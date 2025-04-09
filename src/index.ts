@@ -5,10 +5,13 @@ const app: Application = express()
 const PORT: number = process.env.PORT ? Number(process.env.PORT) : 4000
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send('Hello World')
+  res.send('World')
 })
 app.get('/hi', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hi World')
+})
+app.get('/hola', (req: Request, res: Response, next: NextFunction) => {
+  res.send('Hola World')
 })
 
 app.listen(PORT, () => {

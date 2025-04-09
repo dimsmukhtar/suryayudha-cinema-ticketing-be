@@ -2,24 +2,72 @@ import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import love from 'eslint-config-love'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default defineConfig([
+  // JavaScript config
   {
-    files: ['**/*.{js,mjs,cjs,ts}'],
-    plugins: ['@typescript-eslint'],
-    extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-    parser: '@typescript-eslint/parser',
-    parserOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module'
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
+    ignores: ['**/build/*', '**/node_modules/*', '**/public/*'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser
+      }
     },
-    plugins: ['@typescript-eslint'],
-    ignoresPatterns: ['**/build/*', '**/node_modules/*', '**/public/*']
+    ...love
   },
+
+  // TypeScript config with type checking
   {
-    ...love,
-    files: ['**/*.{js,mjs,cjs,ts}'],
-    languageOptions: { globals: globals.browser }
+    files: ['**/*.ts', '**/*.tsx'],
+    ignores: ['**/build/*', '**/node_modules/*', '**/public/*', 'eslint.config.js'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname
+      },
+      globals: globals.node
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      // Use 'recommended' instead of 'recommendedTypeChecked' for non-type-checking rules
+      ...tseslint.configs.recommended.rules
+    }
   },
-  tseslint.configs.recommended
+
+  // Additional TypeScript config for type-aware rules
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    ignores: [
+      '**/build/*',
+      '**/node_modules/*',
+      '**/public/*',
+      'eslint.config.js',
+      'eslint.config.mjs'
+    ],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname
+      }
+    },
+    rules: {
+      // Only include type-checking rules here
+      ...tseslint.configs.recommendedTypeChecked.rules
+    }
+  }
 ])
