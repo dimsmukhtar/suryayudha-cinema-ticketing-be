@@ -1,73 +1,30 @@
-import { defineConfig } from 'eslint/config'
-import globals from 'globals'
+// eslint.config.js
+import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import love from 'eslint-config-love'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+export default [
+  // Base JS rules
+  js.configs.recommended,
 
-export default defineConfig([
-  // JavaScript config
+  // TypeScript support
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+
+  // Custom rules
   {
-    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
-    ignores: ['**/build/*', '**/node_modules/*', '**/public/*'],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.browser
-      }
-    },
-    ...love
-  },
-
-  // TypeScript config with type checking
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['**/build/*', '**/node_modules/*', '**/public/*', 'eslint.config.js'],
+    files: ['**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: './tsconfig.json',
-        tsconfigRootDir: __dirname
-      },
-      globals: globals.node
-    },
-    plugins: {
-      '@typescript-eslint': tseslint.plugin
-    },
-    rules: {
-      ...tseslint.configs.recommended.rules,
-      // Use 'recommended' instead of 'recommendedTypeChecked' for non-type-checking rules
-      ...tseslint.configs.recommended.rules
-    }
-  },
-
-  // Additional TypeScript config for type-aware rules
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    ignores: [
-      '**/build/*',
-      '**/node_modules/*',
-      '**/public/*',
-      'eslint.config.js',
-      'eslint.config.mjs'
-    ],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: './tsconfig.json',
-        tsconfigRootDir: __dirname
+        project: ['./tsconfig.json']
       }
     },
     rules: {
-      // Only include type-checking rules here
-      ...tseslint.configs.recommendedTypeChecked.rules
+      // rule tambahan
+      // 'no-console': 'warn',
+      // 'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      // '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
+      '@typescript-eslint/restrict-template-expressions': 'off'
     }
   }
-])
+]
