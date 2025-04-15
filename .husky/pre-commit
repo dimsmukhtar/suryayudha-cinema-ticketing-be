@@ -1,34 +1,35 @@
 #!/bin/sh
 
-echo '🏗️👷 Styling, testing and building your project before committing'
+echo '🏗️👷 Styling, testing and building your project before committing 🏗️👷'
 
 #Check Prettier
 npm run check-format ||
 {
-  echo "❌❌Prettier check failed. Run npm run format, add changes and try commit again"
+  echo "❌❌ Prettier check failed. Run -NPM RUN FORMAT-, add changes and try commit again ❌❌"
   false
 }
 
 #Check ESLint
-npm run check-lint ||
+npm run lint ||
 {
-  echo "❌❌ESLint check failed. Make the required changes listed above, add changes and try commit against"
+  echo "❌❌ ESLint check failed. Run -NPM RUN LINT:FIX-, add changes and try commit again ❌❌"
   false
 }
 
 #Check tsconfig
 npm run check-types ||
 {
-  echo "❌❌tsconfig check failed. Make the required changes listed above, add changes and try commit against"
+  echo "❌❌ tsconfig check failed. add changes and try commit against ❌❌"
   false
 }
 
 # build
-npm run build:cp-env ||
+npm run build ||
 {
-  echo "❌❌Build check failed. view the errors above"
+  echo "❌❌ Build check failed. view the errors above ❌❌"
   false
 }
 
 # If everything passes... Now we can commit
-echo '✅✅✅✅ You win this time... I am committing this now. ✅✅✅✅'
+echo '✅✅✅✅ Successfully Linted, Checked Types, Checked Format, Built. ✅✅✅✅'
+echo '✏️✏️✏️✏️ Now you can commit. ✏️✏️✏️✏️'

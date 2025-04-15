@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
-import productRouter from './product.route'
+import v1Routes from './v1/index'
 
-const appRouter = Router()
+const appRouter: Router = Router()
 
-appRouter.use('/api/v1/product', productRouter)
+appRouter.use('/v1', v1Routes)
 
 export default appRouter
