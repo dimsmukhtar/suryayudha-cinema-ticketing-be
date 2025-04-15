@@ -32,4 +32,4 @@ npm run build ||
 
 # If everything passes... Now we can commit
 echo '✅✅✅✅ Successfully Linted, Checked Types, Checked Format, Built. ✅✅✅✅'
-echo '✏️✏️✏️✏️ Now you can commit. ✏️✏️✏️✏️'
+echo '✏️✏️✏️✏️ COMMIT DONE SUCCESSFULLY ✏️✏️✏️✏️'

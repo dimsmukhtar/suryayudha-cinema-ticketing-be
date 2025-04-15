@@ -1,7 +1,7 @@
 {
   "name": "surya-yudha-e-ticket-cinema-booking-backend",
   "version": "1.0.0",
-  "main": "./dist/index.js",
+  "main": "./build/index.js",
   "scripts": {
     "build:watch": "npx tsc -w",
     "dev": "npx nodemon",
