@@ -1,3 +1,4 @@
+src/infrastructure/database/generated/**
 eslint.config.js
 .prettierrc
 package-lock.json
