@@ -35,10 +35,10 @@ model User {
   updated_at DateTime @updatedAt
 
   // relation
-  notifications Notification[]
   movies_created Movie[] @relation("UserCreatedMovies")
   schedules_created Schedule[] @relation("UserCreatedSchedules")
   transactions Transaction[]
+  notifications Notification[]
   @@map("Users")
 }
 
@@ -53,7 +53,7 @@ model Movie {
   title String
   synopsis String
   director String
-  duration Int
+  duration String
   rating String
   language String
   subtitle String
@@ -66,13 +66,14 @@ model Movie {
   updated_at DateTime @updatedAt
 
   // relation
-  movie_casts MovieCast[]
+  created_by User @relation("UserCreatedMovies", fields: [created_by_id], references: [id])
+  movie_casts Cast[]
   movie_genres MovieGenre[]
-  createdBy User @relation("UserCreatedMovies", fields: [created_by_id], references: [id])
+  schedules Schedule[]
   @@map("Movies")
 }
 
-model MovieCast {
+model Cast {
   id Int @id @default(autoincrement())
   actor_name String
   actor_url String
@@ -83,7 +84,7 @@ model MovieCast {
   // relation
   movie Movie @relation(fields: [movie_id], references: [id])
 
-  @@map("MovieCasts")
+  @@map("Cast")
 }
 
 model Genre {
@@ -116,7 +117,7 @@ model Notification {
   id Int @id @default(autoincrement())
   title String
   description String
-  isRead Boolean @default(false)
+  is_read Boolean @default(false)
   user_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -177,8 +178,9 @@ model Schedule {
   updated_at DateTime @updatedAt  
 
   // relation
+  created_by User @relation("UserCreatedSchedules", fields: [created_by_id], references: [id])
+  movie Movie @relation(fields: [movie_id], references: [id])
   studio Studio @relation(fields: [studio_id], references: [id])
-  createdBy User @relation("UserCreatedSchedules", fields: [created_by_id], references: [id])
   schedule_seats ScheduleSeat[]
   @@map("Schedules")
 }

@@ -159,3 +159,6 @@ api/v1/
 - **vouchers/:id** PATCH | **(ADMIN)**
  ```req.body = code,type,value,expires_at,usage_limit,usage_count,min_purchase_amount```
 - **vouchers/:id** DELETE | **(ADMIN)**
+
+#### Database Diagram
+![diagram](./public/img/cinema-booking.png)

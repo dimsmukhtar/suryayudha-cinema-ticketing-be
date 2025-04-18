@@ -7,10 +7,11 @@
 # production
 /dist
 /build
+/src/infrastructure/database/generated
 
 # misc
 .DC_Store
-.package-lock.json
+/package-lock.json
 
 # IDE
 .vscode
