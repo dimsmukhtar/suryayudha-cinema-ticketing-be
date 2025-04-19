@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction, RequestHandler, Router } from 'express'
 import { MovieService } from './movie.service'
 import { CreateMovieDto, MovieValidation } from './movie.validation'
-import { validateResource } from '@/shared/middlewares/validation.middleware'
+import { validateResource } from '../../../shared/middlewares/validation.middleware'
 
 export class MovieController {
   private readonly movieService: MovieService = new MovieService()

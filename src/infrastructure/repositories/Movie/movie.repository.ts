@@ -1,13 +1,8 @@
-import {
-  Movie,
-  Cast,
-  Prisma,
-  PrismaClient
-} from '@/Infrastructure/database/generated/prisma/client'
-import { prisma } from '@/Infrastructure/database/client'
-import { ConflictException } from '@/shared/error-handling/exceptions/conflict.exception'
-import { NotFoundException } from '@/shared/error-handling/exceptions/not-found.exception'
-import { HttpException } from '@/shared/error-handling/exceptions/http.exception'
+import { Movie, Cast, Prisma, PrismaClient } from '@prisma/client'
+import { prisma } from '../../../infrastructure/database/client'
+import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
+import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
+import { HttpException } from '../../../shared/error-handling/exceptions/http.exception'
 
 export class MovieRepository {
   private readonly prisma: PrismaClient = prisma

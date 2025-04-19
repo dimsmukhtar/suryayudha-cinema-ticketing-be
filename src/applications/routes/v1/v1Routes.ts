@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { MovieController } from '@/Applications/modules/Movie/movie.controller'
+import { MovieController } from '../../../applications/modules/Movie/movie.controller'
 
 export class V1Routes {
   public readonly v1Routes: Router

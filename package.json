@@ -1,12 +1,12 @@
 {
   "name": "surya-yudha-e-ticket-cinema-booking-backend",
   "version": "1.0.0",
-  "main": "./build/index.js",
-  "scripts": {
+  "main": "./build/server/index.js",
+    "scripts": {
     "build:watch": "npx tsc -w",
     "dev": "npx nodemon",
     "build": "npx tsc",
-    "prod": "node ./build/index.js",
+    "prod": "node ./build/server/index.js",
     "format": "npx prettier . --write",
     "check-types": "npx tsc --noEmit --pretty",
     "check-format": "npx prettier . --check",
@@ -37,7 +37,6 @@
     "envalid": "^8.0.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
-    "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
     "winston": "^3.17.0",
     "zod": "^3.24.3"
@@ -48,16 +47,12 @@
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.0",
+    "fs-extra": "^11.3.0",
     "husky": "^9.1.7",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
     "prisma": "^6.6.0",
+    "rimraf": "^6.0.1",
     "typescript": "^5.8.3"
-  },
-  "_moduleAliases": {
-    "@/Applications": "build/Applications",
-    "@/Infrastructure": "build/Infrastructure",
-    "@/shared": "build/shared"
-
   }
 }

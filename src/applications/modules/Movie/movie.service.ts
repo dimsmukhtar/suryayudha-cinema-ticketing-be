@@ -1,7 +1,7 @@
-import { MovieRepository } from '@/Infrastructure/repositories/Movie/movie.repository'
+import { MovieRepository } from '../../../infrastructure/repositories/Movie/movie.repository'
 import { CreateMovieDto } from './movie.validation'
-import { Movie } from '@/Infrastructure/database/generated/prisma/client'
-import { HttpException } from '@/shared/error-handling/exceptions/http.exception'
+import { Movie } from '@prisma/client'
+import { HttpException } from '../../..//shared/error-handling/exceptions/http.exception'
 
 export class MovieService {
   private readonly movieRepository: MovieRepository = new MovieRepository()
