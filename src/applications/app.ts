@@ -1,4 +1,4 @@
-import express, { Application, Router } from 'express'
+import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import compression from 'compression'
@@ -66,7 +66,7 @@ class App {
   }
 
   private initializeHealthCheck(): void {
-    this.app.get('/health', (_: Request, res: Response) => {
+    this.app.get('/health', (_: express.Request, res: express.Response) => {
       res.status(200).json({ status: 'OK' })
     })
     this.app.get('/health/db', async (_, res) => {
@@ -78,4 +78,47 @@ class App {
       }
     })
   }
+
+  public async start(): Promise<void> {
+    try {
+      await prisma.$connect()
+      logger.info(`✅ Database connected`)
+      this.server = this.app.listen(process.env.PORT, () => {
+        logger.info(`✅ Server started on port ${process.env.PORT}`)
+      })
+      this.setupGracefulShutdown()
+    } catch (error) {
+      logger.error('Failed to start server:', error)
+      process.exit(1)
+    }
+  }
+
+  private setupGracefulShutdown(): void {
+    const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGQUIT']
+
+    const shutdown = async (signal: NodeJS.Signals) => {
+      logger.warn(`Received ${signal}, shutting down...`)
+
+      try {
+        await prisma.$disconnect()
+        if (this.server) this.server.close()
+        logger.info('✅ Server closed')
+        process.exit(0)
+      } catch (error) {
+        logger.error('Error during shutdown:', error)
+        process.exit(1)
+      }
+    }
+    signals.forEach((signal) => process.on(signal, shutdown))
+    process.on('unhandledRejection', (reason) => {
+      logger.error('Unhandled Rejection:', reason)
+      shutdown('unhandledRejection' as NodeJS.Signals)
+    })
+    process.on('uncaughtException', (error) => {
+      logger.error('Uncaught Exception:', error)
+      shutdown('uncaughtException' as NodeJS.Signals)
+    })
+  }
 }
+
+export default App
