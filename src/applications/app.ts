@@ -66,7 +66,9 @@ class App {
   }
 
   private initializeHealthCheck(): void {
-    this.app.get('/health', (_, res) => res.json({ status: 'OK' }))
+    this.app.get('/health', (_: Request, res: Response) => {
+      res.status(200).json({ status: 'OK' })
+    })
     this.app.get('/health/db', async (_, res) => {
       try {
         await prisma.$queryRaw`SELECT 1`

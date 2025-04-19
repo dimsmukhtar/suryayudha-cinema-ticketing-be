@@ -1,7 +1,16 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpException } from '../exceptions/http.exception'
 
-export const errorMiddleware = (error: Error, req: Request, res: Response, next: NextFunction) => {
+interface ErrorRequestHandler {
+  (error: Error, req: Request, res: Response, next: NextFunction): void
+}
+
+export const errorMiddleware: ErrorRequestHandler = (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (error instanceof HttpException) {
     return res.status(error.statusCode).json(error.toJSON())
   }
