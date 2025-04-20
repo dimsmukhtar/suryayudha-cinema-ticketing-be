@@ -14,6 +14,7 @@ export const errorMiddleware: ErrorRequestHandler = (
   if (error instanceof HttpException) {
     return res.status(error.statusCode).json(error.serialize())
   }
+
   const isProduction = process.env.NODE_ENV === 'production'
   res.status(500).json({
     status: 'error',

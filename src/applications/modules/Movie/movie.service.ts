@@ -17,4 +17,9 @@ export class MovieService {
       throw new HttpException(500, 'Failed to create movie')
     }
   }
+
+  async getAllMovies(): Promise<Movie[]> {
+    try {
+    } catch (error) {}
+  }
 }

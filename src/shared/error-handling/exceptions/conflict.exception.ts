@@ -1,7 +1,7 @@
 import { HttpException } from './http.exception'
 
 export class ConflictException extends HttpException {
-  constructor(message = 'Resource sudah ada') {
-    super(409, message)
+  constructor(message: string) {
+    super(400, message, 'CONFLICT')
   }
 }

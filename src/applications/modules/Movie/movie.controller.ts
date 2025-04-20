@@ -24,8 +24,12 @@ export class MovieController {
     res: Response,
     next: NextFunction
   ) => {
-    const movie = await this.service.createMovie(req.body)
-    res.status(201).json({ success: true, data: movie })
+    try {
+      const movie = await this.service.createMovie(req.body)
+      res.status(201).json({ success: true, data: movie })
+    } catch (error) {
+      next(error)
+    }
   }
 
   public getRoutes(): Router {
