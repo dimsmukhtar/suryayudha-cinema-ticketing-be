@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-import { Application, ErrorRequestHandler, RequestHandler, Router } from 'express'
-import { Logger } from 'winston'
+import { Application } from 'express'
+
 export interface IApp {
   start(): Promise<void>
   getApp(): Application
