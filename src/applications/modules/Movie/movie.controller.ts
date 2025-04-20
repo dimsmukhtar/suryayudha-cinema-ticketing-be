@@ -4,7 +4,7 @@ import { CreateMovieDto, MovieValidation } from './movie.validation'
 import { validateResource } from '../../../shared/middlewares/validation.middleware'
 
 export class MovieController {
-  public readonly movieRouter: Router
+  private readonly movieRouter: Router
 
   constructor(private readonly service: MovieService) {
     this.movieRouter = Router()
@@ -24,7 +24,11 @@ export class MovieController {
     res: Response,
     next: NextFunction
   ) => {
-    const movie = await this.movieService.createMovie(req.body)
+    const movie = await this.service.createMovie(req.body)
     res.status(201).json({ success: true, data: movie })
+  }
+
+  public getRoutes(): Router {
+    return this.movieRouter
   }
 }

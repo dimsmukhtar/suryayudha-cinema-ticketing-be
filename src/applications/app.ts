@@ -1,28 +1,28 @@
-import express, { Application } from 'express'
+import express, { Application, Router } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import compression from 'compression'
 import helmet from 'helmet'
 import { cleanEnv, str, num } from 'envalid'
 import { logger } from '../shared/utils/logger'
-import { Routes } from '../applications/routes/routes'
 import { prisma } from '../infrastructure/database/client'
 import { errorMiddleware } from '../shared/error-handling/middleware/error.middleware'
-import {
-  IApp,
-  AppConfig,
-  AppDependencies,
-  RouteConfig,
-  ErrorHandlerConfig
-} from '../infrastructure/types/app.types'
+import { IApp } from '../infrastructure/types/app.types'
+
+interface IRoutes {
+  getRoutes(): Router
+}
 
 class App implements IApp {
   private app: Application
   private server?: ReturnType<Application['listen']>
   private readonly isProduction: boolean
+  private routes: IRoutes
 
-  constructor() {
+  constructor(routes: IRoutes) {
     this.app = express()
+    this.routes = routes
+
     this.isProduction = process.env.NODE_ENV === 'production'
 
     this.validateEnvironment()
@@ -64,8 +64,7 @@ class App implements IApp {
   }
 
   private initializeRoutes(): void {
-    const routes = new Routes()
-    this.app.use('/api', routes.routes)
+    this.app.use('/api', this.routes.getRoutes())
   }
 
   private initializeErrorHandling(): void {

@@ -4,12 +4,12 @@ import { Movie } from '@prisma/client'
 import { HttpException } from '../../..//shared/error-handling/exceptions/http.exception'
 
 export class MovieService {
-  constructor(private readonly movieRepository: MovieRepository) {}
+  constructor(private readonly repository: MovieRepository) {}
 
   async createMovie(dto: CreateMovieDto): Promise<Movie> {
     try {
       const { casts, genres, ...movieData } = dto
-      return await this.movieRepository.CREATE(movieData, casts, genres)
+      return await this.repository.CREATE(movieData, casts, genres)
     } catch (error) {
       if (error instanceof HttpException) {
         throw error

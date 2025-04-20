@@ -1,8 +1,12 @@
 import { Router } from 'express'
-import { V1Routes } from './v1Routes'
+import { createMovieController } from '../../infrastructure/factories/factories'
 
+interface ControllerRouter {
+  getRoutes(): Router
+}
 export class Routes {
-  public readonly routes: Router
+  private readonly routes: Router
+  private readonly movieRouter: ControllerRouter = createMovieController()
 
   constructor() {
     this.routes = Router()
@@ -10,7 +14,10 @@ export class Routes {
   }
 
   private initializeRoutes(): void {
-    const v1Routes = new V1Routes()
-    this.routes.use('/v1', v1Routes.getV1Routes())
+    this.routes.use('/v1/movies', this.movieRouter.getRoutes())
+  }
+
+  public getRoutes(): Router {
+    return this.routes
   }
 }
