@@ -1,8 +1,7 @@
 export class HttpException extends Error {
   constructor(
     public readonly statusCode: number,
-    public readonly message: string,
-    public readonly details?: any
+    public readonly message: string
   ) {
     super(message)
     Object.setPrototypeOf(this, new.target.prototype)
@@ -14,7 +13,6 @@ export class HttpException extends Error {
       success: false,
       statusCode: this.statusCode,
       message: this.message,
-      details: this.details,
       timeStamp: new Date().toISOString()
     }
   }

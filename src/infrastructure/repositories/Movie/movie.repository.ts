@@ -3,6 +3,7 @@ import { prisma } from '../../../infrastructure/database/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 import { HttpException } from '../../../shared/error-handling/exceptions/http.exception'
+import { handlePrismaError } from '../../../shared/error-handling/exceptions/prisma.error'
 
 export class MovieRepository {
   private readonly prisma: PrismaClient = prisma
@@ -53,7 +54,7 @@ export class MovieRepository {
       })
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        this.handlePrismaError(error)
+        handlePrismaError(error)
       }
       throw error
     }
@@ -61,16 +62,5 @@ export class MovieRepository {
 
   async GETALL() {
     return await this.prisma.movie.findMany
-  }
-
-  private handlePrismaError(error: Prisma.PrismaClientKnownRequestError) {
-    switch (error.code) {
-      case 'P2002':
-        throw new ConflictException('Duplicate entry violation')
-      case 'P2025':
-        throw new NotFoundException('Related resource')
-      default:
-        throw new HttpException(500, `Database error: ${error.message}`)
-    }
   }
 }

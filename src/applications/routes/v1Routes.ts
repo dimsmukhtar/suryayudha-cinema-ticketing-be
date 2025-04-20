@@ -11,7 +11,7 @@ export class V1Routes {
 
   private initializeV1Routes(): void {
     const movieController = new MovieController()
-    this.v1Routes.use('/movies', movieController.getMovieRoutes())
+    this.v1Routes.use('/movies', movieController.movieRouter)
   }
 
   public getV1Routes(): Router {
