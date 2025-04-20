@@ -8,8 +8,9 @@ import { logger } from '../shared/utils/logger'
 import { Routes } from '../applications/routes/routes'
 import { prisma } from '../infrastructure/database/client'
 import { errorMiddleware } from '../shared/error-handling/middleware/error.middleware'
+import { IApp } from '../infrastructure/types/app.types'
 
-class App {
+class App implements IApp {
   private app: Application
   private server?: ReturnType<Application['listen']>
   private readonly isProduction: boolean

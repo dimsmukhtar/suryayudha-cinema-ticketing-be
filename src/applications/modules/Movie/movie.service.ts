@@ -9,7 +9,7 @@ export class MovieService {
   async createMovie(dto: CreateMovieDto): Promise<Movie> {
     try {
       const { casts, genres, ...movieData } = dto
-      return await this.movieRepository.create(movieData, casts, genres)
+      return await this.movieRepository.CREATE(movieData, casts, genres)
     } catch (error) {
       if (error instanceof HttpException) {
         throw error

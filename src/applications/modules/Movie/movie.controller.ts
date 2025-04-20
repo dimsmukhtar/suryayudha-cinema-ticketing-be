@@ -5,9 +5,10 @@ import { validateResource } from '../../../shared/middlewares/validation.middlew
 
 export class MovieController {
   private readonly movieService: MovieService = new MovieService()
-  public readonly movieRouter: Router = Router()
+  private readonly movieRouter: Router
 
   constructor() {
+    this.movieRouter = Router()
     this.initializeMovieRoutes()
   }
 
@@ -26,5 +27,9 @@ export class MovieController {
   ) => {
     const movie = await this.movieService.createMovie(req.body)
     res.status(201).json({ success: true, data: movie })
+  }
+
+  public getMovieRoutes(): Router {
+    return this.movieRouter
   }
 }

@@ -7,7 +7,7 @@ import { HttpException } from '../../../shared/error-handling/exceptions/http.ex
 export class MovieRepository {
   private readonly prisma: PrismaClient = prisma
 
-  async create(
+  async CREATE(
     movieData: Prisma.MovieCreateInput,
     casts: Omit<Cast, 'id' | 'movie_id' | 'created_at' | 'updated_at'>[],
     genres: number[]
@@ -57,6 +57,10 @@ export class MovieRepository {
       }
       throw error
     }
+  }
+
+  async GETALL() {
+    return await this.prisma.movie.findMany
   }
 
   private handlePrismaError(error: Prisma.PrismaClientKnownRequestError) {
