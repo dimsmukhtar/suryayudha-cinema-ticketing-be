@@ -22,7 +22,6 @@ class App implements IApp {
   constructor(routes: IRoutes) {
     this.app = express()
     this.routes = routes
-
     this.isProduction = process.env.NODE_ENV === 'production'
 
     this.validateEnvironment()
@@ -88,13 +87,13 @@ class App implements IApp {
   public async start(): Promise<void> {
     try {
       await prisma.$connect()
-      logger.info(`✅ Database connected`)
+      logger.info(`✅ Database with prisma connected`)
       this.server = this.app.listen(process.env.PORT, () => {
         logger.info(`✅ Server started on port ${process.env.PORT}`)
       })
       this.setupGracefulShutdown()
     } catch (error) {
-      logger.error('Failed to start server:', error)
+      logger.error('❌ Failed to start server:', error)
       process.exit(1)
     }
   }
@@ -115,7 +114,7 @@ class App implements IApp {
         logger.info('✅ Server closed')
         process.exit(0)
       } catch (error) {
-        logger.error('Error during shutdown:', error)
+        logger.error('❌ Error during shutdown:', error)
         process.exit(1)
       }
     }

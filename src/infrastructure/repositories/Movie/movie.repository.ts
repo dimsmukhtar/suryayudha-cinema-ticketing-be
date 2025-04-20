@@ -2,10 +2,11 @@ import { Movie, Cast, Prisma, PrismaClient } from '@prisma/client'
 import { prisma } from '../../../infrastructure/database/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
-import { HttpException } from '../../../shared/error-handling/exceptions/http.exception'
 import { handlePrismaError } from '../../../shared/error-handling/exceptions/prisma.error'
+import { IMovieRepository } from './movie.repository.interface'
+import { logger } from '../../../shared/utils/logger'
 
-export class MovieRepository {
+export class MovieRepository implements IMovieRepository {
   private readonly prisma: PrismaClient = prisma
 
   async CREATE(
@@ -56,11 +57,12 @@ export class MovieRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         handlePrismaError(error)
       }
+      logger.error('Unexpected error in movie repository', error)
       throw error
     }
   }
 
-  async GETALL() {
-    return await this.prisma.movie.findMany
+  async GETALL(): Promise<Movie[]> {
+    return await this.prisma.movie.findMany()
   }
 }
