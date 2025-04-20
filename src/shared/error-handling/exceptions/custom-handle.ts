@@ -9,7 +9,7 @@ import { logger } from '../../../shared/utils/logger'
 type HandleErrorOptions = {
   context?: string
 }
-export function customHandleError(error: unknown, options: HandleErrorOptions = {}): HttpException {
+export function CustomHandleError(error: unknown, options: HandleErrorOptions = {}): HttpException {
   const { context = '[Application]' } = options
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     switch (error.code) {

@@ -1,7 +1,7 @@
 import { MovieRepository } from '../../../infrastructure/repositories/Movie/movie.repository'
 import { CreateMovieDto } from './movie.validation'
 import { Movie } from '@prisma/client'
-import { HttpException } from '../../..//shared/error-handling/exceptions/http.exception'
+import { CustomHandleError } from '../../../shared/error-handling/exceptions/custom-handle'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepository) {}
@@ -11,15 +11,19 @@ export class MovieService {
       const { casts, genres, ...movieData } = dto
       return await this.repository.CREATE(movieData, casts, genres)
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error
-      }
-      throw new HttpException(500, 'Failed to create movie')
+      throw CustomHandleError(error, {
+        context: '[MovieService] - Failed to create movie'
+      })
     }
   }
 
   async getAllMovies(): Promise<Movie[]> {
     try {
-    } catch (error) {}
+      return await this.repository.GETALL()
+    } catch (error) {
+      throw CustomHandleError(error, {
+        context: '[MovieService] - Failed to create movie'
+      })
+    }
   }
 }

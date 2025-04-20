@@ -17,6 +17,7 @@ export class MovieController {
       validateResource(MovieValidation.CreateMovieSchema),
       this.createMovie
     )
+    this.movieRouter.get('/', this.getAllMovies)
   }
 
   private createMovie: RequestHandler = async (
@@ -27,6 +28,19 @@ export class MovieController {
     try {
       const movie = await this.service.createMovie(req.body)
       res.status(201).json({ success: true, data: movie })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  private getAllMovies: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const movies = await this.service.getAllMovies()
+      res.status(200).json({ success: true, data: movies })
     } catch (error) {
       next(error)
     }
