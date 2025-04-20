@@ -8,7 +8,13 @@ import { logger } from '../shared/utils/logger'
 import { Routes } from '../applications/routes/routes'
 import { prisma } from '../infrastructure/database/client'
 import { errorMiddleware } from '../shared/error-handling/middleware/error.middleware'
-import { IApp } from '../infrastructure/types/app.types'
+import {
+  IApp,
+  AppConfig,
+  AppDependencies,
+  RouteConfig,
+  ErrorHandlerConfig
+} from '../infrastructure/types/app.types'
 
 class App implements IApp {
   private app: Application
@@ -92,6 +98,10 @@ class App implements IApp {
       logger.error('Failed to start server:', error)
       process.exit(1)
     }
+  }
+
+  public getApp(): Application {
+    return this.app
   }
 
   private setupGracefulShutdown(): void {
