@@ -31,7 +31,7 @@ model User {
   reset_password_token_expires_at DateTime?
   profile_url String?
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   movies_created Movie[] @relation("UserCreatedMovies")
@@ -62,7 +62,7 @@ model Movie {
   status MovieStatus
   created_by_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   created_by User @relation("UserCreatedMovies", fields: [created_by_id], references: [id])
@@ -78,7 +78,7 @@ model Cast {
   actor_url String
   movie_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   movie Movie @relation(fields: [movie_id], references: [id])
@@ -90,7 +90,7 @@ model Genre {
   id Int @id @default(autoincrement())
   name String
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime?  @updatedAt
 
   // relation
   movie_genres MovieGenre[]
@@ -103,7 +103,7 @@ model MovieGenre {
   movie_id Int
   genre_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   movie Movie @relation(fields: [movie_id], references: [id])
@@ -119,7 +119,7 @@ model Notification {
   is_read Boolean @default(false)
   user_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   user User @relation(fields: [user_id], references: [id])
@@ -130,7 +130,7 @@ model Studio {
   id Int @id @default(autoincrement())
   name String
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   galleries StudioGallery[]
@@ -144,7 +144,7 @@ model StudioGallery {
   photo_url String
   studio_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   studio Studio @relation(fields: [studio_id], references: [id])
@@ -156,7 +156,7 @@ model Seat {
   seat_label String
   studio_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt 
+  updated_at DateTime? @updatedAt 
 
   // relation
   studio Studio @relation(fields: [studio_id], references: [id])
@@ -174,7 +174,7 @@ model Schedule {
   movie_id Int
   studio_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt  
+  updated_at DateTime? @updatedAt  
 
   // relation
   created_by User @relation("UserCreatedSchedules", fields: [created_by_id], references: [id])
@@ -196,7 +196,7 @@ model ScheduleSeat {
   schedule_id Int
   seat_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt  
+  updated_at DateTime? @updatedAt  
 
   // relation
   schedule Schedule @relation(fields: [schedule_id], references: [id])
@@ -221,7 +221,7 @@ model Voucher {
   usage_count Int @default(0)
   min_purchase_amount Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   transactions Transaction[]
@@ -248,7 +248,7 @@ model Transaction {
   user_id Int
   voucher_id Int
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt   
+  updated_at DateTime? @updatedAt   
 
   // relation 
   user User @relation(fields: [user_id], references: [id])
@@ -265,7 +265,7 @@ model TransactionItem {
   price Int
   seat_label String
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime? @updatedAt
 
   // relation
   transaction Transaction @relation(fields: [transaction_id], references: [id])
@@ -288,7 +288,7 @@ model Ticket {
   status TicketStatus
   transaction_item_id Int @unique
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt 
+  updated_at DateTime? @updatedAt 
 
   // relation
   transaction_item TransactionItem @relation(fields: [transaction_item_id], references: [id])

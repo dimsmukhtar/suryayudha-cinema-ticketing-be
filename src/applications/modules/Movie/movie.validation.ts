@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z, ZodType } from 'zod'
 
 export const MovieCastSchema = z.object({
   actor_name: z.string(),
@@ -6,7 +6,7 @@ export const MovieCastSchema = z.object({
 })
 
 export class MovieValidation {
-  static readonly CreateMovieSchema = z.object({
+  static readonly CREATE: ZodType = z.object({
     title: z.string({
       required_error: 'Judul harus diisi',
       invalid_type_error: 'Judul harus berupa string'
@@ -50,16 +50,6 @@ export class MovieValidation {
       invalid_type_error: 'Status film harus berupa string'
     }),
     casts: z.array(MovieCastSchema).min(1, 'Minimal 1 cast').optional(),
-    movie_genres: z.array(z.number().int().positive()).optional(),
-    created_by: z.object({
-      connect: z.object(
-        {
-          id: z.number().int().positive()
-        },
-        { required_error: 'ID pembuat harus diisi' }
-      )
-    })
+    movie_genres: z.array(z.number().int().positive()).optional()
   })
 }
-
-export type CreateMovieDto = z.infer<typeof MovieValidation.CreateMovieSchema>

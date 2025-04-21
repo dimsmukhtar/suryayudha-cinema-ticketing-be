@@ -1,7 +1,9 @@
-import express, { Request, Response, NextFunction, RequestHandler, Router } from 'express'
+import { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
-import { CreateMovieDto, MovieValidation } from './movie.validation'
+import { MovieValidation } from './movie.validation'
 import { validateResource } from '../../../shared/middlewares/validation.middleware'
+import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
+import { MoviePayload } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -14,30 +16,24 @@ export class MovieController {
   private initializeMovieRoutes(): void {
     this.movieRouter.post(
       '/',
-      validateResource(MovieValidation.CreateMovieSchema),
+      // validateResource(MovieValidation.CreateMovieSchema),
       this.createMovie
     )
     this.movieRouter.get('/', this.getAllMovies)
   }
 
-  private createMovie: RequestHandler = async (
-    req: Request<{}, {}, CreateMovieDto>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  private createMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const movie = await this.service.createMovie(req.body)
+      const moviePayloadRequest: MoviePayload = req.body
+      const authReq = req as AuthenticateUser
+      const movie = await this.service.createMovie(moviePayloadRequest, authReq.user.id)
       res.status(201).json({ success: true, data: movie })
     } catch (error) {
       next(error)
     }
   }
 
-  private getAllMovies: RequestHandler = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  private getAllMovies = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const movies = await this.service.getAllMovies()
       res.status(200).json({ success: true, data: movies })
