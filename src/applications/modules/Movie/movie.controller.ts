@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
-import { MovieValidation } from './movie.validation'
-import { validateResource } from '../../../shared/middlewares/validation.middleware'
 import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import { MoviePayload } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
 
@@ -26,7 +24,12 @@ export class MovieController {
     try {
       const moviePayloadRequest: MoviePayload = req.body
       const authReq = req as AuthenticateUser
-      const movie = await this.service.createMovie(moviePayloadRequest, authReq.user.id)
+      const { movies_genres } = req.body
+      const movie = await this.service.createMovie(
+        moviePayloadRequest,
+        authReq.user.id,
+        movies_genres
+      )
       res.status(201).json({ success: true, data: movie })
     } catch (error) {
       next(error)
