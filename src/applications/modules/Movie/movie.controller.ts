@@ -24,12 +24,8 @@ export class MovieController {
     try {
       const moviePayloadRequest: MoviePayload = req.body
       const authReq = req as AuthenticateUser
-      const { movies_genres } = req.body
-      const movie = await this.service.createMovie(
-        moviePayloadRequest,
-        authReq.user.id,
-        movies_genres
-      )
+      const { movie_genres } = req.body
+      const movie = await this.service.createMovie(moviePayloadRequest, 1, movie_genres)
       res.status(201).json({ success: true, data: movie })
     } catch (error) {
       next(error)

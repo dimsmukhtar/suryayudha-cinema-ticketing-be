@@ -1,8 +1,7 @@
 import { HttpException } from './http.exception'
 
 export class NotFoundException extends HttpException {
-  constructor(entity: string, id?: string | number) {
-    const message = id ? `${entity} dengan ID ${id} tidak ditemukan` : `${entity} tidak ditemukan`
+  constructor(message: string, id?: string | number) {
     super(404, message, 'NOT_FOUND')
   }
 }

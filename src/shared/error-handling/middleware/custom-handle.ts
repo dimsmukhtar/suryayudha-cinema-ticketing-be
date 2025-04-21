@@ -9,7 +9,7 @@ import { logger } from '../../../shared/utils/logger'
 type HandleErrorOptions = {
   context?: string
 }
-export function CustomHandleError(error: unknown, options: HandleErrorOptions = {}): HttpException {
+export function CustomHandleError(error: any, options: HandleErrorOptions = {}): HttpException {
   const { context = '[Application]' } = options
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     switch (error.code) {
@@ -37,11 +37,6 @@ export function CustomHandleError(error: unknown, options: HandleErrorOptions = 
     return new InternalServerErrorException(`${context} - Database connection failed`)
   }
 
-  if (error instanceof Error) {
-    logger.error(`${context} - Unexpected error:`, error)
-    return new InternalServerErrorException(error.message || `${context} - Internal server error`)
-  }
-
   logger.error(`${context} - Unhandled error type:`, error)
-  return new InternalServerErrorException(`${context} - Unknown error occurred`)
+  return new HttpException(error.statusCode, error.message, error.errorCode)
 }

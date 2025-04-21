@@ -11,7 +11,7 @@ export class MovieService {
   async createMovie(
     movieData: MoviePayload,
     userId: number,
-    movie_genres?: number[]
+    movie_genres: number[]
   ): Promise<Movie> {
     try {
       const createRequest = ZodValidation.validate(MovieValidation.CREATE, movieData)

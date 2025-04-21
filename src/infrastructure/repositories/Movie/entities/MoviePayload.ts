@@ -12,7 +12,6 @@ export type MoviePayload = {
   poster_url: string
   trailer_url: string
   release_date: string
-  created_by_id: number
   status: 'coming_soon' | 'now_showing' | 'ended'
   movie_genres?: number[]
 }
@@ -32,7 +31,6 @@ export function toMovieResponse(movie: MoviePayload): MovieResponse {
     poster_url: movie.poster_url,
     trailer_url: movie.trailer_url,
     release_date: movie.release_date,
-    created_by_id: movie.created_by_id,
     status: movie.status,
     movie_genres: movie.movie_genres
   }
