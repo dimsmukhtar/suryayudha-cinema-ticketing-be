@@ -5,6 +5,7 @@ import { HttpException } from '../exceptions/http.exception'
 import { BadRequestException } from '../exceptions/bad-request.exception'
 import { InternalServerErrorException } from '../exceptions/internal-server.exception'
 import { logger } from '../../../shared/utils/logger'
+import { ZodError } from 'zod'
 
 type HandleErrorOptions = {
   context?: string
@@ -35,6 +36,11 @@ export function CustomHandleError(error: any, options: HandleErrorOptions = {}):
   ) {
     logger.error(`${context} - Database connection error:`, error)
     return new InternalServerErrorException(`${context} - Database connection failed`)
+  }
+
+  if (error instanceof ZodError) {
+    const messages = error.errors.map((e) => e.message).join(', ')
+    return new BadRequestException(`${context} - VALIDATION_ERROR: ${messages}`)
   }
 
   logger.error(`${context} - Unhandled error type:`, error)
