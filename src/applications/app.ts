@@ -72,12 +72,12 @@ class App implements IApp {
 
   private initializeHealthCheck(): void {
     this.app.get('/health', (_: express.Request, res: express.Response) => {
-      res.status(200).json({ status: 'OK' })
+      res.status(200).json({ status: 'SERVER OK' })
     })
     this.app.get('/health/db', async (_, res) => {
       try {
         await prisma.$queryRaw`SELECT 1`
-        res.json({ database: 'OK' })
+        res.json({ database: 'DATABASE OK' })
       } catch (error) {
         res.status(500).json({ database: 'Unhealthy' })
       }

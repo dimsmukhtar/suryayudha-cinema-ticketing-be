@@ -18,7 +18,7 @@ export class MovieService {
       return await this.repository.createMovie(createRequest, userId, movie_genres)
     } catch (error) {
       throw CustomHandleError(error, {
-        context: '[MovieService] - Failed to create movie'
+        context: 'Failed to create movie'
       })
     }
   }
@@ -28,7 +28,7 @@ export class MovieService {
       return await this.repository.getAllMovies()
     } catch (error) {
       throw CustomHandleError(error, {
-        context: '[MovieService] - Failed to get all movies'
+        context: 'Failed to get all movies'
       })
     }
   }

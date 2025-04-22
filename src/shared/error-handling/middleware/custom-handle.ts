@@ -15,34 +15,41 @@ export function CustomHandleError(error: any, options: HandleErrorOptions = {}):
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     switch (error.code) {
       case 'P2002':
-        return new ConflictException('[P2002] - Duplicate entry violation')
+        return new ConflictException(`GOT [P2002] ${context}: ${error.message}`)
       case 'P2025':
-        return new NotFoundException('[P2025] - Related resource')
+        return new NotFoundException(`GOT [P2025] ${context}: ${error.message}`)
       default:
         return new HttpException(
           500,
-          `[In PrismaClientKnownRequestError] - Database error: ${error.message}`
+          `GOT [PRISMA_CLIENT_KNOWN_REQUEST_ERROR] ${context}: ${error.message}`,
+          'PRISMA_CLIENT_KNOWN_REQUEST_ERROR'
         )
     }
   }
 
   if (error instanceof Prisma.PrismaClientValidationError) {
-    return new BadRequestException(`${context} - Invalid input data format`)
+    return new BadRequestException(
+      `GOT [PRISMA_CLIENT_VALIDATION_ERROR] ${context}: ${error.message}`
+    )
   }
 
   if (
     error instanceof Prisma.PrismaClientInitializationError ||
     error instanceof Prisma.PrismaClientRustPanicError
   ) {
-    logger.error(`${context} - Database connection error:`, error)
-    return new InternalServerErrorException(`${context} - Database connection failed`)
+    logger.error(
+      `GOT [PRISMA_CLIENT_INITIALIZATION_ERROR or PRISMA_CLIENT_RUST_PANIC_ERROR] ${context}:`,
+      error
+    )
+    return new InternalServerErrorException(
+      `GOT [PRISMA_CLIENT_INITIALIZATION_ERROR or PRISMA_CLIENT_RUST_PANIC_ERROR] ${context}: ${error.message}`
+    )
   }
 
   if (error instanceof ZodError) {
     const messages = error.errors.map((e) => e.message).join(', ')
-    return new BadRequestException(`${context} - VALIDATION_ERROR: ${messages}`)
+    return new BadRequestException(`GOT [ZOD_VALIDATION_ERROR] ${context}: ${messages}`)
   }
 
-  logger.error(`${context} - Unhandled error type:`, error)
   return new HttpException(error.statusCode, error.message, error.errorCode)
 }

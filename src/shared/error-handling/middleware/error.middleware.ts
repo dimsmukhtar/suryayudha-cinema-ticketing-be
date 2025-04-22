@@ -17,9 +17,10 @@ export const errorMiddleware: ErrorRequestHandler = (
 
   const isProduction = process.env.NODE_ENV === 'production'
   res.status(500).json({
-    status: 'error',
+    success: false,
     statusCode: 500,
-    message: isProduction ? 'Internal server error' : error.message,
+    errorCode: 'UNKNOWN_ERROR_CODE',
+    message: isProduction ? 'SOMETHING WENT WRONG' : error.message,
     ...(!isProduction && { stack: error.stack })
   })
 }
