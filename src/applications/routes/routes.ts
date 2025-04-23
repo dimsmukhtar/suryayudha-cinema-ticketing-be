@@ -1,12 +1,10 @@
 import { Router } from 'express'
 import { createMovieController } from '../../infrastructure/factories/factories'
+import { IRoutes } from 'infrastructure/types/route.type'
 
-interface ControllerRouter {
-  getRoutes(): Router
-}
 export class Routes {
   private readonly routes: Router
-  private readonly movieRouter: ControllerRouter = createMovieController()
+  private readonly movieRouter: IRoutes = createMovieController()
 
   constructor() {
     this.routes = Router()

@@ -1,12 +1,11 @@
-import { Movie, Cast, Prisma, PrismaClient } from '@prisma/client'
-import { prisma } from '../../../infrastructure/database/client'
+import { Movie, PrismaClient } from '@prisma/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
 import { MoviePayload, toMovieResponse, MovieResponse } from './entities/MoviePayload'
 import { IMovieRepository } from './MovieRepositoryInterface'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
-  private readonly prisma: PrismaClient = prisma
+  constructor(private readonly prisma: PrismaClient) {}
 
   async createMovie(movieData: MoviePayload, userId: number, genreIds: number[]): Promise<Movie> {
     return await this.prisma.$transaction(async (tx) => {

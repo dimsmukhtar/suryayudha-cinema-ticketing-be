@@ -36,10 +36,12 @@ export class MovieValidation {
       invalid_type_error: 'Subtitle harus berupa string'
     }),
     poster_url: z.string({
-      required_error: 'Poster harus diisi'
+      required_error: 'Poster harus diisi',
+      invalid_type_error: 'Poster url harus berupa string'
     }),
     trailer_url: z.string({
-      required_error: 'Trailer harus diisi'
+      required_error: 'Trailer harus diisi',
+      invalid_type_error: 'Trailer url harus berupa string'
     }),
     release_date: z.string({
       required_error: 'Tanggal rilis harus diisi',

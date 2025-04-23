@@ -83,7 +83,7 @@ model Cast {
   // relation
   movie Movie @relation(fields: [movie_id], references: [id])
 
-  @@map("Cast")
+  @@map("Casts")
 }
 
 model Genre {
@@ -201,7 +201,7 @@ model ScheduleSeat {
   // relation
   schedule Schedule @relation(fields: [schedule_id], references: [id])
   seat Seat @relation(fields: [seat_id], references: [id])
-  transaction_items TransactionItem[]
+  transaction_item TransactionItem?
 
   @@map("ScheduleSeats")
 }
@@ -261,7 +261,7 @@ model Transaction {
 model TransactionItem {
   id Int @id @default(autoincrement())
   transaction_id Int
-  schedule_seat_id Int
+  schedule_seat_id Int @unique
   price Int
   seat_label String
   created_at DateTime @default(now())

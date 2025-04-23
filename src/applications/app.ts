@@ -1,4 +1,4 @@
-import express, { Application, Router } from 'express'
+import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import compression from 'compression'
@@ -7,11 +7,8 @@ import { cleanEnv, str, num } from 'envalid'
 import { logger } from '../shared/utils/logger'
 import { prisma } from '../infrastructure/database/client'
 import { errorMiddleware } from '../shared/error-handling/middleware/error.middleware'
-import { IApp } from '../infrastructure/types/app.types'
-
-interface IRoutes {
-  getRoutes(): Router
-}
+import { IApp } from '../infrastructure/types/app.type'
+import { IRoutes } from '../infrastructure/types/route.type'
 
 class App implements IApp {
   private app: Application
