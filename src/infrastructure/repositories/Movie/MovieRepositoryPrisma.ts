@@ -85,6 +85,20 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     return movie
   }
 
+  async updateMovie(movieId: number, movieData: Partial<Prisma.MovieCreateInput>): Promise<Movie> {
+    const movie = await this.checkMovieExists(movieId)
+    if (movie) {
+      return await this.prisma.movie.update({
+        where: {
+          id: movieId
+        },
+        data: movieData
+      })
+    }
+
+    return movie
+  }
+
   async checkMovieExists(movieId: number): Promise<Movie> {
     const movie = await this.prisma.movie.findUnique({
       where: { id: movieId }

@@ -45,14 +45,14 @@ api/v1/
  ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,created_by```
 - **movies/:id** DELETE | **(ADMIN)**
 
-#### MoviesCast
+#### Casts
 api/v1/
 - **movies/:id/casts** POST | **(ADMIN)**
  ```req.body = actor_name,actor_url```
 - **movies/:id/casts** GET | **(USER & ADMIN)**
-- **movies/:id/casts/:castId** PATCH | **(ADMIN)**
+- **casts/:id** PATCH | **(ADMIN)**
  ```req.body = actor_name,actor_url```
-- **movies/:id/casts/:castId** DELETE | **(ADMIN)**
+- **casts/:id** DELETE | **(ADMIN)**
 
 #### Genres
 api/v1/
@@ -68,7 +68,6 @@ api/v1/
 api/v1/
 - **movies/:id/genres** POST | **(ADMIN)**
  ```req.body = movie_id,genre_id```
-- **movies/:id/genres** GET
 - **movies/:id/genres/:genresId** DELETE | **(ADMIN)**
 
 #### Notifications
