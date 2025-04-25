@@ -51,7 +51,19 @@ export class MovieValidation {
       required_error: 'Status film harus diisi',
       invalid_type_error: 'Status film harus berupa string'
     }),
-    casts: z.array(MovieCastSchema).min(1, 'Minimal 1 cast').optional(),
-    movie_genres: z.array(z.number().int().positive()).optional()
+    casts: z.array(MovieCastSchema).optional(),
+    movie_genres: z
+      .array(
+        z
+          .number({
+            invalid_type_error: 'Genre harus berupa array number'
+          })
+          .int()
+          .positive(),
+        {
+          invalid_type_error: 'Genre harus berupa array number'
+        }
+      )
+      .optional()
   })
 }

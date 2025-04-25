@@ -4,6 +4,7 @@ import { CustomHandleError } from '../../../shared/error-handling/middleware/cus
 import { MoviePayload } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
 import { MovieValidation } from './movie.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
+import { MovieWithRelations } from '../../../infrastructure/repositories/Movie/MovieRepositoryInterface'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepositoryPrisma) {}
@@ -16,8 +17,8 @@ export class MovieService {
     try {
       const createRequest = ZodValidation.validate(MovieValidation.CREATE, movieData)
       return await this.repository.createMovie(createRequest, userId, movie_genres)
-    } catch (error) {
-      throw CustomHandleError(error, {
+    } catch (e) {
+      throw CustomHandleError(e, {
         context: 'Failed to create movie'
       })
     }
@@ -26,9 +27,19 @@ export class MovieService {
   async getAllMovies(): Promise<Movie[]> {
     try {
       return await this.repository.getAllMovies()
-    } catch (error) {
-      throw CustomHandleError(error, {
+    } catch (e) {
+      throw CustomHandleError(e, {
         context: 'Failed to get all movies'
+      })
+    }
+  }
+
+  async getMovieById(movieId: number): Promise<MovieWithRelations> {
+    try {
+      return await this.repository.getMovieById(movieId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Failed to get movie by id'
       })
     }
   }

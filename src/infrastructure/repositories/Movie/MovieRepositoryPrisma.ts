@@ -1,7 +1,7 @@
-import { Movie, PrismaClient } from '@prisma/client'
+import { Movie, PrismaClient, Prisma } from '@prisma/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
 import { MoviePayload, toMovieResponse, MovieResponse } from './entities/MoviePayload'
-import { IMovieRepository } from './MovieRepositoryInterface'
+import { IMovieRepository, MovieWithRelations } from './MovieRepositoryInterface'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
@@ -46,11 +46,53 @@ export class MovieRepositoryPrisma implements IMovieRepository {
   }
 
   async getAllMovies(): Promise<Movie[]> {
-    return await this.prisma.movie.findMany({
+    return await this.prisma.movie.findMany()
+  }
+
+  async getMovieById(movieId: number): Promise<MovieWithRelations> {
+    const movie = await this.prisma.movie.findUnique({
+      where: { id: movieId },
       include: {
-        created_by: true,
-        movie_genres: true
+        created_by: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        casts: {
+          select: {
+            id: true,
+            actor_name: true,
+            actor_url: true
+          }
+        },
+        movie_genres: {
+          select: {
+            id: true,
+            genre: {
+              select: {
+                name: true
+              }
+            }
+          }
+        },
+        schedules: true
       }
     })
+    if (!movie) {
+      throw new NotFoundException(`Movie with id ${movieId} not found`)
+    }
+    return movie
+  }
+
+  async checkMovieExists(movieId: number): Promise<Movie> {
+    const movie = await this.prisma.movie.findUnique({
+      where: { id: movieId }
+    })
+
+    if (!movie) {
+      throw new NotFoundException(`Movie with id ${movieId} not found`)
+    }
+    return movie
   }
 }

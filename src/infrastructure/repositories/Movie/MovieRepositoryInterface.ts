@@ -8,11 +8,29 @@ export interface IMovieRepository {
 
 export type MovieWithRelations = Prisma.MovieGetPayload<{
   include: {
-    created_by: true
-    movie_genres: true
-    casts: true
+    created_by: {
+      select: {
+        id: true
+        name: true
+      }
+    }
+    casts: {
+      select: {
+        id: true
+        actor_name: true
+        actor_url: true
+      }
+    }
+    movie_genres: {
+      select: {
+        id: true
+        genre: {
+          select: {
+            name: true
+          }
+        }
+      }
+    }
     schedules: true
   }
 }>
-
-export type MovieCreateInput = Partial<Prisma.MovieCreateInput>

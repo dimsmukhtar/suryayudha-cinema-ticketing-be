@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, Router } from 'express'
+import e, { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
 import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import { MoviePayload } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
@@ -18,6 +18,7 @@ export class MovieController {
       this.createMovie
     )
     this.movieRouter.get('/', this.getAllMovies)
+    this.movieRouter.get('/:id', this.getMovieById)
   }
 
   private createMovie = async (req: Request, res: Response, next: NextFunction) => {
@@ -27,8 +28,8 @@ export class MovieController {
       const { movie_genres } = req.body
       const movie = await this.service.createMovie(moviePayloadRequest, 1, movie_genres)
       res.status(201).json({ success: true, data: movie })
-    } catch (error) {
-      next(error)
+    } catch (e) {
+      next(e)
     }
   }
 
@@ -36,8 +37,17 @@ export class MovieController {
     try {
       const movies = await this.service.getAllMovies()
       res.status(200).json({ success: true, data: movies })
-    } catch (error) {
-      next(error)
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getMovieById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const movie = await this.service.getMovieById(Number(req.params.id))
+      res.status(200).json({ success: true, data: movie })
+    } catch (e) {
+      next(e)
     }
   }
 
