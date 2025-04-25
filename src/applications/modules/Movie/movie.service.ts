@@ -4,10 +4,10 @@ import { CustomHandleError } from '../../../shared/error-handling/middleware/cus
 import {
   MoviePayload,
   MoviePayloadUpdate
-} from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
+} from '../../../infrastructure/repositories/Movie/entities/MovieTypes'
 import { MovieValidation } from './movie.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { MovieWithRelations } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
+import { MovieWithRelations } from '../../../infrastructure/repositories/Movie/entities/MovieTypes'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepositoryPrisma) {}

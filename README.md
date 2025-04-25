@@ -14,7 +14,23 @@ api/v1/
 - **users** GET | **(ADMIN)**
 - **users/:id** GET | **(ADMIN)**
 - **users/** POST | **(ADMIN)**
- ```req.body = name,email,role,password,is_verified,profile_url```
+ ```json
+ req.body =
+ {
+  "title": "example",
+  "synopsis": "example",
+  "director": "example",
+  "duration": "2:30",
+  "rating": "16+",
+  "language": "English",
+  "subtitle": "Indonesia",
+  "poster_url": "exampleg",
+  "trailer_url": "example",
+  "release_date": "2021-09-07",
+  "status": "coming_soon",
+  "movie_genres": [4]
+  }
+  ```
 - **users/:id** PATCH | **(ADMIN)**
  ```req.body = name,email,role,password,is_verified,profile_url```
 - **users/:id** DELETE | **(ADMIN)**

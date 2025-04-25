@@ -4,7 +4,7 @@ import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import {
   MoviePayload,
   MoviePayloadUpdate
-} from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
+} from '../../../infrastructure/repositories/Movie/entities/MovieTypes'
 
 export class MovieController {
   private readonly movieRouter: Router

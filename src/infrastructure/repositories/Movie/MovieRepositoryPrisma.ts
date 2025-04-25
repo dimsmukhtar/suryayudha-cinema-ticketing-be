@@ -1,7 +1,7 @@
 import { Movie, PrismaClient, Prisma } from '@prisma/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
-import { MoviePayload, toMovieResponse, MoviePayloadUpdate } from './entities/MoviePayload'
-import { IMovieRepository, MovieWithRelations } from './entities/MoviePayload'
+import { MoviePayload, toMovieResponse, MoviePayloadUpdate } from './entities/MovieTypes'
+import { IMovieRepository, MovieWithRelations } from './entities/MovieTypes'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
