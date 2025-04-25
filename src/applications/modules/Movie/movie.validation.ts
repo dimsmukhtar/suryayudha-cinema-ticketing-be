@@ -51,7 +51,6 @@ export class MovieValidation {
       required_error: 'Status film harus diisi',
       invalid_type_error: 'Status film harus berupa string'
     }),
-    casts: z.array(MovieCastSchema).optional(),
     movie_genres: z
       .array(
         z
@@ -64,6 +63,64 @@ export class MovieValidation {
           invalid_type_error: 'Genre harus berupa array number'
         }
       )
+      .optional()
+  })
+
+  static readonly UPDATE: ZodType = z.object({
+    title: z
+      .string({
+        invalid_type_error: 'Judul harus berupa string'
+      })
+      .optional(),
+    synopsis: z
+      .string({
+        invalid_type_error: 'Sinopsis harus berupa string'
+      })
+      .optional(),
+    director: z
+      .string({
+        invalid_type_error: 'Director harus berupa string'
+      })
+      .optional(),
+    duration: z
+      .string({
+        invalid_type_error: 'Durasi harus berupa string'
+      })
+      .optional(),
+    rating: z
+      .string({
+        invalid_type_error: 'Rating harus berupa string'
+      })
+      .optional(),
+    language: z
+      .string({
+        invalid_type_error: 'Bahasa harus berupa string'
+      })
+      .optional(),
+    subtitle: z
+      .string({
+        invalid_type_error: 'Subtitle harus berupa string'
+      })
+      .optional(),
+    poster_url: z
+      .string({
+        invalid_type_error: 'Poster url harus berupa string'
+      })
+      .optional(),
+    trailer_url: z
+      .string({
+        invalid_type_error: 'Trailer url harus berupa string'
+      })
+      .optional(),
+    release_date: z
+      .string({
+        invalid_type_error: 'Tanggal rilis harus berupa string'
+      })
+      .optional(),
+    status: z
+      .enum(['coming_soon', 'now_showing', 'ended'], {
+        invalid_type_error: 'Status film harus berupa string'
+      })
       .optional()
   })
 }

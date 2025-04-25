@@ -1,7 +1,7 @@
 import { Movie, PrismaClient, Prisma } from '@prisma/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
-import { MoviePayload, toMovieResponse, MovieResponse } from './entities/MoviePayload'
-import { IMovieRepository, MovieWithRelations } from './MovieRepositoryInterface'
+import { MoviePayload, toMovieResponse, MoviePayloadUpdate } from './entities/MoviePayload'
+import { IMovieRepository, MovieWithRelations } from './entities/MoviePayload'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
@@ -85,18 +85,14 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     return movie
   }
 
-  async updateMovie(movieId: number, movieData: Partial<Prisma.MovieCreateInput>): Promise<Movie> {
-    const movie = await this.checkMovieExists(movieId)
-    if (movie) {
-      return await this.prisma.movie.update({
-        where: {
-          id: movieId
-        },
-        data: movieData
-      })
-    }
-
-    return movie
+  async updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
+    await this.checkMovieExists(movieId)
+    return await this.prisma.movie.update({
+      where: {
+        id: movieId
+      },
+      data: movieData
+    })
   }
 
   async checkMovieExists(movieId: number): Promise<Movie> {

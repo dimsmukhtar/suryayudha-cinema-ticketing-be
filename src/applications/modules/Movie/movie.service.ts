@@ -1,10 +1,13 @@
 import { MovieRepositoryPrisma } from '../../../infrastructure/repositories/Movie/MovieRepositoryPrisma'
-import { Movie } from '@prisma/client'
+import { Movie, Prisma } from '@prisma/client'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
-import { MoviePayload } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
+import {
+  MoviePayload,
+  MoviePayloadUpdate
+} from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
 import { MovieValidation } from './movie.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { MovieWithRelations } from '../../../infrastructure/repositories/Movie/MovieRepositoryInterface'
+import { MovieWithRelations } from '../../../infrastructure/repositories/Movie/entities/MoviePayload'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepositoryPrisma) {}
@@ -15,8 +18,8 @@ export class MovieService {
     movie_genres: number[]
   ): Promise<Movie> {
     try {
-      const createRequest = ZodValidation.validate(MovieValidation.CREATE, movieData)
-      return await this.repository.createMovie(createRequest, userId, movie_genres)
+      const movieCreatePayloadRequest = ZodValidation.validate(MovieValidation.CREATE, movieData)
+      return await this.repository.createMovie(movieCreatePayloadRequest, userId, movie_genres)
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Failed to create movie'
@@ -40,6 +43,17 @@ export class MovieService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Failed to get movie by id'
+      })
+    }
+  }
+
+  async upateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
+    try {
+      const movieUpdatePayloadRequest = ZodValidation.validate(MovieValidation.UPDATE, movieData)
+      return await this.repository.updateMovie(movieId, movieUpdatePayloadRequest)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Failed to update movie'
       })
     }
   }
