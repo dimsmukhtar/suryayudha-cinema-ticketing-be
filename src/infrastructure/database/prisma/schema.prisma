@@ -81,7 +81,7 @@ model Cast {
   updated_at DateTime? @updatedAt
 
   // relation
-  movie Movie @relation(fields: [movie_id], references: [id])
+  movie Movie @relation(fields: [movie_id], references: [id], onDelete: Cascade)
 
   @@map("Casts")
 }
@@ -122,7 +122,7 @@ model Notification {
   updated_at DateTime? @updatedAt
 
   // relation
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   @@map("Notifications")
 }
 
@@ -147,7 +147,7 @@ model StudioGallery {
   updated_at DateTime? @updatedAt
 
   // relation
-  studio Studio @relation(fields: [studio_id], references: [id])
+  studio Studio @relation(fields: [studio_id], references: [id], onDelete: Cascade)
   @@map("StudioGalleries")
 }
 
@@ -159,7 +159,7 @@ model Seat {
   updated_at DateTime? @updatedAt 
 
   // relation
-  studio Studio @relation(fields: [studio_id], references: [id])
+  studio Studio @relation(fields: [studio_id], references: [id], onDelete: Cascade)
   schedule_seats ScheduleSeat[]
   @@map("Seats") 
 }
@@ -178,8 +178,8 @@ model Schedule {
 
   // relation
   created_by User @relation("UserCreatedSchedules", fields: [created_by_id], references: [id])
-  movie Movie @relation(fields: [movie_id], references: [id])
-  studio Studio @relation(fields: [studio_id], references: [id])
+  movie Movie @relation(fields: [movie_id], references: [id], onDelete: Cascade)
+  studio Studio @relation(fields: [studio_id], references: [id], onDelete: Cascade)
   schedule_seats ScheduleSeat[]
   @@map("Schedules")
 }
@@ -199,8 +199,8 @@ model ScheduleSeat {
   updated_at DateTime? @updatedAt  
 
   // relation
-  schedule Schedule @relation(fields: [schedule_id], references: [id])
-  seat Seat @relation(fields: [seat_id], references: [id])
+  schedule Schedule @relation(fields: [schedule_id], references: [id], onDelete: Cascade)
+  seat Seat @relation(fields: [seat_id], references: [id], onDelete: Cascade)
   transaction_item TransactionItem?
 
   @@map("ScheduleSeats")
@@ -251,7 +251,7 @@ model Transaction {
   updated_at DateTime? @updatedAt   
 
   // relation 
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   voucher Voucher? @relation(fields: [voucher_id], references: [id])
   transaction_items TransactionItem[]
 
@@ -268,7 +268,7 @@ model TransactionItem {
   updated_at DateTime? @updatedAt
 
   // relation
-  transaction Transaction @relation(fields: [transaction_id], references: [id])
+  transaction Transaction @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
   schedule_seat ScheduleSeat @relation(fields: [schedule_seat_id], references: [id])
   ticket Ticket?
 
@@ -291,7 +291,7 @@ model Ticket {
   updated_at DateTime? @updatedAt 
 
   // relation
-  transaction_item TransactionItem @relation(fields: [transaction_item_id], references: [id])
+  transaction_item TransactionItem @relation(fields: [transaction_item_id], references: [id], onDelete: Cascade)
   
   @@map("Tickets")
 }
