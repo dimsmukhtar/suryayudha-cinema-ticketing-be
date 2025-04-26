@@ -57,4 +57,14 @@ export class MovieService {
       })
     }
   }
+
+  async deleteMovie(movieId: number): Promise<void> {
+    try {
+      await this.repository.deleteMovie(movieId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Failed to delete movie'
+      })
+    }
+  }
 }

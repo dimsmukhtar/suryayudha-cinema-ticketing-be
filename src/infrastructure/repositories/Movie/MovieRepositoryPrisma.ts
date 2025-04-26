@@ -95,6 +95,13 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     })
   }
 
+  async deleteMovie(movieId: number): Promise<void> {
+    await this.checkMovieExists(movieId)
+    await this.prisma.movie.delete({
+      where: { id: movieId }
+    })
+  }
+
   async checkMovieExists(movieId: number): Promise<Movie> {
     const movie = await this.prisma.movie.findUnique({
       where: { id: movieId }

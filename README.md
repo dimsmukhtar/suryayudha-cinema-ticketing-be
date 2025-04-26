@@ -14,23 +14,7 @@ api/v1/
 - **users** GET | **(ADMIN)**
 - **users/:id** GET | **(ADMIN)**
 - **users/** POST | **(ADMIN)**
- ```json
- req.body =
- {
-  "title": "example",
-  "synopsis": "example",
-  "director": "example",
-  "duration": "2:30",
-  "rating": "16+",
-  "language": "English",
-  "subtitle": "Indonesia",
-  "poster_url": "exampleg",
-  "trailer_url": "example",
-  "release_date": "2021-09-07",
-  "status": "coming_soon",
-  "movie_genres": [4]
-  }
-  ```
+ ```req.boy = name,email,role,password,is_verified ```
 - **users/:id** PATCH | **(ADMIN)**
  ```req.body = name,email,role,password,is_verified,profile_url```
 - **users/:id** DELETE | **(ADMIN)**
@@ -53,7 +37,23 @@ api/v1/
 #### Movies
 api/v1/
 - **movies/** POST | **(ADMIN)**
- ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,created_by```
+```json
+ req.body =
+ {
+  "title": "example",
+  "synopsis": "example",
+  "director": "example",
+  "duration": "2:30",
+  "rating": "16+",
+  "language": "English",
+  "subtitle": "Indonesia",
+  "poster_url": "exampleg",
+  "trailer_url": "example",
+  "release_date": "2021-09-07",
+  "status": "coming_soon",
+  "movie_genres": [4]
+  }
+  ```
 - **movies/** GET | **(USER & ADMIN)**
  ```req.query = ?status=now_showing or coming_soon or ?page or ?limit```
 - **movies/:id** GET | **(USER & ADMIN)**

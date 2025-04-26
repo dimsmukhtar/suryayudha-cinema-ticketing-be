@@ -67,7 +67,7 @@ model Movie {
   // relation
   created_by User @relation("UserCreatedMovies", fields: [created_by_id], references: [id])
   casts Cast[]
-  movie_genres MovieGenre[]
+  movie_genres MovieGenre[] 
   schedules Schedule[]
   @@map("Movies")
 }
@@ -106,8 +106,8 @@ model MovieGenre {
   updated_at DateTime? @updatedAt
 
   // relation
-  movie Movie @relation(fields: [movie_id], references: [id])
-  genre Genre @relation(fields: [genre_id], references: [id])
+  movie Movie @relation(fields: [movie_id], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genre_id], references: [id], onDelete:  Cascade)
 
   @@map("MovieGenres")
 }

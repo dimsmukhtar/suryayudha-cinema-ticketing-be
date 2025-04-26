@@ -19,6 +19,7 @@ export class MovieController {
     this.movieRouter.get('/', this.getAllMovies)
     this.movieRouter.get('/:id', this.getMovieById)
     this.movieRouter.patch('/:id', this.updateMovie)
+    this.movieRouter.delete('/:id', this.deleteMovie)
   }
 
   private createMovie = async (req: Request, res: Response, next: NextFunction) => {
@@ -27,7 +28,7 @@ export class MovieController {
       const authReq = req as AuthenticateUser
       const { movie_genres } = req.body
       const movie = await this.service.createMovie(movieCreatePayloadRequest, 1, movie_genres)
-      res.status(201).json({ success: true, data: movie })
+      res.status(201).json({ success: true, message: 'Movie created successfully', data: movie })
     } catch (e) {
       next(e)
     }
@@ -36,7 +37,9 @@ export class MovieController {
   private getAllMovies = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const movies = await this.service.getAllMovies()
-      res.status(200).json({ success: true, data: movies })
+      res
+        .status(200)
+        .json({ success: true, message: 'All Movies fetched successfully', data: movies })
     } catch (e) {
       next(e)
     }
@@ -45,7 +48,9 @@ export class MovieController {
   private getMovieById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const movie = await this.service.getMovieById(Number(req.params.id))
-      res.status(200).json({ success: true, data: movie })
+      res
+        .status(200)
+        .json({ success: true, message: 'Movie details fetched successfully', data: movie })
     } catch (e) {
       next(e)
     }
@@ -55,7 +60,19 @@ export class MovieController {
     try {
       const movieUpdatePayloadRequest: MoviePayloadUpdate = req.body
       const movie = await this.service.upateMovie(Number(req.params.id), movieUpdatePayloadRequest)
-      res.status(200).json({ success: true, data: movie })
+      res.status(200).json({ success: true, message: 'Movie updated successfully', data: movie })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private deleteMovie = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.service.deleteMovie(Number(req.params.id))
+      res.status(200).json({
+        success: true,
+        message: 'Movie deleted successfully'
+      })
     } catch (e) {
       next(e)
     }
