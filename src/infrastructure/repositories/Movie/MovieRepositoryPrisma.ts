@@ -1,8 +1,9 @@
-import { Movie, PrismaClient, Prisma } from '@prisma/client'
+import { Movie, PrismaClient } from '@prisma/client'
 import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
-import { MoviePayload, toMovieResponse, MoviePayloadUpdate } from './entities/MovieTypes'
+import { MoviePayload, MoviePayloadUpdate } from './entities/MovieTypes'
 import { IMovieRepository, MovieWithRelations } from './entities/MovieTypes'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '../../../shared/helpers/checkExistingRow'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -86,7 +87,7 @@ export class MovieRepositoryPrisma implements IMovieRepository {
   }
 
   async updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
-    await this.checkMovieExists(movieId)
+    await checkExists(this.prisma.movie, movieId, 'Movie')
     return await this.prisma.movie.update({
       where: {
         id: movieId
@@ -96,20 +97,9 @@ export class MovieRepositoryPrisma implements IMovieRepository {
   }
 
   async deleteMovie(movieId: number): Promise<void> {
-    await this.checkMovieExists(movieId)
+    await checkExists(this.prisma.movie, movieId, 'Movie')
     await this.prisma.movie.delete({
       where: { id: movieId }
     })
-  }
-
-  async checkMovieExists(movieId: number): Promise<Movie> {
-    const movie = await this.prisma.movie.findUnique({
-      where: { id: movieId }
-    })
-
-    if (!movie) {
-      throw new NotFoundException(`Movie with id ${movieId} not found`)
-    }
-    return movie
   }
 }
