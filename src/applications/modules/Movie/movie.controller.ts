@@ -4,7 +4,6 @@ import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
 import { upload } from '../../../shared/utils/multer.config'
 import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
-import { devNull } from 'os'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -25,14 +24,14 @@ export class MovieController {
   private createMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const file = req.file
-      let posterUrl = null
+      let posterUrl: string | null = null
       if (file) {
         posterUrl = await uploadImageToImageKit(file)
       }
 
       const movieCreatePayloadRequest: MoviePayload = {
         ...req.body,
-        poster_url: posterUrl
+        poster_url: posterUrl ? posterUrl : req.body.poster_url
       }
       const authReq = req as AuthenticateUser
       const genreIds = req.body.movie_genres
@@ -67,7 +66,7 @@ export class MovieController {
   private updateMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const file = req.file
-      let posterUrl = null
+      let posterUrl: string | null = null
       if (file) {
         posterUrl = await uploadImageToImageKit(file)
       }

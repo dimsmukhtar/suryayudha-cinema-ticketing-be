@@ -1,4 +1,5 @@
 import ImageKit from 'imagekit'
+import { HttpException } from '../error-handling/exceptions/http.exception'
 
 export const imageKit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
@@ -11,12 +12,11 @@ export const uploadImageToImageKit = async (file: Express.Multer.File): Promise<
     const response = await imageKit.upload({
       file: file.buffer,
       fileName: `poster_${Date.now()}`,
-      folder: '/movie-posters',
       useUniqueFileName: true
     })
     return response.url
   } catch (error) {
-    throw new Error('Failed to upload image')
+    throw new HttpException(500, 'Gagal mengupload ke image kit')
   }
 }
 

@@ -1,12 +1,17 @@
 import multer from 'multer'
 import { Request } from 'express'
+import { BadRequestException } from '../error-handling/exceptions/bad-request.exception'
 
 const storage = multer.memoryStorage()
 
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
   if (!allowedTypes.includes(file.mimetype)) {
-    return cb(new Error('Invalid tipe file, hanya JPEG, PNG, JPG, dan WEBP yang di perbolehkan'))
+    return cb(
+      new BadRequestException(
+        'Invalid tipe file, hanya JPEG, PNG, JPG, dan WEBP yang di perbolehkan'
+      )
+    )
   }
   cb(null, true)
 }

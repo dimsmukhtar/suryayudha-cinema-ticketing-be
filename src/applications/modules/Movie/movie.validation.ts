@@ -1,10 +1,5 @@
 import { z, ZodType } from 'zod'
 
-export const MovieCastSchema = z.object({
-  actor_name: z.string(),
-  actor_url: z.string().url()
-})
-
 export class MovieValidation {
   static readonly CREATE: ZodType = z.object({
     title: z.string({
