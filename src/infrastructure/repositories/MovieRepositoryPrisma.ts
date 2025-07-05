@@ -16,14 +16,13 @@ export class MovieRepositoryPrisma implements IMovieRepository {
         }
       })
 
-      if (existingMovie)
-        throw new ConflictException(`Movie with title ${movieData.title} already exists`)
+      if (existingMovie) throw new ConflictException(`Film dengan id ${movieData.title} sudah ada`)
 
       const arrayGenreIds: number[] = Array.isArray(genreIds) ? genreIds : []
       if (arrayGenreIds.length) {
         const count = await tx.genre.count({ where: { id: { in: arrayGenreIds } } })
         if (count !== arrayGenreIds.length) {
-          throw new NotFoundException('Some genres not found')
+          throw new NotFoundException('Beberapa genre tidak ditemukan')
         }
       }
       const movie = await tx.movie.create({
@@ -81,13 +80,13 @@ export class MovieRepositoryPrisma implements IMovieRepository {
       }
     })
     if (!movie) {
-      throw new NotFoundException(`Movie with id ${movieId} not found`)
+      throw new NotFoundException(`Film dengan id ${movieId} tidak ditemukan`)
     }
     return movie
   }
 
   async updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
-    await checkExists(this.prisma.movie, movieId, 'Movie')
+    await checkExists(this.prisma.movie, movieId, 'Film')
     return await this.prisma.movie.update({
       where: {
         id: movieId
@@ -97,7 +96,7 @@ export class MovieRepositoryPrisma implements IMovieRepository {
   }
 
   async deleteMovie(movieId: number): Promise<void> {
-    await checkExists(this.prisma.movie, movieId, 'Movie')
+    await checkExists(this.prisma.movie, movieId, 'Film')
     await this.prisma.movie.delete({
       where: { id: movieId }
     })

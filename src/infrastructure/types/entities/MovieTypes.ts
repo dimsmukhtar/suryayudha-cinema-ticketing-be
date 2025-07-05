@@ -12,10 +12,9 @@ export type MoviePayload = {
   trailer_url: string
   release_date: string
   status: 'coming_soon' | 'now_showing' | 'ended'
-  movie_genres?: number[]
 }
 
-export type MoviePayloadUpdate = Partial<Omit<MoviePayload, 'movie_genres'>>
+export type MoviePayloadUpdate = Partial<MoviePayload>
 
 export type MovieResponse = MoviePayload
 

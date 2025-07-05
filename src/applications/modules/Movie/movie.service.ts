@@ -22,7 +22,7 @@ export class MovieService {
       return await this.repository.createMovie(movieCreatePayloadRequest, userId, movie_genres)
     } catch (e) {
       throw CustomHandleError(e, {
-        context: 'Failed to create movie'
+        context: 'Error saat membuat film baru'
       })
     }
   }
@@ -32,7 +32,7 @@ export class MovieService {
       return await this.repository.getAllMovies()
     } catch (e) {
       throw CustomHandleError(e, {
-        context: 'Failed to get all movies'
+        context: 'Error saat mengambil semua film'
       })
     }
   }
@@ -42,7 +42,7 @@ export class MovieService {
       return await this.repository.getMovieById(movieId)
     } catch (e) {
       throw CustomHandleError(e, {
-        context: 'Failed to get movie by id'
+        context: 'Error saat mengambil film berdasarkan id'
       })
     }
   }
@@ -54,7 +54,7 @@ export class MovieService {
     } catch (e) {
       console.log(e)
       throw CustomHandleError(e, {
-        context: 'Failed to update movie'
+        context: 'Error saat mengupdate film'
       })
     }
   }
@@ -64,7 +64,7 @@ export class MovieService {
       await this.repository.deleteMovie(movieId)
     } catch (e) {
       throw CustomHandleError(e, {
-        context: 'Failed to delete movie'
+        context: 'Error saat menghapus film'
       })
     }
   }

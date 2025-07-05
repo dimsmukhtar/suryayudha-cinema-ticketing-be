@@ -40,7 +40,7 @@ export class MovieController {
         .map((id: string) => parseInt(id.trim()))
         .filter((id: number) => !isNaN(id))
       const movie = await this.service.createMovie(movieCreatePayloadRequest, 1, genreIds)
-      res.status(201).json({ success: true, message: 'Movie created successfully', data: movie })
+      res.status(201).json({ success: true, message: 'Film berhasil dibuat', data: movie })
     } catch (e) {
       next(e)
     }
@@ -49,9 +49,7 @@ export class MovieController {
   private getAllMovies = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const movies = await this.service.getAllMovies()
-      res
-        .status(200)
-        .json({ success: true, message: 'All Movies fetched successfully', data: movies })
+      res.status(200).json({ success: true, message: 'Semua film berhasil diambil', data: movies })
     } catch (e) {
       next(e)
     }
@@ -60,9 +58,7 @@ export class MovieController {
   private getMovieById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const movie = await this.service.getMovieById(Number(req.params.id))
-      res
-        .status(200)
-        .json({ success: true, message: 'Movie details fetched successfully', data: movie })
+      res.status(200).json({ success: true, message: 'Film berhasil diambil', data: movie })
     } catch (e) {
       next(e)
     }
@@ -72,7 +68,7 @@ export class MovieController {
     try {
       const movieUpdatePayloadRequest: MoviePayloadUpdate = req.body
       const movie = await this.service.upateMovie(Number(req.params.id), movieUpdatePayloadRequest)
-      res.status(200).json({ success: true, message: 'Movie updated successfully', data: movie })
+      res.status(200).json({ success: true, message: 'Film berhasil diupdate', data: movie })
     } catch (e) {
       next(e)
     }
@@ -83,7 +79,7 @@ export class MovieController {
       await this.service.deleteMovie(Number(req.params.id))
       res.status(200).json({
         success: true,
-        message: 'Movie deleted successfully'
+        message: 'Film berhasil dihapus'
       })
     } catch (e) {
       next(e)

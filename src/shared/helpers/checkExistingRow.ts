@@ -13,6 +13,6 @@ export const checkExists = async (
     where: { id }
   })
   if (!result) {
-    throw new NotFoundException(`${entityName} with id ${id} not found`)
+    throw new NotFoundException(`${entityName} dengan id ${id} tidak ditemukan`)
   }
 }
