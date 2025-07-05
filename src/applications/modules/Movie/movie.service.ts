@@ -39,7 +39,6 @@ export class MovieService {
 
   async getMovieById(movieId: number): Promise<MovieWithRelations> {
     try {
-      console.log(await this.repository.getMovieById(movieId))
       return await this.repository.getMovieById(movieId)
     } catch (e) {
       throw CustomHandleError(e, {

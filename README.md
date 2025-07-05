@@ -64,7 +64,7 @@ api/v1/
 #### Casts
 api/v1/
 - **movies/:id/casts** POST | **(ADMIN)**
- ```req.body = actor_name,actor_url```
+ ```req.body = movie_id,actor_name,actor_url```
 - **casts/:id** PATCH | **(ADMIN)**
  ```req.body = actor_name,actor_url```
 - **casts/:id** DELETE | **(ADMIN)**

@@ -6,7 +6,7 @@ export class CastRepositoryPrisma implements ICastRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createCast(castData: CastPayload): Promise<Cast> {
-    await checkExists(this.prisma.cast, castData.movie_id, 'Film')
+    await checkExists(this.prisma.movie, castData.movie_id, 'Film')
     return await this.prisma.cast.create({
       data: castData
     })

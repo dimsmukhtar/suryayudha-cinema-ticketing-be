@@ -1,4 +1,4 @@
-import e, { Request, Response, NextFunction, Router } from 'express'
+import { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
 import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
