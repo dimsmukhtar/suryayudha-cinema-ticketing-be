@@ -39,6 +39,7 @@ export class MovieService {
 
   async getMovieById(movieId: number): Promise<MovieWithRelations> {
     try {
+      console.log(await this.repository.getMovieById(movieId))
       return await this.repository.getMovieById(movieId)
     } catch (e) {
       throw CustomHandleError(e, {
@@ -52,7 +53,7 @@ export class MovieService {
       const movieUpdatePayloadRequest = ZodValidation.validate(MovieValidation.UPDATE, movieData)
       return await this.repository.updateMovie(movieId, movieUpdatePayloadRequest)
     } catch (e) {
-      console.log(e)
+      console.error(e)
       throw CustomHandleError(e, {
         context: 'Error saat mengupdate film'
       })

@@ -91,7 +91,10 @@ export class MovieRepositoryPrisma implements IMovieRepository {
       where: {
         id: movieId
       },
-      data: movieData
+      data: {
+        ...movieData,
+        release_date: movieData.release_date ? new Date(movieData.release_date) : undefined
+      }
     })
   }
 

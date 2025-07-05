@@ -18,7 +18,7 @@ export class MovieController {
     this.movieRouter.post('/', upload.single('poster_url'), this.createMovie)
     this.movieRouter.get('/', this.getAllMovies)
     this.movieRouter.get('/:id', this.getMovieById)
-    this.movieRouter.patch('/:id', this.updateMovie)
+    this.movieRouter.patch('/:id', upload.single('poster_url'), this.updateMovie)
     this.movieRouter.delete('/:id', this.deleteMovie)
   }
 
@@ -66,7 +66,15 @@ export class MovieController {
 
   private updateMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const movieUpdatePayloadRequest: MoviePayloadUpdate = req.body
+      const file = req.file
+      let posterUrl = null
+      if (file) {
+        posterUrl = await uploadImageToImageKit(file)
+      }
+      const movieUpdatePayloadRequest: MoviePayloadUpdate = {
+        ...req.body,
+        poster_url: posterUrl ? posterUrl : req.body.poster_url
+      }
       const movie = await this.service.upateMovie(Number(req.params.id), movieUpdatePayloadRequest)
       res.status(200).json({ success: true, message: 'Film berhasil diupdate', data: movie })
     } catch (e) {
