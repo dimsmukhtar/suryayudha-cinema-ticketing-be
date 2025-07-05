@@ -1,10 +1,10 @@
 import e, { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
 import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
-import {
-  MoviePayload,
-  MoviePayloadUpdate
-} from '../../../infrastructure/repositories/Movie/entities/MovieTypes'
+import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
+import { upload } from '../../../shared/utils/multer.config'
+import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
+import { devNull } from 'os'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -15,7 +15,7 @@ export class MovieController {
   }
 
   private initializeMovieRoutes(): void {
-    this.movieRouter.post('/', this.createMovie)
+    this.movieRouter.post('/', upload.single('poster_url'), this.createMovie)
     this.movieRouter.get('/', this.getAllMovies)
     this.movieRouter.get('/:id', this.getMovieById)
     this.movieRouter.patch('/:id', this.updateMovie)
@@ -24,10 +24,22 @@ export class MovieController {
 
   private createMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const movieCreatePayloadRequest: MoviePayload = req.body
+      const file = req.file
+      let posterUrl = null
+      if (file) {
+        posterUrl = await uploadImageToImageKit(file)
+      }
+
+      const movieCreatePayloadRequest: MoviePayload = {
+        ...req.body,
+        poster_url: posterUrl
+      }
       const authReq = req as AuthenticateUser
-      const { movie_genres } = req.body
-      const movie = await this.service.createMovie(movieCreatePayloadRequest, 1, movie_genres)
+      const genreIds = req.body.movie_genres
+        .split(',')
+        .map((id: string) => parseInt(id.trim()))
+        .filter((id: number) => !isNaN(id))
+      const movie = await this.service.createMovie(movieCreatePayloadRequest, 1, genreIds)
       res.status(201).json({ success: true, message: 'Movie created successfully', data: movie })
     } catch (e) {
       next(e)

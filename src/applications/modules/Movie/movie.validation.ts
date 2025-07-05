@@ -50,20 +50,20 @@ export class MovieValidation {
     status: z.enum(['coming_soon', 'now_showing', 'ended'], {
       required_error: 'Status film harus diisi',
       invalid_type_error: 'Status film harus berupa string'
-    }),
-    movie_genres: z
-      .array(
-        z
-          .number({
-            invalid_type_error: 'Genre harus berupa array number'
-          })
-          .int()
-          .positive(),
-        {
-          invalid_type_error: 'Genre harus berupa array number'
-        }
-      )
-      .optional()
+    })
+    // movie_genres: z
+    //   .array(
+    //     z
+    //       .number({
+    //         invalid_type_error: 'Genre harus berupa array number'
+    //       })
+    //       .int()
+    //       .positive(),
+    //     {
+    //       invalid_type_error: 'Genre harus berupa array number'
+    //     }
+    //   )
+    //   .optional()
   })
 
   static readonly UPDATE: ZodType = z.object({

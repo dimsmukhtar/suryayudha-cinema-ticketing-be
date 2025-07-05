@@ -1,9 +1,9 @@
 import { Movie, PrismaClient } from '@prisma/client'
-import { ConflictException } from '../../../shared/error-handling/exceptions/conflict.exception'
-import { MoviePayload, MoviePayloadUpdate } from './entities/MovieTypes'
-import { IMovieRepository, MovieWithRelations } from './entities/MovieTypes'
-import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../../shared/helpers/checkExistingRow'
+import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
+import { MoviePayload, MoviePayloadUpdate } from '../types/entities/MovieTypes'
+import { IMovieRepository, MovieWithRelations } from '../types/entities/MovieTypes'
+import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '../../shared/helpers/checkExistingRow'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}

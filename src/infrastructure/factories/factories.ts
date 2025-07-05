@@ -1,4 +1,4 @@
-import { MovieRepositoryPrisma } from '../repositories/Movie/MovieRepositoryPrisma'
+import { MovieRepositoryPrisma } from '../repositories/MovieRepositoryPrisma'
 import { MovieService } from '../../applications/modules/Movie/movie.service'
 import { MovieController } from '../../applications/modules/Movie/movie.controller'
 import { prisma } from '../database/client'

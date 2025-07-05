@@ -20,7 +20,7 @@ api/v1/
 - **users/:id** DELETE | **(ADMIN)**
 
 - **users/register** POST | **(USER)**
- ```req.body = name,email,password passwordConfirmation```
+ ```req.body = name,email,password, passwordConfirmation```
 - **users/verify** POST | **(USER)**
 ```req.body = email,verificationCode```
 - **users/profile** GET | **(USER & ADMIN)**
@@ -65,7 +65,6 @@ api/v1/
 api/v1/
 - **movies/:id/casts** POST | **(ADMIN)**
  ```req.body = actor_name,actor_url```
-- **movies/:id/casts** GET | **(USER & ADMIN)**
 - **casts/:id** PATCH | **(ADMIN)**
  ```req.body = actor_name,actor_url```
 - **casts/:id** DELETE | **(ADMIN)**
@@ -111,26 +110,21 @@ api/v1/
 
 #### StudioGalleries
 api/v1/
-- **studios/galleries/** POST | **(ADMIN)**
- ```req.body = name,photo_url,studio_id```
-- **studios/galleries/** GET | **(USER & ADMIN)**
- ```req.query = ?studio_id=3```
-- **studios/galleries/:id** PATCH | **(ADMIN)**
- ```req.body = name,photo_url,studio_id```
+- **studios/:id/galleries/** POST | **(ADMIN)**
+ ```req.body = photo_url```
 - **studios/galleries/:id** DELETE | **(ADMIN)**
 
 #### Seats
 api/v1/
-- **seats/** POST | **(ADMIN)**
- ```req.body = seat_label,studio_id```
-- **seats/** GET | **(ADMIN)**
+- **studios/:id/seats** POST | **(ADMIN)**
+ ```req.body = seat_label```
 - **seats/:id** PATCH | **(ADMIN)**
- ```req.body = seat_label,studio_id```
+ ```req.body = seat_label```
 - **seats/:id** DELETE | **(ADMIN)**
 
 #### Schedules
 api/v1/
-- **schedules/** POST | **(ADMIN)**
+- **movies/:id/schedules/** POST | **(ADMIN)**
  ```req.body = date,start_time,finished_time,price,created_by,movie_id,studio_id```
 - **schedules/** GET | **(USER * ADMIN)**
  ```req.query = ?movieId=3 or ?date```

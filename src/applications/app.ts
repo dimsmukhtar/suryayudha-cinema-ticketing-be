@@ -39,7 +39,10 @@ class App implements IApp {
       ACCESS_TOKEN_PUBLIC_KEY: str(),
       REFRESH_TOKEN_PRIVATE_KEY: str(),
       REFRESH_TOKEN_PUBLIC_KEY: str(),
-      CORS_ORIGIN: str({ default: '*' })
+      CORS_ORIGIN: str({ default: '*' }),
+      IMAGEKIT_PUBLIC_KEY: str(),
+      IMAGEKIT_PRIVATE_KEY: str(),
+      IMAGEKIT_URL_ENDPOINT: str()
     })
   }
 
@@ -93,10 +96,6 @@ class App implements IApp {
       logger.error('❌ Failed to start server:', error)
       process.exit(1)
     }
-  }
-
-  public getApp(): Application {
-    return this.app
   }
 
   private setupGracefulShutdown(): void {

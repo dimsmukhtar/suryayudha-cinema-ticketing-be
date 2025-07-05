@@ -1,13 +1,13 @@
-import { MovieRepositoryPrisma } from '../../../infrastructure/repositories/Movie/MovieRepositoryPrisma'
-import { Movie, Prisma } from '@prisma/client'
+import { MovieRepositoryPrisma } from '../../../infrastructure/repositories/MovieRepositoryPrisma'
+import { Movie } from '@prisma/client'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import {
   MoviePayload,
-  MoviePayloadUpdate
-} from '../../../infrastructure/repositories/Movie/entities/MovieTypes'
+  MoviePayloadUpdate,
+  MovieWithRelations
+} from '../../../infrastructure/types/entities/MovieTypes'
 import { MovieValidation } from './movie.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { MovieWithRelations } from '../../../infrastructure/repositories/Movie/entities/MovieTypes'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepositoryPrisma) {}
@@ -52,6 +52,7 @@ export class MovieService {
       const movieUpdatePayloadRequest = ZodValidation.validate(MovieValidation.UPDATE, movieData)
       return await this.repository.updateMovie(movieId, movieUpdatePayloadRequest)
     } catch (e) {
+      console.log(e)
       throw CustomHandleError(e, {
         context: 'Failed to update movie'
       })

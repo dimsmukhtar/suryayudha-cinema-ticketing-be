@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client'
 import { NotFoundException } from '../error-handling/exceptions/not-found.exception'
 
 type ModelDelegate = {
