@@ -21,7 +21,9 @@ api/v1/
 
 - **users/register** POST | **(USER)**
  ```req.body = name,email,password, passwordConfirmation```
-- **users/verify** POST | **(USER)**
+ - **users/resend-verification-token** POST | **(USER)**
+```req.body = email```
+- **users/verify-email** POST | **(USER)**
 ```req.body = email,verificationCode```
 - **users/profile** GET | **(USER & ADMIN)**
 - **users/profile/update** PATCH | **(USER & ADMIN)**

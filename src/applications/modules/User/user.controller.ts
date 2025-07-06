@@ -3,10 +3,12 @@ import { UserService } from './user.service'
 import {
   RegisterPayload,
   UserPayload,
-  UserUpdatePayload
+  UserUpdatePayload,
+  VerifyEmailPayload
 } from '../../../infrastructure/types/entities/UserTypes'
 import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
 import { upload } from '../../../shared/utils/multer.config'
+import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
 export class UserController {
   private readonly userRouter: Router
   constructor(private readonly service: UserService) {
@@ -22,6 +24,8 @@ export class UserController {
     this.userRouter.patch('/:id', upload.single('profile_url'), this.updateUser)
 
     this.userRouter.post('/register', this.register)
+    this.userRouter.post('/resend-verification-token', this.resendVerificationToken)
+    this.userRouter.post('/verify-email', this.verifyEmail)
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -79,7 +83,7 @@ export class UserController {
 
   private register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const verificationToken = Math.floor(100000 + Math.random() * 900000).toString()
+      const verificationToken = generateVerificationToken()
       const verificationTokenExpiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 menit
       req.body.verification_token = verificationToken
       req.body.verification_token_expires_at = verificationTokenExpiresAt
@@ -96,6 +100,25 @@ export class UserController {
       })
     } catch (e) {
       console.log(e)
+      next(e)
+    }
+  }
+
+  private resendVerificationToken = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.service.resendVerificationToken(req.body.email)
+      res.status(200).json({ success: true, message: 'Token verifikasi berhasil dikirim ulang' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const verifyEmailPayload: VerifyEmailPayload = req.body
+      await this.service.verifyEmail(verifyEmailPayload)
+      res.status(200).json({ success: true, message: 'Email berhasil diverifikasi' })
+    } catch (e) {
       next(e)
     }
   }

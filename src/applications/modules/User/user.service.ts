@@ -5,7 +5,8 @@ import {
   RegisterPayload,
   UserPayload,
   UserUpdatePayload,
-  UserWithRelations
+  UserWithRelations,
+  VerifyEmailPayload
 } from 'infrastructure/types/entities/UserTypes'
 import { UserValidation } from './user.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
@@ -73,6 +74,27 @@ export class UserService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat membuat user'
+      })
+    }
+  }
+
+  async resendVerificationToken(email: string): Promise<void> {
+    try {
+      await this.repository.resendVerificationToken(email)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengirim email verifikasi'
+      })
+    }
+  }
+
+  async verifyEmail(data: VerifyEmailPayload): Promise<void> {
+    try {
+      const verifyEmailPayload = ZodValidation.validate(UserValidation.VERIFY_EMAIL, data)
+      await this.repository.verifyEmail(verifyEmailPayload)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat verifikasi email'
       })
     }
   }
