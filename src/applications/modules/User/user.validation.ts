@@ -62,4 +62,32 @@ export class UserValidation {
       })
       .optional()
   })
+
+  static readonly REGISTER: ZodType = z
+    .object({
+      name: z.string({
+        required_error: 'Nama harus diisi',
+        invalid_type_error: 'Nama harus berupa string'
+      }),
+      email: z
+        .string({
+          required_error: 'Email harus diisi',
+          invalid_type_error: 'Email harus berupa string'
+        })
+        .email('Email tidak valid'),
+      password: z
+        .string({
+          required_error: 'Password harus diisi',
+          invalid_type_error: 'Password harus berupa string'
+        })
+        .min(8, 'Password minimal 8 karakter'),
+      passwordConfirmation: z.string({
+        required_error: 'Konfirmasi password harus diisi',
+        invalid_type_error: 'Konfirmasi password harus berupa string'
+      })
+    })
+    .refine((data) => data.password === data.passwordConfirmation, {
+      message: 'Password dan konfirmasi password tidak cocok',
+      path: ['passwordConfirmation']
+    })
 }

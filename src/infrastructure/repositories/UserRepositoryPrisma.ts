@@ -3,7 +3,8 @@ import {
   IUserRepository,
   UserWithRelations,
   UserPayload,
-  UserUpdatePayload
+  UserUpdatePayload,
+  RegisterPayload
 } from '../../infrastructure/types/entities/UserTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
@@ -67,5 +68,10 @@ export class UserRepositoryPrisma {
   async deleteUser(id: number): Promise<void> {
     await checkExists(this.prisma.user, id, 'User')
     await this.prisma.user.delete({ where: { id } })
+  }
+
+  async register(data: RegisterPayload): Promise<User> {
+    const { passwordConfirmation, ...prismaData } = data
+    return await this.prisma.user.create({ data: prismaData })
   }
 }

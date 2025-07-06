@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { UserService } from './user.service'
-import { UserPayload, UserUpdatePayload } from '../../../infrastructure/types/entities/UserTypes'
+import {
+  RegisterPayload,
+  UserPayload,
+  UserUpdatePayload
+} from '../../../infrastructure/types/entities/UserTypes'
 import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
 import { upload } from '../../../shared/utils/multer.config'
 export class UserController {
@@ -12,9 +16,12 @@ export class UserController {
 
   private initializeUserRoutes() {
     this.userRouter.get('/', this.getAllUsers)
-    this.userRouter.get('/:id', this.getUserById)
     this.userRouter.post('/', this.createUser)
+    this.userRouter.get('/:id', this.getUserById)
+    this.userRouter.delete('/:id', this.deleteUser)
     this.userRouter.patch('/:id', upload.single('profile_url'), this.updateUser)
+
+    this.userRouter.post('/register', this.register)
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -54,6 +61,35 @@ export class UserController {
       const user = await this.service.updateUser(parseInt(req.params.id), updateUserPayload)
       res.status(200).json({ success: true, message: 'User berhasil diupdate', data: user })
     } catch (e) {
+      next(e)
+    }
+  }
+
+  private deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.service.deleteUser(parseInt(req.params.id))
+      res.status(200).json({ success: true, message: 'User berhasil dihapus' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const verificationToken = Math.floor(100000 + Math.random() * 900000).toString()
+      const verificationTokenExpiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 menit
+      const registerPayload: RegisterPayload = {
+        ...req.body,
+        role: 'user',
+        is_verified: false,
+        profile_url: 'https://ik.imagekit.io/yxctvbjvh/profilepic.png?updatedAt=1734338115538',
+        verification_token: verificationToken,
+        verification_token_expires_at: verificationTokenExpiresAt
+      }
+      await this.service.register(registerPayload)
+      res.status(201).json({ success: true, message: 'Berhasil register' })
+    } catch (e) {
+      console.log(e)
       next(e)
     }
   }

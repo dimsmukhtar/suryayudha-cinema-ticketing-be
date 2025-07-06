@@ -1,10 +1,38 @@
 import { Prisma, User } from '@prisma/client'
 
+export type UserPayload = {
+  name: string
+  email: string
+  password: string
+  role: 'user' | 'admin'
+  is_verified: boolean
+}
+
+export type UserUpdatePayload = {
+  name?: string
+  email?: string
+  password?: string
+  role?: 'user' | 'admin'
+  profile_url?: Express.Multer.File
+  is_verified?: boolean
+}
+
+export type UserWithRelations = Prisma.UserGetPayload<{
+  include: {
+    transactions: true
+    notifications: true
+  }
+}>
 export type RegisterPayload = {
   name: string
   email: string
   password: string
   passwordConfirmation: string
+  role: 'user' | 'admin'
+  is_verified: boolean
+  profile_url?: string
+  verification_token?: string
+  verification_token_expires_at?: Date
 }
 
 export type LoginPayload = {
@@ -35,29 +63,6 @@ export type ProfileUpdatePayload = {
   profile_url?: string
 }
 
-export type UserPayload = {
-  name: string
-  email: string
-  password: string
-  role: 'user' | 'admin'
-  is_verified: boolean
-}
-
-export type UserUpdatePayload = {
-  name?: string
-  email?: string
-  password?: string
-  role?: 'user' | 'admin'
-  profile_url?: Express.Multer.File
-  is_verified?: boolean
-}
-
-export type UserWithRelations = Prisma.UserGetPayload<{
-  include: {
-    transactions: true
-    notifications: true
-  }
-}>
 export interface IUserRepository {
   getAllUsers(): Promise<User[]>
   getUserById(id: number): Promise<User>
