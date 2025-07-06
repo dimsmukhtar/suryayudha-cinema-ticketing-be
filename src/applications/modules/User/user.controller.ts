@@ -47,15 +47,10 @@ export class UserController {
 
   private updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const file = req.file
-      let profileUrl: string | null = null
-      if (file) {
-        profileUrl = await uploadImageToImageKit(file)
+      if (req.file) {
+        req.body.profile_url = req.file
       }
-      const updateUserPayload: UserUpdatePayload = {
-        ...req.body,
-        profile_url: profileUrl ? profileUrl : req.body.profile_url
-      }
+      const updateUserPayload: UserUpdatePayload = req.body
       const user = await this.service.updateUser(parseInt(req.params.id), updateUserPayload)
       res.status(200).json({ success: true, message: 'User berhasil diupdate', data: user })
     } catch (e) {

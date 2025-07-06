@@ -46,9 +46,16 @@ export class UserValidation {
       })
       .min(8, 'Password minimal 8 karakter')
       .optional(),
-    role: z.enum(['user', 'admin'], {
-      invalid_type_error: 'Role harus berupa string'
-    }),
+    role: z
+      .enum(['user', 'admin'], {
+        invalid_type_error: 'Role harus berupa string'
+      })
+      .optional(),
+    profile_url: z
+      .unknown({
+        invalid_type_error: 'URL profile harus diisi'
+      })
+      .optional(),
     is_verified: z
       .boolean({
         invalid_type_error: 'Status verifikasi harus berupa boolean'

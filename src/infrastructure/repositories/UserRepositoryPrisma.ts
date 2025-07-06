@@ -7,6 +7,7 @@ import {
 } from '../../infrastructure/types/entities/UserTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
+import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
 
 //   getAllUsers(): Promise<User>
 //   getUserById(id: number): Promise<User>
@@ -52,7 +53,15 @@ export class UserRepositoryPrisma {
 
   async updateUser(id: number, data: UserUpdatePayload): Promise<User> {
     await checkExists(this.prisma.user, id, 'User')
-    return await this.prisma.user.update({ where: { id }, data })
+    let profileUrl: string | undefined
+    if (data.profile_url) {
+      profileUrl = await uploadImageToImageKit(data.profile_url)
+    }
+    const dataUpdata: any = {
+      ...data,
+      ...(profileUrl && { profile_url: profileUrl })
+    }
+    return await this.prisma.user.update({ where: { id }, data: dataUpdata })
   }
 
   async deleteUser(id: number): Promise<void> {

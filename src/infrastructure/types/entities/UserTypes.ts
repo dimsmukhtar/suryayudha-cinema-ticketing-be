@@ -48,7 +48,7 @@ export type UserUpdatePayload = {
   email?: string
   password?: string
   role?: 'user' | 'admin'
-  profile_url?: string
+  profile_url?: Express.Multer.File
   is_verified?: boolean
 }
 
