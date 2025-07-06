@@ -5,7 +5,8 @@ import {
   UserPayload,
   UserUpdatePayload,
   RegisterPayload,
-  VerifyEmailPayload
+  VerifyEmailPayload,
+  LoginPayload
 } from '../../infrastructure/types/entities/UserTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
@@ -13,6 +14,7 @@ import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { sendEmail } from '../../shared/utils/nodemailer'
 import { generateVerificationToken } from '../../shared/helpers/generateVerificationToken'
+import { hashPassword, verifyPassword } from '../../shared/utils/passwordEncrypt'
 
 //   getAllUsers(): Promise<User>
 //   getUserById(id: number): Promise<User>
@@ -146,7 +148,13 @@ export class UserRepositoryPrisma {
 `
     })
     const { passwordConfirmation, ...prismaData } = data
-    return await this.prisma.user.create({ data: prismaData })
+
+    return await this.prisma.user.create({
+      data: {
+        ...prismaData,
+        password: await hashPassword(data.password)
+      }
+    })
   }
 
   async resendVerificationToken(email: string): Promise<void> {
@@ -253,5 +261,17 @@ export class UserRepositoryPrisma {
         is_verified: true
       }
     })
+  }
+
+  async login(data: LoginPayload): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { email: data.email } })
+    if (!user) {
+      throw new NotFoundException(`User dengan email ${data.email} tidak ditemukan`)
+    }
+    const isPasswordValid = await verifyPassword(data.password, user.password)
+    if (!isPasswordValid) {
+      throw new BadRequestException('Password salah')
+    }
+    return user
   }
 }

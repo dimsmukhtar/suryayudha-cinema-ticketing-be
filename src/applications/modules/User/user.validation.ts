@@ -127,4 +127,19 @@ export class UserValidation {
       invalid_type_error: 'Token verifikasi harus berupa string'
     })
   })
+
+  static readonly LOGIN: ZodType = z.object({
+    email: z
+      .string({
+        required_error: 'Email harus diisi',
+        invalid_type_error: 'Email harus berupa string'
+      })
+      .email('Email tidak valid'),
+    password: z
+      .string({
+        required_error: 'Password harus diisi',
+        invalid_type_error: 'Password harus berupa string'
+      })
+      .min(8, 'Password minimal 8 karakter')
+  })
 }

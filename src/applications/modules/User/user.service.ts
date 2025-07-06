@@ -2,6 +2,7 @@ import { User } from '@prisma/client'
 import { UserRepositoryPrisma } from '../../../infrastructure/repositories/UserRepositoryPrisma'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import {
+  LoginPayload,
   RegisterPayload,
   UserPayload,
   UserUpdatePayload,
@@ -95,6 +96,17 @@ export class UserService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat verifikasi email'
+      })
+    }
+  }
+
+  async login(data: LoginPayload): Promise<User> {
+    try {
+      const userPayloadRequest = ZodValidation.validate(UserValidation.LOGIN, data)
+      return await this.repository.login(userPayloadRequest)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat login'
       })
     }
   }

@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { UserService } from './user.service'
 import {
+  LoginPayload,
   RegisterPayload,
   UserPayload,
   UserUpdatePayload,
   VerifyEmailPayload
 } from '../../../infrastructure/types/entities/UserTypes'
-import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
+import { signJwt } from '../../../shared/utils/jwt'
 import { upload } from '../../../shared/utils/multer.config'
 import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
 export class UserController {
@@ -26,6 +27,7 @@ export class UserController {
     this.userRouter.post('/register', this.register)
     this.userRouter.post('/resend-verification-token', this.resendVerificationToken)
     this.userRouter.post('/verify-email', this.verifyEmail)
+    this.userRouter.post('/login', this.login)
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -118,6 +120,17 @@ export class UserController {
       const verifyEmailPayload: VerifyEmailPayload = req.body
       await this.service.verifyEmail(verifyEmailPayload)
       res.status(200).json({ success: true, message: 'Email berhasil diverifikasi' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const loginPayload: LoginPayload = req.body
+      const user = await this.service.login(loginPayload)
+
+      res.status(200).json({ success: true, message: 'Login berhasil', data: user })
     } catch (e) {
       next(e)
     }
