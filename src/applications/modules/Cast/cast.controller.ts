@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { CastService } from './cast.service'
-import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
 import { upload } from '../../../shared/utils/multer.config'
 import { CastPayload, CastPayloadUpdate } from '../../../infrastructure/types/entities/CastTypes'
+import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 
 export class CastController {
   private readonly castRouter: Router
@@ -12,22 +12,28 @@ export class CastController {
   }
 
   private initializeCastRoutes(): void {
-    this.castRouter.post('/', upload.single('actor_url'), this.createCast)
+    this.castRouter.get('/', this.getAllCasts)
+    this.castRouter.post(
+      '/',
+      upload.single('actor_url'),
+      (req, _res, next) => {
+        if (!req.body.actor_url && !req.file) {
+          return next(new BadRequestException('Actor url harus diisi'))
+        }
+        req.body.actor_url = req.file
+        next()
+      },
+      this.createCast
+    )
     this.castRouter.patch('/:id', upload.single('actor_url'), this.updateCast)
     this.castRouter.delete('/:id', this.deleteCast)
   }
 
   private createCast = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const file = req.file
-      let actorUrl: string | null = null
-      if (file) {
-        actorUrl = await uploadImageToImageKit(file)
-      }
       const castCreatePayloadRequest: CastPayload = {
         ...req.body,
-        movie_id: parseInt(req.body.movie_id),
-        actor_url: actorUrl ? actorUrl : req.body.actor_url
+        movie_id: parseInt(req.body.movie_id)
       }
 
       const cast = await this.service.createCast(castCreatePayloadRequest)
@@ -39,14 +45,9 @@ export class CastController {
 
   private updateCast = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const file = req.file
-      let actorUrl: string | null = null
-      if (file) {
-        actorUrl = await uploadImageToImageKit(file)
-      }
       const castUpdatePayloadRequest: CastPayloadUpdate = {
         ...req.body,
-        actor_url: actorUrl ? actorUrl : req.body.actor_url
+        ...(req.file && { actor_url: req.file })
       }
 
       const cast = await this.service.updateCast(Number(req.params.id), castUpdatePayloadRequest)
@@ -60,6 +61,15 @@ export class CastController {
     try {
       await this.service.deleteCast(Number(req.params.id))
       res.status(201).json({ success: true, message: 'Cast berhasil dihapus' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getAllCasts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const casts = await this.service.getAllCasts()
+      res.status(200).json({ success: true, message: 'Data cast berhasil didapatkan', data: casts })
     } catch (e) {
       next(e)
     }

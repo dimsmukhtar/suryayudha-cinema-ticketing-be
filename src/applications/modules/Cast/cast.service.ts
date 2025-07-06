@@ -39,4 +39,14 @@ export class CastService {
       })
     }
   }
+
+  async getAllCasts(): Promise<Cast[]> {
+    try {
+      return await this.repository.getAllCasts()
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengambil semua cast'
+      })
+    }
+  }
 }

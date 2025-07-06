@@ -9,7 +9,7 @@ export class GenreController {
     this.initializeGenreRoutes()
   }
 
-  initializeGenreRoutes() {
+  private initializeGenreRoutes() {
     this.genreRouter.get('/', this.getAllGenres)
     this.genreRouter.get('/:id', this.getGenreById)
     this.genreRouter.post('/', this.createGenre)

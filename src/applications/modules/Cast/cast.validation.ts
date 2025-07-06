@@ -10,10 +10,7 @@ export class CastValidation {
       required_error: 'Nama aktor harus diisi',
       invalid_type_error: 'Nama aktor harus berupa string'
     }),
-    actor_url: z.string({
-      required_error: 'URL aktor harus diisi',
-      invalid_type_error: 'URL aktor harus berupa string'
-    })
+    actor_url: z.unknown({ required_error: 'URL aktor harus diisi' })
   })
 
   static readonly UPDATE: ZodType = z.object({
@@ -22,10 +19,6 @@ export class CastValidation {
         invalid_type_error: 'Nama aktor harus berupa string'
       })
       .optional(),
-    actor_url: z
-      .string({
-        invalid_type_error: 'URL aktor harus berupa string'
-      })
-      .optional()
+    actor_url: z.unknown({ required_error: 'URL aktor harus diisi' }).optional()
   })
 }

@@ -2,7 +2,7 @@ import { Cast } from '@prisma/client'
 
 export type CastPayload = {
   actor_name: string
-  actor_url: string
+  actor_url: Express.Multer.File
   movie_id: number
 }
 

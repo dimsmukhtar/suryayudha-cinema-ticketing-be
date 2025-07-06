@@ -4,11 +4,14 @@ import { MoviePayload, MoviePayloadUpdate } from '../types/entities/MovieTypes'
 import { IMovieRepository, MovieWithRelations } from '../types/entities/MovieTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
+import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createMovie(movieData: MoviePayload, userId: number, genreIds: number[]): Promise<Movie> {
+    const posterUrl: string = await uploadImageToImageKit(movieData.poster_url)
+    const movieDataWithPosterUrl = { ...movieData, poster_url: posterUrl }
     return await this.prisma.$transaction(async (tx) => {
       const existingMovie = await tx.movie.findFirst({
         where: {
@@ -27,7 +30,7 @@ export class MovieRepositoryPrisma implements IMovieRepository {
       }
       const movie = await tx.movie.create({
         data: {
-          ...movieData,
+          ...movieDataWithPosterUrl,
           release_date: new Date(movieData.release_date),
           created_by_id: userId,
           movie_genres: {
@@ -71,6 +74,7 @@ export class MovieRepositoryPrisma implements IMovieRepository {
             id: true,
             genre: {
               select: {
+                id: true,
                 name: true
               }
             }
@@ -87,14 +91,22 @@ export class MovieRepositoryPrisma implements IMovieRepository {
 
   async updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
     await checkExists(this.prisma.movie, movieId, 'Film')
+    let posterUrl: string | undefined
+    if (movieData.poster_url) {
+      posterUrl = await uploadImageToImageKit(movieData.poster_url)
+    }
+    const data: any = {
+      ...movieData,
+      ...(posterUrl && { poster_url: posterUrl }),
+      ...(movieData.release_date && {
+        release_date: new Date(movieData.release_date)
+      })
+    }
     return await this.prisma.movie.update({
       where: {
         id: movieId
       },
-      data: {
-        ...movieData,
-        release_date: movieData.release_date ? new Date(movieData.release_date) : undefined
-      }
+      data: data
     })
   }
 

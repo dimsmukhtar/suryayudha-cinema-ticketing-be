@@ -8,7 +8,7 @@ export type MoviePayload = {
   rating: string
   language: string
   subtitle: string
-  poster_url: string
+  poster_url: Express.Multer.File
   trailer_url: string
   release_date: string
   status: 'coming_soon' | 'now_showing' | 'ended'
@@ -38,6 +38,7 @@ export type MovieWithRelations = Prisma.MovieGetPayload<{
         id: true
         genre: {
           select: {
+            id: true
             name: true
           }
         }

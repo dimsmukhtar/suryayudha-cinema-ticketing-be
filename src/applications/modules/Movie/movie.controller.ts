@@ -4,6 +4,7 @@ import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
 import { upload } from '../../../shared/utils/multer.config'
 import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
+import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -14,7 +15,16 @@ export class MovieController {
   }
 
   private initializeMovieRoutes(): void {
-    this.movieRouter.post('/', upload.single('poster_url'), this.createMovie)
+    this.movieRouter.post(
+      '/',
+      upload.single('poster_url'),
+      (req, _res, next) => {
+        if (!req.body.poster_url && !req.file) {
+          return next(new BadRequestException('Poster url harus diisi'))
+        }
+      },
+      this.createMovie
+    )
     this.movieRouter.get('/', this.getAllMovies)
     this.movieRouter.get('/:id', this.getMovieById)
     this.movieRouter.patch('/:id', upload.single('poster_url'), this.updateMovie)
@@ -23,15 +33,8 @@ export class MovieController {
 
   private createMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const file = req.file
-      let posterUrl: string | null = null
-      if (file) {
-        posterUrl = await uploadImageToImageKit(file)
-      }
-
       const movieCreatePayloadRequest: MoviePayload = {
-        ...req.body,
-        poster_url: posterUrl ? posterUrl : req.body.poster_url
+        ...req.body
       }
       const authReq = req as AuthenticateUser
       const genreIds = req.body.movie_genres
@@ -65,14 +68,9 @@ export class MovieController {
 
   private updateMovie = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const file = req.file
-      let posterUrl: string | null = null
-      if (file) {
-        posterUrl = await uploadImageToImageKit(file)
-      }
       const movieUpdatePayloadRequest: MoviePayloadUpdate = {
         ...req.body,
-        poster_url: posterUrl ? posterUrl : req.body.poster_url
+        ...(req.file && { poster_url: req.file })
       }
       const movie = await this.service.upateMovie(Number(req.params.id), movieUpdatePayloadRequest)
       res.status(200).json({ success: true, message: 'Film berhasil diupdate', data: movie })
