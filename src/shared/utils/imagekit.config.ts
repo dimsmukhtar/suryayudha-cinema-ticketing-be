@@ -19,12 +19,3 @@ export const uploadImageToImageKit = async (file: Express.Multer.File): Promise<
     throw new HttpException(500, 'Gagal mengupload ke image kit')
   }
 }
-
-export const deleteImageFromImageKit = async (url: string): Promise<void> => {
-  try {
-    const fileId = url.split('/').pop()?.split('.')[0] || ''
-    await imageKit.deleteFile(fileId)
-  } catch (error) {
-    console.error('Failed to delete image from ImageKit', error)
-  }
-}

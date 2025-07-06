@@ -22,6 +22,8 @@ export class MovieController {
         if (!req.body.poster_url && !req.file) {
           return next(new BadRequestException('Poster url harus diisi'))
         }
+        req.body.poster_url = req.file
+        next()
       },
       this.createMovie
     )
