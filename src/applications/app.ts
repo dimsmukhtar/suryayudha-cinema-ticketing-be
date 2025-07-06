@@ -42,7 +42,9 @@ class App implements IApp {
       CORS_ORIGIN: str({ default: '*' }),
       IMAGEKIT_PUBLIC_KEY: str(),
       IMAGEKIT_PRIVATE_KEY: str(),
-      IMAGEKIT_URL_ENDPOINT: str()
+      IMAGEKIT_URL_ENDPOINT: str(),
+      APP_PASSWORD: str(),
+      USER_EMAIL: str()
     })
   }
 

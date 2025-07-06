@@ -9,6 +9,8 @@ import {
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
+import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { sendEmail } from '../../shared/utils/nodemailer'
 
 //   getAllUsers(): Promise<User>
 //   getUserById(id: number): Promise<User>
@@ -49,6 +51,10 @@ export class UserRepositoryPrisma {
   }
 
   async createUser(data: UserPayload): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { email: data.email } })
+    if (user) {
+      throw new BadRequestException(`Email ${data.email} sudah terdaftar`)
+    }
     return await this.prisma.user.create({ data })
   }
 
@@ -71,6 +77,72 @@ export class UserRepositoryPrisma {
   }
 
   async register(data: RegisterPayload): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { email: data.email } })
+    if (user) {
+      throw new BadRequestException(`Email ${data.email} sudah terdaftar`)
+    }
+    await sendEmail({
+      email: data.email,
+      subject: 'Token untuk Verifikasi Email Anda',
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Verification</title>
+</head>
+<body
+  style="
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  "
+>
+  <div
+    style="
+      background: linear-gradient(to right, #5f6fff, #5f6fff);
+      padding: 20px;
+      text-align: center;
+    "
+  >
+    <h1 style="color: white; margin: 0">Verifikasi Email Anda</h1>
+  </div>
+  <div
+    style="
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 0 0 5px 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    "
+  >
+    <p>Hallo</p>
+    <p>
+      Terimakasih sudah mendaftarkan diri anda di Website Surya Yudha Cinema, berikut adalah kode
+      verifikasi anda!.
+    </p>
+    <div style="text-align: center; margin: 30px 0">
+      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #5f6fff"
+        >${data.verification_token}</span
+      >
+    </div>
+    <p>Gunakan kode diatas untuk memverifikasi akun anda.</p>
+    <p>
+      Kode ini akan kedaluwarsa dalam 15 menit demi alasan keamanan, jadi pastikan anda verifikasi
+      sebelum 15 menit!..
+    </p>
+    <p>Best regards,<br />Developer Team</p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em">
+    <p>Jika Anda tidak membuat akun dengan kami, harap abaikan email ini.</p>
+  </div>
+</body>
+</html>
+,
+`
+    })
     const { passwordConfirmation, ...prismaData } = data
     return await this.prisma.user.create({ data: prismaData })
   }

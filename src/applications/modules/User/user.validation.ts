@@ -22,6 +22,11 @@ export class UserValidation {
       required_error: 'Role harus diisi',
       invalid_type_error: 'Role harus berupa string'
     }),
+    profile_url: z
+      .unknown({
+        invalid_type_error: 'URL profile harus diisi'
+      })
+      .optional(),
     is_verified: z.boolean({
       required_error: 'Status verifikasi harus diisi',
       invalid_type_error: 'Status verifikasi harus berupa boolean'
@@ -84,6 +89,25 @@ export class UserValidation {
       passwordConfirmation: z.string({
         required_error: 'Konfirmasi password harus diisi',
         invalid_type_error: 'Konfirmasi password harus berupa string'
+      }),
+      role: z.enum(['user', 'admin'], {
+        required_error: 'Role harus diisi',
+        invalid_type_error: 'Role harus berupa string'
+      }),
+      profile_url: z.unknown({
+        invalid_type_error: 'URL profile harus diisi'
+      }),
+      is_verified: z.boolean({
+        required_error: 'Status verifikasi harus diisi',
+        invalid_type_error: 'Status verifikasi harus berupa boolean'
+      }),
+      verification_token: z.string({
+        required_error: 'Token verifikasi harus diisi',
+        invalid_type_error: 'Token verifikasi harus berupa string'
+      }),
+      verification_token_expires_at: z.date({
+        required_error: 'Tanggal kadaluarsa token verifikasi harus diisi',
+        invalid_type_error: 'Tanggal kadaluarsa token verifikasi harus berupa date'
       })
     })
     .refine((data) => data.password === data.passwordConfirmation, {

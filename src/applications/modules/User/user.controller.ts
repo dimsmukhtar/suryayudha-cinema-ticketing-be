@@ -44,7 +44,10 @@ export class UserController {
 
   private createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const createUserPayload: UserPayload = req.body
+      const createUserPayload: UserPayload = {
+        ...req.body,
+        profile_url: 'https://ik.imagekit.io/yxctvbjvh/profilepic.png?updatedAt=1734338115538'
+      }
       const user = await this.service.createUser(createUserPayload)
       res.status(201).json({ success: true, message: 'User berhasil dibuat', data: user })
     } catch (e) {
@@ -78,16 +81,19 @@ export class UserController {
     try {
       const verificationToken = Math.floor(100000 + Math.random() * 900000).toString()
       const verificationTokenExpiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 menit
-      const registerPayload: RegisterPayload = {
-        ...req.body,
-        role: 'user',
-        is_verified: false,
-        profile_url: 'https://ik.imagekit.io/yxctvbjvh/profilepic.png?updatedAt=1734338115538',
-        verification_token: verificationToken,
-        verification_token_expires_at: verificationTokenExpiresAt
-      }
+      req.body.verification_token = verificationToken
+      req.body.verification_token_expires_at = verificationTokenExpiresAt
+      req.body.role = 'user'
+      req.body.is_verified = false
+      req.body.profile_url =
+        'https://ik.imagekit.io/yxctvbjvh/profilepic.png?updatedAt=1734338115538'
+      const registerPayload: RegisterPayload = req.body
       await this.service.register(registerPayload)
-      res.status(201).json({ success: true, message: 'Berhasil register' })
+      res.status(201).json({
+        success: true,
+        message:
+          'Berhasil register dan token verifikasi telah dikirim ke email anda!, silahkan cek email untuk verifikasi'
+      })
     } catch (e) {
       console.log(e)
       next(e)
