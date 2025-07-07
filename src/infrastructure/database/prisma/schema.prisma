@@ -140,9 +140,16 @@ model NotificationRecipients {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
+  // relation
   notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  // relation
+
+  // OPTIMASI: agar user hanya bisa jadi penerima 1x per notifikasi
+  @@unique([notification_id, user_id])
+
+  // OPTIMASI: Percepat query berdasarkan user_id
+  @@index([user_id])
+
   @@map("NotificationRecipients")
 }
 
@@ -153,8 +160,15 @@ model UserNotificationReads {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
+// relation
   notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // OPTIMASI: agar user hanya bisa membaca 1x per notifikasi
+  @@unique([notification_id, user_id])
+
+  // OPTIMASI: Percepat query berdasarkan user_id
+  @@index([user_id])
   @@map("UserNotificationReads")
 }
 

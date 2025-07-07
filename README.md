@@ -91,12 +91,10 @@ api/v1/
 #### Notifications
 api/v1/
 - **notifications/** POST | **(ADMIN)**
- ```req.body = title,description,is_read,user_id```
+ ```req.body = title,description,target_audience,user_id```
 - **notifications/** GET | **(ADMIN)**
 - **notifications/my** GET | **(USER & ADMIN)**
-- **notifications/my/mark/:id** PATCH | **(USER & ADMIN)**
-- **notifications/my/mark-all** PATCH | **(USER & ADMIN)**
- ```req.body = name```
+- **notifications/my/mark** POST | **(USER & ADMIN)**
 - **notifications/:id** DELETE | **(USER & ADMIN)**
 
 

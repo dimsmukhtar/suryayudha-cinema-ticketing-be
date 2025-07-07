@@ -11,6 +11,9 @@ import { GenreService } from '../../applications/modules/Genre/genre.service'
 import { UserService } from '../../applications/modules/User/user.service'
 import { UserRepositoryPrisma } from '../repositories/UserRepositoryPrisma'
 import { UserController } from '../../applications/modules/User/user.controller'
+import { NotificationRepositoryPrisma } from '../repositories/NotificationRepositoryPrisma'
+import { NotificationService } from '../../applications/modules/Notification/notification.service'
+import { NotificationController } from '../../applications/modules/Notification/notification.controller'
 
 export const factoriesMovieController = () => {
   const repository = new MovieRepositoryPrisma(prisma)
@@ -34,4 +37,10 @@ export const factoriesUserController = () => {
   const repository = new UserRepositoryPrisma(prisma)
   const service = new UserService(repository)
   return new UserController(service)
+}
+
+export const factoriesNotificationController = () => {
+  const repository = new NotificationRepositoryPrisma(prisma)
+  const service = new NotificationService(repository)
+  return new NotificationController(service)
 }
