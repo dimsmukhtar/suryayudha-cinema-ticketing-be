@@ -65,8 +65,9 @@ api/v1/
 
 #### Casts
 api/v1/
-- **movies/:id/casts** POST | **(ADMIN)**
+- **casts/casts** POST | **(ADMIN)**
  ```req.body = movie_id,actor_name,actor_url```
+ - **casts/** GET | **(USER & ADMIN)**
 - **casts/:id** PATCH | **(ADMIN)**
  ```req.body = actor_name,actor_url```
 - **casts/:id** DELETE | **(ADMIN)**
@@ -83,9 +84,9 @@ api/v1/
 
 #### MoviesGenres
 api/v1/
-- **movies/:id/genres** POST | **(ADMIN)**
+- **movies/:id/genres/movie-genre** POST | **(ADMIN)**
  ```req.body = movie_id,genre_id```
-- **movies/:id/genres/:genresId** DELETE | **(ADMIN)**
+- **movies/:id/genres/movie-genre/:id** DELETE | **(ADMIN)**
 
 #### Notifications
 api/v1/
