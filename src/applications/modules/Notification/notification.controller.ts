@@ -14,6 +14,7 @@ export class NotificationController {
     this.notificationRouter.get('/', this.getAllNotifications)
     this.notificationRouter.post('/', this.createNotification)
     this.notificationRouter.get('/my', authenticate, this.getMyNotifications)
+    this.notificationRouter.post('/:id/my/mark', authenticate, this.markNofiticationAsRead)
   }
 
   private getAllNotifications = async (req: Request, res: Response, next: NextFunction) => {
@@ -48,6 +49,17 @@ export class NotificationController {
       res
         .status(200)
         .json({ success: true, message: 'Semua notifikasi berhasil diambil', data: notifications })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private markNofiticationAsRead = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const notificationId = parseInt(req.params.id)
+      const userId = req.user!.id
+      await this.service.markNofiticationAsRead(userId, notificationId)
+      res.status(200).json({ success: true, message: 'Notifikasi berhasil dibaca' })
     } catch (e) {
       next(e)
     }

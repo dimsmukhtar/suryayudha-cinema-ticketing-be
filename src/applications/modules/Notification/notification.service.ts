@@ -1,4 +1,4 @@
-import { Notification } from '@prisma/client'
+import { Notification, UserNotificationReads } from '@prisma/client'
 import { NotificationRepositoryPrisma } from '../../../infrastructure/repositories/NotificationRepositoryPrisma'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import {
@@ -45,6 +45,19 @@ export class NotificationService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil notifikasi'
+      })
+    }
+  }
+
+  async markNofiticationAsRead(
+    userId: number,
+    notificationId: number
+  ): Promise<UserNotificationReads> {
+    try {
+      return await this.repository.markNofiticationAsRead(userId, notificationId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat membaca notifikasi'
       })
     }
   }

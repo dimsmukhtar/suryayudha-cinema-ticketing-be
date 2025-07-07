@@ -1,5 +1,6 @@
-import { Notification, PrismaClient } from '@prisma/client'
+import { Notification, PrismaClient, UserNotificationReads } from '@prisma/client'
 import { NotificationPayload, NotificationWithIsRead } from '../types/entities/NotificationTypes'
+import { checkExists } from '../../shared/helpers/checkExistingRow'
 
 export class NotificationRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -62,5 +63,25 @@ export class NotificationRepositoryPrisma {
     })
 
     return notifications
+  }
+
+  async markNofiticationAsRead(
+    userId: number,
+    notificationId: number
+  ): Promise<UserNotificationReads> {
+    await checkExists(this.prisma.notification, notificationId, 'Notifikasi')
+    return await this.prisma.userNotificationReads.upsert({
+      where: {
+        notification_id_user_id: {
+          user_id: userId,
+          notification_id: notificationId
+        }
+      },
+      create: {
+        user_id: userId,
+        notification_id: notificationId
+      },
+      update: {}
+    })
   }
 }
