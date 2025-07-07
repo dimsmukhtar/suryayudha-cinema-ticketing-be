@@ -37,7 +37,8 @@ model User {
   movies_created Movie[] @relation("UserCreatedMovies")
   schedules_created Schedule[] @relation("UserCreatedSchedules")
   transactions Transaction[]
-  notifications Notification[]
+  notification_recipients NotificationRecipients[]
+  user_notification_reads UserNotificationReads[]
   @@map("Users")
 }
 
@@ -112,18 +113,49 @@ model MovieGenre {
   @@map("MovieGenres")
 }
 
+
+enum TARGET_AUDIENCE {
+  all
+  spesific
+}
+
 model Notification {
   id Int @id @default(autoincrement())
   title String
   description String
-  is_read Boolean @default(false)
-  user_id Int
+  target_audience TARGET_AUDIENCE
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
   // relation
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  notification_recipients NotificationRecipients[]
+  user_notification_reads UserNotificationReads[]
   @@map("Notifications")
+}
+
+model NotificationRecipients {
+  id Int @id @default(autoincrement())
+  notification_id Int
+  user_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+
+  notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  // relation
+  @@map("NotificationRecipients")
+}
+
+model UserNotificationReads {
+  id Int @id @default(autoincrement())
+  notification_id Int
+  user_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+
+  notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@map("UserNotificationReads")
 }
 
 model Studio {

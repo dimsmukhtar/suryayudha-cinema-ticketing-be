@@ -29,7 +29,6 @@ export type UserUpdatePayload = {
 export type UserWithRelations = Prisma.UserGetPayload<{
   include: {
     transactions: true
-    notifications: true
   }
 }>
 export type RegisterPayload = {

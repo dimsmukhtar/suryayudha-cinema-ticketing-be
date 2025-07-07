@@ -31,8 +31,7 @@ export class UserRepositoryPrisma {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        transactions: true,
-        notifications: true
+        transactions: true
       }
     })
     if (!user) {
