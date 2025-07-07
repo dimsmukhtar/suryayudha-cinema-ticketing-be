@@ -95,7 +95,7 @@ api/v1/
 - **notifications/** GET | **(ADMIN)**
 - **notifications/my** GET | **(USER & ADMIN)**
 - **notifications/:id/my/mark** POST | **(USER & ADMIN)**
-- **notifications/:id** DELETE | **(USER & ADMIN)**
+<!-- - **notifications/:id** DELETE | **(USER & ADMIN)** -->
 
 
 
