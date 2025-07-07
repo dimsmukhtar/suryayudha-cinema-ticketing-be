@@ -3,6 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import compression from 'compression'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import { cleanEnv, str, num } from 'envalid'
 import { logger } from '../shared/utils/logger'
 import { prisma } from '../infrastructure/database/client'
@@ -31,7 +32,7 @@ class App implements IApp {
   private validateEnvironment(): void {
     cleanEnv(process.env, {
       PORT: num({ default: 3000 }),
-      NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
+      NODE_ENV: str({ choices: ['DEVELOPMENT', 'PRODUCTION', 'TEST'], default: 'DEVELOPMENT' }),
       DATABASE_URL: str(),
       NODEMAILER_APP_EMAIL: str(),
       NODEMAILER_APP_PASSWORD: str(),
@@ -61,6 +62,7 @@ class App implements IApp {
     this.app.use(morgan(this.isProduction ? 'combined' : 'dev'))
     this.app.use(compression())
     this.app.use(express.json())
+    this.app.use(cookieParser())
     this.app.use(express.urlencoded({ extended: true }))
   }
 

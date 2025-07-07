@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
-import { AuthenticateUser } from '../../../shared/definitions/AuthenticateUser'
 import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
 import { upload } from '../../../shared/utils/multer.config'
-import { uploadImageToImageKit } from '../../../shared/utils/imagekit.config'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { authenticate } from '../../../shared/error-handling/middleware/authenticate'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -17,6 +16,7 @@ export class MovieController {
   private initializeMovieRoutes(): void {
     this.movieRouter.post(
       '/',
+      authenticate,
       upload.single('poster_url'),
       (req, _res, next) => {
         if (!req.body.poster_url && !req.file) {
@@ -38,12 +38,12 @@ export class MovieController {
       const movieCreatePayloadRequest: MoviePayload = {
         ...req.body
       }
-      const authReq = req as AuthenticateUser
+      const userId = req.user!.id
       const genreIds = req.body.movie_genres
         .split(',')
         .map((id: string) => parseInt(id.trim()))
         .filter((id: number) => !isNaN(id))
-      const movie = await this.service.createMovie(movieCreatePayloadRequest, 1, genreIds)
+      const movie = await this.service.createMovie(movieCreatePayloadRequest, userId, genreIds)
       res.status(201).json({ success: true, message: 'Film berhasil dibuat', data: movie })
     } catch (e) {
       next(e)

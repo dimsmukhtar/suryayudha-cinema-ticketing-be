@@ -12,10 +12,11 @@ export const errorMiddleware: ErrorRequestHandler = (
   next: NextFunction
 ) => {
   if (error instanceof HttpException) {
-    return res.status(error.statusCode).json(error.serialize())
+    const statusCode = error.statusCode || 500
+    return res.status(statusCode).json(error.serialize())
   }
 
-  const isProduction = process.env.NODE_ENV === 'production'
+  const isProduction = process.env.NODE_ENV === 'PRODUCTION'
   res.status(500).json({
     success: false,
     statusCode: 500,

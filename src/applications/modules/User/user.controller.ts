@@ -1,15 +1,18 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { UserService } from './user.service'
 import {
+  ChangePasswordPayload,
   LoginPayload,
   RegisterPayload,
+  ResetPasswordPayload,
   UserPayload,
   UserUpdatePayload,
   VerifyEmailPayload
 } from '../../../infrastructure/types/entities/UserTypes'
-import { signJwt } from '../../../shared/utils/jwt'
+import { setAccessToken } from '../../../shared/helpers/setCookies'
 import { upload } from '../../../shared/utils/multer.config'
 import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
+import { authenticate } from '../../../shared/error-handling/middleware/authenticate'
 export class UserController {
   private readonly userRouter: Router
   constructor(private readonly service: UserService) {
@@ -19,15 +22,28 @@ export class UserController {
 
   private initializeUserRoutes() {
     this.userRouter.get('/', this.getAllUsers)
-    this.userRouter.post('/', this.createUser)
-    this.userRouter.get('/:id', this.getUserById)
-    this.userRouter.delete('/:id', this.deleteUser)
-    this.userRouter.patch('/:id', upload.single('profile_url'), this.updateUser)
 
     this.userRouter.post('/register', this.register)
     this.userRouter.post('/resend-verification-token', this.resendVerificationToken)
     this.userRouter.post('/verify-email', this.verifyEmail)
     this.userRouter.post('/login', this.login)
+    this.userRouter.post('/login-admin', this.loginAdmin)
+    this.userRouter.post('/logout', this.logout)
+    this.userRouter.get('/profile', authenticate, this.getProfile)
+    this.userRouter.patch(
+      '/update-profile',
+      authenticate,
+      upload.single('profile_url'),
+      this.updateProfile
+    )
+    this.userRouter.put('/change-password', authenticate, this.changePassword)
+    this.userRouter.post('/forgot-password', this.sendTokenResetPassword)
+    this.userRouter.post('/reset-password', this.resetPassword)
+
+    this.userRouter.post('/', this.createUser)
+    this.userRouter.patch('/:id', upload.single('profile_url'), this.updateUser)
+    this.userRouter.delete('/:id', this.deleteUser)
+    this.userRouter.get('/:id', this.getUserById)
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -128,9 +144,100 @@ export class UserController {
   private login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const loginPayload: LoginPayload = req.body
-      const user = await this.service.login(loginPayload)
+      const token = await this.service.login('user', loginPayload)
+      setAccessToken(token, res)
+      res.status(200).json({ success: true, message: 'Login berhasil', token })
+    } catch (e) {
+      next(e)
+    }
+  }
 
-      res.status(200).json({ success: true, message: 'Login berhasil', data: user })
+  private loginAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const loginPayload: LoginPayload = req.body
+      const token = await this.service.login('admin', loginPayload)
+      setAccessToken(token, res)
+      res.status(200).json({ success: true, message: 'Login admin berhasil', token })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.clearCookie('accessToken')
+      res.clearCookie('refreshToken')
+      res.status(200).json({ success: true, message: 'Logout berhasil' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log(req.user)
+      const userId = req.user!.id
+      const user = await this.service.getProfile(userId)
+      const {
+        password,
+        verification_token,
+        verification_token_expires_at,
+        reset_password_token,
+        reset_password_token_expires_at,
+        ...rest
+      } = user
+      res.status(200).json({ success: true, message: 'Profile berhasil diambil', data: rest })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (req.file) {
+        req.body.profile_url = req.file
+      }
+      const updateProfilePayload: UserUpdatePayload = req.body
+      const userId = req.user!.id
+      const user = await this.service.updateProfile(userId, updateProfilePayload)
+      const { password, ...rest } = user
+      res.status(200).json({ success: true, message: 'Profile berhasil diupdate', data: rest })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const changePasswordPayload: ChangePasswordPayload = req.body
+      const email = req.user!.email
+      const user = await this.service.changePassword(email, changePasswordPayload)
+      const { password, ...rest } = user
+      res.status(200).json({ success: true, message: 'Password berhasil diubah', data: rest })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private sendTokenResetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data: { email: string } = {
+        ...req.body
+      }
+      await this.service.sendTokenResetPassword(data)
+      res.status(200).json({ success: true, message: 'Token reset password berhasil dikirim' })
+    } catch (e) {
+      console.log(e)
+      next(e)
+    }
+  }
+
+  private resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const resetPasswordPayload: ResetPasswordPayload = req.body
+      const user = await this.service.resetPassword(resetPasswordPayload)
+      const { password, ...rest } = user
+      res.status(200).json({ success: true, message: 'Password berhasil direset', data: rest })
     } catch (e) {
       next(e)
     }

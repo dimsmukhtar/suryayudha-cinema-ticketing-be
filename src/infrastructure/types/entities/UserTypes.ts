@@ -1,5 +1,14 @@
 import { Prisma, User } from '@prisma/client'
 
+export type UserJwtPayload = {
+  id: number
+  name: string
+  email: string
+  role: string
+  iat: string
+  exp: string
+}
+
 export type UserPayload = {
   name: string
   email: string
@@ -47,6 +56,7 @@ export type ChangePasswordPayload = {
 }
 
 export type ResetPasswordPayload = {
+  email: string
   passwordResetCode: string
   newPassword: string
   newPasswordConfirmation: string
@@ -60,7 +70,11 @@ export type VerifyEmailPayload = {
 export type ProfileUpdatePayload = {
   name?: string
   email?: string
-  profile_url?: string
+  profile_url?: Express.Multer.File
+}
+
+export type ForgotPasswordPayload = {
+  email: string
 }
 
 export interface IUserRepository {
@@ -71,14 +85,12 @@ export interface IUserRepository {
   deleteUser(id: number): Promise<void>
 
   register(data: RegisterPayload): Promise<User>
-  login(data: LoginPayload): Promise<User>
-  loginAdmin(data: LoginPayload): Promise<User>
-  logout(): Promise<void>
-  resendVerificationToken(email: string): Promise<void>
+  login(data: LoginPayload): Promise<string>
+  loginAdmin(data: LoginPayload): Promise<string>
   verifyEmail(data: VerifyEmailPayload): Promise<void>
-  profile(): Promise<User>
-  updateProfile(data: ProfileUpdatePayload): Promise<User>
-  changePassword(data: ChangePasswordPayload): Promise<User>
-  forgotPassword(email: string): Promise<void>
+  getProfile(userId: number): Promise<User>
+  updateProfile(userId: number, data: ProfileUpdatePayload): Promise<User>
+  changePassword(email: string, data: ChangePasswordPayload): Promise<User>
+  sendTokenResetPassword(email: string): Promise<void>
   resetPassword(data: ResetPasswordPayload): Promise<User>
 }
