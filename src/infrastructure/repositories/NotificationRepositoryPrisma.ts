@@ -38,7 +38,12 @@ export class NotificationRepositoryPrisma {
               }
             }
           }
-        ]
+        ],
+        user_notification_hides: {
+          none: {
+            user_id: userId
+          }
+        }
       },
       include: {
         user_notification_reads: {
@@ -82,6 +87,17 @@ export class NotificationRepositoryPrisma {
         notification_id: notificationId
       },
       update: {}
+    })
+  }
+
+  async hideNotification(userId: number, notificationId: number) {
+    await checkExists(this.prisma.notification, notificationId, 'Notifikasi')
+    return this.prisma.userNotificationHides.createMany({
+      data: {
+        user_id: userId,
+        notification_id: notificationId
+      },
+      skipDuplicates: true
     })
   }
 }

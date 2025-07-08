@@ -39,6 +39,7 @@ model User {
   transactions Transaction[]
   notification_recipients NotificationRecipients[]
   user_notification_reads UserNotificationReads[]
+  user_notification_hides UserNotificationHides[]
   @@map("Users")
 }
 
@@ -130,6 +131,7 @@ model Notification {
   // relation
   notification_recipients NotificationRecipients[]
   user_notification_reads UserNotificationReads[]
+  user_notification_hides UserNotificationHides[]
   @@map("Notifications")
 }
 
@@ -170,6 +172,23 @@ model UserNotificationReads {
   // OPTIMASI: Percepat query berdasarkan user_id
   @@index([user_id])
   @@map("UserNotificationReads")
+}
+
+model UserNotificationHides {
+  id Int @id @default(autoincrement())
+  notification_id Int
+  user_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+
+// relation
+  notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // OPTIMASI: agar user hanya bisa hide 1x per notifikasi
+  @@unique([notification_id, user_id])
+
+  @@map("UserNotificationHides")
 }
 
 model Studio {

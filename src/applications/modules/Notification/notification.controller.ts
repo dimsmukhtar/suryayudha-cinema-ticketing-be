@@ -15,6 +15,7 @@ export class NotificationController {
     this.notificationRouter.post('/', this.createNotification)
     this.notificationRouter.get('/my', authenticate, this.getMyNotifications)
     this.notificationRouter.post('/:id/my/mark', authenticate, this.markNofiticationAsRead)
+    this.notificationRouter.delete('/:id/my/hide', authenticate, this.hideNotification)
   }
 
   private getAllNotifications = async (req: Request, res: Response, next: NextFunction) => {
@@ -60,6 +61,17 @@ export class NotificationController {
       const userId = req.user!.id
       await this.service.markNofiticationAsRead(userId, notificationId)
       res.status(200).json({ success: true, message: 'Notifikasi berhasil dibaca' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private hideNotification = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const notificationId = parseInt(req.params.id)
+      const userId = req.user!.id
+      await this.service.hideNotification(userId, notificationId)
+      res.status(200).json({ success: true, message: 'Notifikasi berhasil dihapus' })
     } catch (e) {
       next(e)
     }

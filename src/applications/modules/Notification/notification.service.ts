@@ -61,4 +61,14 @@ export class NotificationService {
       })
     }
   }
+
+  async hideNotification(userId: number, notificationId: number) {
+    try {
+      return await this.repository.hideNotification(userId, notificationId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat menyembunyikan notifikasi'
+      })
+    }
+  }
 }
