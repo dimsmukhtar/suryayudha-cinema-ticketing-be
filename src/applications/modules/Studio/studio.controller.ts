@@ -16,6 +16,7 @@ export class StudioController {
     this.studioRouter.put('/:id', this.updateStudio)
     this.studioRouter.delete('/:id', this.deleteStudio)
     this.studioRouter.post('/:id/upload', uploadMultiple.array('photos'), this.uploadStudioPhotos)
+    this.studioRouter.delete('/photos/:id/delete', this.deletePhotoFromImageKit)
   }
 
   private getAllStudios = async (req: Request, res: Response, next: NextFunction) => {
@@ -76,6 +77,16 @@ export class StudioController {
       const files = req.files as Express.Multer.File[]
       await this.service.uploadStudioPhotos(studioId, files)
       res.status(200).json({ success: true, message: 'Foto studio berhasil diupload' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private deletePhotoFromImageKit = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const photoId = parseInt(req.params.id)
+      await this.service.deletePhotoFromImageKit(photoId)
+      res.status(200).json({ success: true, message: 'Foto studio berhasil dihapus' })
     } catch (e) {
       next(e)
     }

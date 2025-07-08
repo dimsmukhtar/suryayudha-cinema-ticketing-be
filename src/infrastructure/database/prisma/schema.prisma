@@ -207,6 +207,7 @@ model Studio {
 model StudioGallery {
   id Int @id @default(autoincrement())
   photo_url String
+  photo_id String
   studio_id Int
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt

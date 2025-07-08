@@ -10,7 +10,7 @@ export class MovieRepositoryPrisma implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createMovie(movieData: MoviePayload, userId: number, genreIds: number[]): Promise<Movie> {
-    const posterUrl: string = await uploadImageToImageKit(
+    const { url: posterUrl } = await uploadImageToImageKit(
       'poster',
       '/posters',
       movieData.poster_url
@@ -97,7 +97,8 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     await checkExists(this.prisma.movie, movieId, 'Film')
     let posterUrl: string | undefined
     if (movieData.poster_url) {
-      posterUrl = await uploadImageToImageKit('poster', '/posters', movieData.poster_url)
+      const { url } = await uploadImageToImageKit('poster', '/posters', movieData.poster_url)
+      posterUrl = url
     }
     const data: any = {
       ...movieData,

@@ -2,7 +2,7 @@ import { PrismaClient, Studio, StudioGallery } from '@prisma/client'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
-import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
+import { uploadImageToImageKit, deleteImageFromImageKit } from '../../shared/utils/imagekit.config'
 
 export class StudioRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -44,10 +44,14 @@ export class StudioRepositoryPrisma {
       throw new BadRequestException('Tidak ada foto yang diupload')
     }
 
-    const urlUploadResult: { url: string }[] = []
+    const urlUploadResult: { url: string; photo_id: string }[] = []
     for (const photo of photos) {
-      const result = await uploadImageToImageKit('studio', '/studioGalleries', photo)
-      urlUploadResult.push({ url: result })
+      const { url: result, fileId } = await uploadImageToImageKit(
+        'studio',
+        '/studioGalleries',
+        photo
+      )
+      urlUploadResult.push({ url: result, photo_id: fileId })
     }
 
     await this.prisma.$transaction(
@@ -55,10 +59,20 @@ export class StudioRepositoryPrisma {
         this.prisma.studioGallery.create({
           data: {
             studio_id: studioId,
+            photo_id: result.photo_id,
             photo_url: result.url
           }
         })
       )
     )
+  }
+
+  async deletePhotoFromImageKit(photoId: number): Promise<void> {
+    const photo = await this.prisma.studioGallery.findUnique({ where: { id: photoId } })
+    if (!photo) {
+      throw new NotFoundException(`Foto dengan id ${photoId} tidak ditemukan`)
+    }
+    await this.prisma.studioGallery.delete({ where: { id: photoId } })
+    await deleteImageFromImageKit(photo.photo_id)
   }
 }

@@ -68,4 +68,14 @@ export class StudioService {
       })
     }
   }
+
+  async deletePhotoFromImageKit(photoId: number): Promise<void> {
+    try {
+      return await this.repository.deletePhotoFromImageKit(photoId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat menghapus foto studio'
+      })
+    }
+  }
 }
