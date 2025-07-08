@@ -1,5 +1,10 @@
 ### Api Specifications
 
+#### Health
+
+- **health** GET | **(ADMIN)**
+- **health/db** GET | **(ADMIN)**
+
 #### Auths
 api/v1/
 - **auths/login** POST | **(USER)**
@@ -95,7 +100,7 @@ api/v1/
 - **notifications/** GET | **(ADMIN)**
 - **notifications/my** GET | **(USER & ADMIN)**
 - **notifications/:id/my/mark** POST | **(USER & ADMIN)**
-<!-- - **notifications/:id** DELETE | **(USER & ADMIN)** -->
+- **notifications/:id/my/hide** DELETE | **(USER & ADMIN)**
 
 
 

@@ -4,7 +4,8 @@ import {
   factoriesCastController,
   factoriesGenreController,
   factoriesUserController,
-  factoriesNotificationController
+  factoriesNotificationController,
+  factoriesStudioController
 } from '../../infrastructure/factories/factories'
 import { IRoutes } from 'infrastructure/types/route.type'
 
@@ -15,6 +16,7 @@ export class Routes {
   private readonly genreRoutes: IRoutes = factoriesGenreController()
   private readonly userRoutes: IRoutes = factoriesUserController()
   private readonly notificationRoutes: IRoutes = factoriesNotificationController()
+  private readonly studioRoutes: IRoutes = factoriesStudioController()
 
   constructor() {
     this.routes = Router()
@@ -27,6 +29,7 @@ export class Routes {
     this.routes.use('/v1/genres', this.genreRoutes.getRoutes())
     this.routes.use('/v1/users', this.userRoutes.getRoutes())
     this.routes.use('/v1/notifications', this.notificationRoutes.getRoutes())
+    this.routes.use('/v1/studios', this.studioRoutes.getRoutes())
   }
 
   public getRoutes(): Router {

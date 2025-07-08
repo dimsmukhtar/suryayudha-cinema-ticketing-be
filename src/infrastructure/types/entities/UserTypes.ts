@@ -78,18 +78,18 @@ export type ForgotPasswordPayload = {
 
 export interface IUserRepository {
   getAllUsers(): Promise<User[]>
-  getUserById(id: number): Promise<User>
+  getUserById(id: number): Promise<UserWithRelations>
   createUser(data: UserPayload): Promise<User>
   updateUser(id: number, data: UserUpdatePayload): Promise<User>
   deleteUser(id: number): Promise<void>
-
   register(data: RegisterPayload): Promise<User>
+  resendVerificationToken(email: string): Promise<void>
+  verifyEmail(data: VerifyEmailPayload): Promise<void>
   login(data: LoginPayload): Promise<string>
   loginAdmin(data: LoginPayload): Promise<string>
-  verifyEmail(data: VerifyEmailPayload): Promise<void>
   getProfile(userId: number): Promise<User>
   updateProfile(userId: number, data: ProfileUpdatePayload): Promise<User>
   changePassword(email: string, data: ChangePasswordPayload): Promise<User>
-  sendTokenResetPassword(email: string): Promise<void>
+  sendTokenResetPassword(email: { email: string }): Promise<void>
   resetPassword(data: ResetPasswordPayload): Promise<User>
 }

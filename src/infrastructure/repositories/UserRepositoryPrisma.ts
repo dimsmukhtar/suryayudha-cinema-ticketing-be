@@ -20,7 +20,7 @@ import { generateVerificationToken } from '../../shared/helpers/generateVerifica
 import { hashPassword, verifyPassword } from '../../shared/utils/passwordEncrypt'
 import { signJwt } from '../../shared/utils/jwt'
 
-export class UserRepositoryPrisma {
+export class UserRepositoryPrisma implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async getAllUsers(): Promise<User[]> {
