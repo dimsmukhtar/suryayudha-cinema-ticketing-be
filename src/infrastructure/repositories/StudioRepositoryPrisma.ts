@@ -3,9 +3,9 @@ import { NotFoundException } from '../../shared/error-handling/exceptions/not-fo
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { uploadImageToImageKit, deleteImageFromImageKit } from '../../shared/utils/imagekit.config'
-import { StudioWIthGalleries } from '../types/entities/StudioTypes'
+import { IStudioRepository, StudioWIthGalleries } from '../types/entities/StudioTypes'
 
-export class StudioRepositoryPrisma {
+export class StudioRepositoryPrisma implements IStudioRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createStudio(studioData: { name: string }): Promise<Studio> {

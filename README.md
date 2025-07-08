@@ -131,10 +131,9 @@ api/v1/
 
 #### Schedules
 api/v1/
-- **movies/:id/schedules/** POST | **(ADMIN)**
+- **schedules/** POST | **(ADMIN)**
  ```req.body = date,start_time,finished_time,price,created_by,movie_id,studio_id```
 - **schedules/** GET | **(USER * ADMIN)**
- ```req.query = ?movieId=3 or ?date```
 - **schedules/:id** GET | **(USER * ADMIN)**
 - **schedules/:id** PATCH | **(ADMIN)**
  ```req.body = date,start_time,finished_time,price,created_by,movie_id,studio_id```

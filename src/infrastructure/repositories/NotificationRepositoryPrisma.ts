@@ -1,8 +1,12 @@
 import { Notification, PrismaClient, UserNotificationReads } from '@prisma/client'
-import { NotificationPayload, NotificationWithIsRead } from '../types/entities/NotificationTypes'
+import {
+  INotificationRepository,
+  NotificationPayload,
+  NotificationWithIsRead
+} from '../types/entities/NotificationTypes'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 
-export class NotificationRepositoryPrisma {
+export class NotificationRepositoryPrisma implements INotificationRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createNotification(notificationData: NotificationPayload): Promise<Notification> {
