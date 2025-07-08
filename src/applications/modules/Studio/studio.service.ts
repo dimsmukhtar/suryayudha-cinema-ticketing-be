@@ -58,4 +58,14 @@ export class StudioService {
       })
     }
   }
+
+  async uploadStudioPhotos(studioId: number, photos: Express.Multer.File[]): Promise<void> {
+    try {
+      return await this.repository.uploadStudioPhotos(studioId, photos)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengupload foto studio'
+      })
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { StudioService } from './studio.service'
+import { uploadMultiple } from '../../../shared/utils/multer.config'
 
 export class StudioController {
   private readonly studioRouter: Router
@@ -14,6 +15,7 @@ export class StudioController {
     this.studioRouter.get('/:id', this.getStudioById)
     this.studioRouter.put('/:id', this.updateStudio)
     this.studioRouter.delete('/:id', this.deleteStudio)
+    this.studioRouter.post('/:id/upload', uploadMultiple.array('photos'), this.uploadStudioPhotos)
   }
 
   private getAllStudios = async (req: Request, res: Response, next: NextFunction) => {
@@ -63,6 +65,17 @@ export class StudioController {
     try {
       await this.service.deleteStudio(parseInt(req.params.id))
       res.status(200).json({ success: true, message: 'Studio berhasil dihapus' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private uploadStudioPhotos = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const studioId = parseInt(req.params.id)
+      const files = req.files as Express.Multer.File[]
+      await this.service.uploadStudioPhotos(studioId, files)
+      res.status(200).json({ success: true, message: 'Foto studio berhasil diupload' })
     } catch (e) {
       next(e)
     }

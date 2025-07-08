@@ -7,11 +7,16 @@ export const imageKit = new ImageKit({
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT!
 })
 
-export const uploadImageToImageKit = async (file: Express.Multer.File): Promise<string> => {
+export const uploadImageToImageKit = async (
+  fileName: string,
+  folderName: string,
+  file: Express.Multer.File
+): Promise<string> => {
   try {
     const response = await imageKit.upload({
       file: file.buffer,
-      fileName: `poster_${Date.now()}`,
+      fileName: `${fileName}_${Date.now()}`,
+      folder: folderName,
       useUniqueFileName: true
     })
     return response.url

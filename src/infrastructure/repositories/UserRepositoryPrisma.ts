@@ -57,7 +57,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     await checkExists(this.prisma.user, id, 'User')
     let profileUrl: string | undefined
     if (data.profile_url) {
-      profileUrl = await uploadImageToImageKit(data.profile_url)
+      profileUrl = await uploadImageToImageKit('profile', '/users', data.profile_url)
     }
     const dataUpdata: any = {
       ...data,
@@ -305,7 +305,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     await checkExists(this.prisma.user, userId, 'User')
     let profileUrl: string | undefined
     if (data.profile_url) {
-      profileUrl = await uploadImageToImageKit(data.profile_url)
+      profileUrl = await uploadImageToImageKit('profile', '/users', data.profile_url)
     }
     const dataUpdata: any = {
       ...data,

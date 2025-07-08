@@ -116,8 +116,8 @@ api/v1/
 
 #### StudioGalleries
 api/v1/
-- **studios/:id/galleries/** POST | **(ADMIN)**
- ```req.body = photo_url```
+- **studios/:id/upload/** POST | **(ADMIN)**
+ ```req.body = photos```
 - **studios/galleries/:id** DELETE | **(ADMIN)**
 
 #### Seats

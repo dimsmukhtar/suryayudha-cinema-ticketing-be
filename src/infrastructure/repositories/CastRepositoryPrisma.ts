@@ -8,7 +8,7 @@ export class CastRepositoryPrisma implements ICastRepository {
 
   async createCast(castData: CastPayload): Promise<Cast> {
     await checkExists(this.prisma.movie, castData.movie_id, 'Film')
-    const actorUrl: string = await uploadImageToImageKit(castData.actor_url)
+    const actorUrl: string = await uploadImageToImageKit('actor', '/casts', castData.actor_url)
     const castDataWithActorUrl = { ...castData, actor_url: actorUrl }
     return await this.prisma.cast.create({
       data: castDataWithActorUrl
@@ -19,7 +19,7 @@ export class CastRepositoryPrisma implements ICastRepository {
     await checkExists(this.prisma.cast, castId, 'Cast')
     let actorUrlString: string | undefined
     if (castData.actor_url) {
-      actorUrlString = await uploadImageToImageKit(castData.actor_url)
+      actorUrlString = await uploadImageToImageKit('actor', '/casts', castData.actor_url)
     }
     const data: Partial<Cast> = {
       ...('actor_name' in castData && { actor_name: castData.actor_name }),
