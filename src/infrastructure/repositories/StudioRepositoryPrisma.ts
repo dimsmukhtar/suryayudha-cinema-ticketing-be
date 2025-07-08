@@ -3,6 +3,7 @@ import { NotFoundException } from '../../shared/error-handling/exceptions/not-fo
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { uploadImageToImageKit, deleteImageFromImageKit } from '../../shared/utils/imagekit.config'
+import { StudioWIthGalleries } from '../types/entities/StudioTypes'
 
 export class StudioRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -17,8 +18,11 @@ export class StudioRepositoryPrisma {
     return await this.prisma.studio.findMany()
   }
 
-  async getStudioById(studioId: number): Promise<Studio> {
-    const studio = await this.prisma.studio.findUnique({ where: { id: studioId } })
+  async getStudioById(studioId: number): Promise<StudioWIthGalleries> {
+    const studio = await this.prisma.studio.findUnique({
+      where: { id: studioId },
+      include: { galleries: true }
+    })
     if (!studio) {
       throw new NotFoundException(`Studio dengan id ${studioId} tidak ditemukan`)
     }
@@ -74,5 +78,10 @@ export class StudioRepositoryPrisma {
     }
     await this.prisma.studioGallery.delete({ where: { id: photoId } })
     await deleteImageFromImageKit(photo.photo_id)
+  }
+
+  async getAllPhotos(): Promise<StudioGallery[]> {
+    const photos = await this.prisma.studioGallery.findMany()
+    return photos
   }
 }

@@ -1,8 +1,9 @@
-import { Studio } from '@prisma/client'
+import { Studio, StudioGallery } from '@prisma/client'
 import { StudioRepositoryPrisma } from '../../../infrastructure/repositories/StudioRepositoryPrisma'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
 import { StudioValidation } from './studio.validation'
+import { StudioWIthGalleries } from '../../../infrastructure/types/entities/StudioTypes'
 
 export class StudioService {
   constructor(private readonly repository: StudioRepositoryPrisma) {}
@@ -28,7 +29,7 @@ export class StudioService {
     }
   }
 
-  async getStudioById(studioId: number): Promise<Studio> {
+  async getStudioById(studioId: number): Promise<StudioWIthGalleries> {
     try {
       return await this.repository.getStudioById(studioId)
     } catch (e) {
@@ -75,6 +76,16 @@ export class StudioService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat menghapus foto studio'
+      })
+    }
+  }
+
+  async getAllPhotos(): Promise<StudioGallery[]> {
+    try {
+      return await this.repository.getAllPhotos()
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengambil semua foto studio'
       })
     }
   }

@@ -11,6 +11,7 @@ export class StudioController {
 
   private initializeStudioRoutes(): void {
     this.studioRouter.get('/', this.getAllStudios)
+    this.studioRouter.get('/photos', this.getAllPhotos)
     this.studioRouter.post('/', this.createStudio)
     this.studioRouter.get('/:id', this.getStudioById)
     this.studioRouter.put('/:id', this.updateStudio)
@@ -87,6 +88,15 @@ export class StudioController {
       const photoId = parseInt(req.params.id)
       await this.service.deletePhotoFromImageKit(photoId)
       res.status(200).json({ success: true, message: 'Foto studio berhasil dihapus' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getAllPhotos = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const photos = await this.service.getAllPhotos()
+      res.status(200).json({ success: true, message: 'Semua foto berhasil diambil', data: photos })
     } catch (e) {
       next(e)
     }

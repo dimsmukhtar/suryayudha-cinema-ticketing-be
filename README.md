@@ -119,6 +119,7 @@ api/v1/
 - **studios/:id/upload/** POST | **(ADMIN)**
  ```req.body = photos```
 - **studios/photos/:id/delete** DELETE | **(ADMIN)**
+- **studios/photos** GET | **(USER & ADMIN)**
 
 #### Seats
 api/v1/
