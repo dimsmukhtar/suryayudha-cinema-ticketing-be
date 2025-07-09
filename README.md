@@ -121,22 +121,15 @@ api/v1/
 - **studios/photos/:id/delete** DELETE | **(ADMIN)**
 - **studios/photos** GET | **(USER & ADMIN)**
 
-#### Seats
-api/v1/
-- **studios/:id/seats** POST | **(ADMIN)**
- ```req.body = seat_label```
-- **seats/:id** PATCH | **(ADMIN)**
- ```req.body = seat_label```
-- **seats/:id** DELETE | **(ADMIN)**
 
 #### Schedules
 api/v1/
 - **schedules/** POST | **(ADMIN)**
- ```req.body = date,start_time,finished_time,price,created_by,movie_id,studio_id```
+ ```req.body = start_time,price,movie_id,studio_id```
 - **schedules/** GET | **(USER * ADMIN)**
 - **schedules/:id** GET | **(USER * ADMIN)**
 - **schedules/:id** PATCH | **(ADMIN)**
- ```req.body = date,start_time,finished_time,price,created_by,movie_id,studio_id```
+ ```req.body = date,start_time,price,created_by,movie_id,studio_id```
 - **schedules/:id** DELETE | **(ADMIN)**
 
 #### SchedulesSeats

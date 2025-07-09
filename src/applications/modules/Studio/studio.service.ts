@@ -3,7 +3,7 @@ import { StudioRepositoryPrisma } from '../../../infrastructure/repositories/Stu
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
 import { StudioValidation } from './studio.validation'
-import { StudioWIthGalleries } from '../../../infrastructure/types/entities/StudioTypes'
+import { StudioWIthGalleriesAndSeats } from '../../../infrastructure/types/entities/StudioTypes'
 
 export class StudioService {
   constructor(private readonly repository: StudioRepositoryPrisma) {}
@@ -29,7 +29,7 @@ export class StudioService {
     }
   }
 
-  async getStudioById(studioId: number): Promise<StudioWIthGalleries> {
+  async getStudioById(studioId: number): Promise<StudioWIthGalleriesAndSeats> {
     try {
       return await this.repository.getStudioById(studioId)
     } catch (e) {

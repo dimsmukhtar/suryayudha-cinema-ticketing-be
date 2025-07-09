@@ -3,7 +3,7 @@ import { NotFoundException } from '../../shared/error-handling/exceptions/not-fo
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { uploadImageToImageKit, deleteImageFromImageKit } from '../../shared/utils/imagekit.config'
-import { IStudioRepository, StudioWIthGalleries } from '../types/entities/StudioTypes'
+import { IStudioRepository, StudioWIthGalleriesAndSeats } from '../types/entities/StudioTypes'
 
 export class StudioRepositoryPrisma implements IStudioRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -18,10 +18,10 @@ export class StudioRepositoryPrisma implements IStudioRepository {
     return await this.prisma.studio.findMany()
   }
 
-  async getStudioById(studioId: number): Promise<StudioWIthGalleries> {
+  async getStudioById(studioId: number): Promise<StudioWIthGalleriesAndSeats> {
     const studio = await this.prisma.studio.findUnique({
       where: { id: studioId },
-      include: { galleries: true }
+      include: { galleries: true, seats: true }
     })
     if (!studio) {
       throw new NotFoundException(`Studio dengan id ${studioId} tidak ditemukan`)
