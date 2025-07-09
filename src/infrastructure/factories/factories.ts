@@ -17,6 +17,9 @@ import { NotificationController } from '../../applications/modules/Notification/
 import { StudioRepositoryPrisma } from '../repositories/StudioRepositoryPrisma'
 import { StudioService } from '../../applications/modules/Studio/studio.service'
 import { StudioController } from '../../applications/modules/Studio/studio.controller'
+import { ScheduleRepositoryPrisma } from '../repositories/ScheduleRepositoryPrisma'
+import { ScheduleService } from '../../applications/modules/Schedule/schedule.service'
+import { ScheduleController } from '../../applications/modules/Schedule/schedule.controller'
 
 export const factoriesMovieController = () => {
   const repository = new MovieRepositoryPrisma(prisma)
@@ -52,4 +55,10 @@ export const factoriesStudioController = () => {
   const repository = new StudioRepositoryPrisma(prisma)
   const service = new StudioService(repository)
   return new StudioController(service)
+}
+
+export const factoriesScheduleController = () => {
+  const repository = new ScheduleRepositoryPrisma(prisma)
+  const service = new ScheduleService(repository)
+  return new ScheduleController(service)
 }

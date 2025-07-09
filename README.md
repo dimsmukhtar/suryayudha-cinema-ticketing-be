@@ -128,17 +128,9 @@ api/v1/
  ```req.body = start_time,price,movie_id,studio_id```
 - **schedules/** GET | **(USER * ADMIN)**
 - **schedules/:id** GET | **(USER * ADMIN)**
-- **schedules/:id** PATCH | **(ADMIN)**
- ```req.body = date,start_time,price,created_by,movie_id,studio_id```
 - **schedules/:id** DELETE | **(ADMIN)**
-
-#### SchedulesSeats
-api/v1/
-- **schedules-seats/** GET | **(USER * ADMIN)**
- ```req.query = ?scheduleId=3```
-- **schedules-seats/:id** PATCH | **(ADMIN)**
+- **schedules/:id/seats** PATCH | **(ADMIN)**
  ```req.body = status,schedule_id,seat_id```
-- **schedules-seats/:id** DELETE | **(ADMIN)**
 
 #### Bookings & Transactions
 api/v1/
