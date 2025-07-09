@@ -50,7 +50,7 @@ api/v1/
   "title": "example",
   "synopsis": "example",
   "director": "example",
-  "duration": "2:30",
+  "duration": "2h 30m",
   "rating": "16+",
   "language": "English",
   "subtitle": "Indonesia",
@@ -58,7 +58,7 @@ api/v1/
   "trailer_url": "example",
   "release_date": "2021-09-07",
   "status": "coming_soon",
-  "movie_genres": [4]
+  "movie_genres": "1,2,3"
   }
   ```
 - **movies/** GET | **(USER & ADMIN)**

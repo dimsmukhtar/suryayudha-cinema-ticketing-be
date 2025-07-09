@@ -6,89 +6,108 @@ interface SeatData {
   studio_id: number
 }
 
-// seat for studio 1, total 155 seat
-const seatsDataForStudio1: SeatData[] = []
-const studioId1: number = 1
+async function main() {
+  logger.info('✅ Starting the seed script ✅')
 
-for (let i = 1; i <= 15; i++) {
-  seatsDataForStudio1.push({
-    seat_label: `A${i}`,
-    studio_id: studioId1
+  logger.info('Creating 3 studio...⌛')
+  const studio1 = await prisma.studio.create({
+    data: {
+      name: 'Cinema 1'
+    }
   })
-}
+  const studio2 = await prisma.studio.create({
+    data: {
+      name: 'Cinema 2'
+    }
+  })
+  const studio3 = await prisma.studio.create({
+    data: {
+      name: 'Cinema 3'
+    }
+  })
+  // seat for studio 1, total 155 seat
+  const seatsDataForStudio1: SeatData[] = []
+  const studioId1: number = studio1.id
 
-const restColumnStudio1 = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
-restColumnStudio1.forEach((column) => {
-  for (let i = 1; i <= 14; i++) {
+  logger.info('Creating seats for studio 1...⌛')
+  for (let i = 1; i <= 15; i++) {
     seatsDataForStudio1.push({
-      seat_label: `${column}${i}`,
+      seat_label: `A${i}`,
       studio_id: studioId1
     })
   }
-})
-
-// seat for studio 2, total 168 seat
-const seatsDataForStudio2: SeatData[] = []
-const studioId2: number = 2
-
-const columnStudio2 = ['A', 'B']
-columnStudio2.forEach((column) => {
-  for (let i = 1; i <= 12; i++) {
-    seatsDataForStudio2.push({
-      seat_label: `${column}${i}`,
-      studio_id: studioId2
-    })
-  }
-})
-
-const restColumnStudio2 = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
-restColumnStudio2.forEach((column) => {
-  for (let i = 1; i <= 16; i++) {
-    seatsDataForStudio2.push({
-      seat_label: `${column}${i}`,
-      studio_id: studioId2
-    })
-  }
-})
-
-// seat for studio 3, total 156 seat
-const seatsDataForStudio3: SeatData[] = []
-const studioId3: number = 3
-
-for (let i = 1; i <= 14; i++) {
-  seatsDataForStudio3.push({
-    seat_label: `A${i}`,
-    studio_id: studioId3
+  const restColumnStudio1 = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+  restColumnStudio1.forEach((column) => {
+    for (let i = 1; i <= 14; i++) {
+      seatsDataForStudio1.push({
+        seat_label: `${column}${i}`,
+        studio_id: studioId1
+      })
+    }
   })
-}
 
-for (let i = 1; i <= 12; i++) {
-  seatsDataForStudio3.push({
-    seat_label: `G${i}`,
-    studio_id: studioId3
+  // seat for studio 2, total 168 seat
+  const seatsDataForStudio2: SeatData[] = []
+  const studioId2: number = studio2.id
+
+  logger.info('Creating seats for studio 2...⌛')
+  const columnStudio2 = ['A', 'B']
+  columnStudio2.forEach((column) => {
+    for (let i = 1; i <= 12; i++) {
+      seatsDataForStudio2.push({
+        seat_label: `${column}${i}`,
+        studio_id: studioId2
+      })
+    }
   })
-}
+  const restColumnStudio2 = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+  restColumnStudio2.forEach((column) => {
+    for (let i = 1; i <= 16; i++) {
+      seatsDataForStudio2.push({
+        seat_label: `${column}${i}`,
+        studio_id: studioId2
+      })
+    }
+  })
 
-const restColumnStudio3 = ['B', 'C', 'D', 'E', 'F', 'H', 'I', 'J', 'K', 'L']
-restColumnStudio3.forEach((column) => {
-  for (let i = 1; i <= 13; i++) {
+  // seat for studio 3, total 156 seat
+  const seatsDataForStudio3: SeatData[] = []
+  const studioId3: number = studio3.id
+
+  logger.info('Creating seats for studio 3...⌛')
+  for (let i = 1; i <= 14; i++) {
     seatsDataForStudio3.push({
-      seat_label: `${column}${i}`,
+      seat_label: `A${i}`,
       studio_id: studioId3
     })
   }
-})
+  for (let i = 1; i <= 12; i++) {
+    seatsDataForStudio3.push({
+      seat_label: `G${i}`,
+      studio_id: studioId3
+    })
+  }
+  const restColumnStudio3 = ['B', 'C', 'D', 'E', 'F', 'H', 'I', 'J', 'K', 'L']
+  restColumnStudio3.forEach((column) => {
+    for (let i = 1; i <= 13; i++) {
+      seatsDataForStudio3.push({
+        seat_label: `${column}${i}`,
+        studio_id: studioId3
+      })
+    }
+  })
 
-const allSeats: SeatData[] = [
-  ...seatsDataForStudio1,
-  ...seatsDataForStudio2,
-  ...seatsDataForStudio3
-]
+  const allSeats: SeatData[] = [
+    ...seatsDataForStudio1,
+    ...seatsDataForStudio2,
+    ...seatsDataForStudio3
+  ]
 
-async function main() {
   await prisma.seat.createMany({
     data: allSeats
   })
+
+  logger.info('✅ Successfully Finished the seed script ✅')
 }
 
 main().catch((e) => {
