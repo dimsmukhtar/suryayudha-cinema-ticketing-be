@@ -12,17 +12,20 @@ async function main() {
   logger.info('Creating 3 studio...⌛')
   const studio1 = await prisma.studio.create({
     data: {
-      name: 'Cinema 1'
+      name: 'Cinema 1',
+      screen_placement: 'right'
     }
   })
   const studio2 = await prisma.studio.create({
     data: {
-      name: 'Cinema 2'
+      name: 'Cinema 2',
+      screen_placement: 'left'
     }
   })
   const studio3 = await prisma.studio.create({
     data: {
-      name: 'Cinema 3'
+      name: 'Cinema 3',
+      screen_placement: 'right'
     }
   })
   // seat for studio 1, total 155 seat

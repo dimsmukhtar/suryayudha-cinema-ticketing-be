@@ -8,7 +8,7 @@ import { StudioWIthGalleriesAndSeats } from '../../../infrastructure/types/entit
 export class StudioService {
   constructor(private readonly repository: StudioRepositoryPrisma) {}
 
-  async createStudio(studioData: { name: string }): Promise<Studio> {
+  async createStudio(studioData: { name: string; screen_placement: string }): Promise<Studio> {
     try {
       const studioPayloadRequest = ZodValidation.validate(StudioValidation.CREATE, studioData)
       return await this.repository.createStudio(studioPayloadRequest)
@@ -39,7 +39,10 @@ export class StudioService {
     }
   }
 
-  async updateStudio(studioId: number, studioData: { name: string }): Promise<Studio> {
+  async updateStudio(
+    studioId: number,
+    studioData: { name?: string; screen_placement?: string }
+  ): Promise<Studio> {
     try {
       const studioPayloadRequest = ZodValidation.validate(StudioValidation.UPDATE, studioData)
       return await this.repository.updateStudio(studioId, studioPayloadRequest)

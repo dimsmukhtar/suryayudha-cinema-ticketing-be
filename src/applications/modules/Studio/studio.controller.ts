@@ -42,7 +42,7 @@ export class StudioController {
 
   private createStudio = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const studioCreatePayloadRequest: { name: string } = req.body
+      const studioCreatePayloadRequest: { name: string; screen_placement: string } = req.body
       const studio = await this.service.createStudio(studioCreatePayloadRequest)
       res.status(201).json({ success: true, message: 'Studio berhasil dibuat', data: studio })
     } catch (e) {
@@ -52,7 +52,7 @@ export class StudioController {
 
   private updateStudio = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const studioUpdatePayloadRequest: { name: string } = req.body
+      const studioUpdatePayloadRequest: { name?: string; screen_placement?: string } = req.body
       const studio = await this.service.updateStudio(
         parseInt(req.params.id),
         studioUpdatePayloadRequest

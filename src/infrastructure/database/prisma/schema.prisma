@@ -191,9 +191,17 @@ model UserNotificationHides {
   @@map("UserNotificationHides")
 }
 
+enum ScreenPlacement {
+  top
+  left
+  right
+}
+
+
 model Studio {
   id Int @id @default(autoincrement())
   name String
+  screen_placement ScreenPlacement
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 

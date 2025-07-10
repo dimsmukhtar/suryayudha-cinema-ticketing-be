@@ -1,4 +1,4 @@
-import { PrismaClient, Studio, StudioGallery } from '@prisma/client'
+import { PrismaClient, ScreenPlacement, Studio, StudioGallery } from '@prisma/client'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
@@ -8,9 +8,12 @@ import { IStudioRepository, StudioWIthGalleriesAndSeats } from '../types/entitie
 export class StudioRepositoryPrisma implements IStudioRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async createStudio(studioData: { name: string }): Promise<Studio> {
+  async createStudio(studioData: { name: string; screen_placement: string }): Promise<Studio> {
     return await this.prisma.studio.create({
-      data: studioData
+      data: {
+        ...studioData,
+        screen_placement: studioData.screen_placement as ScreenPlacement
+      }
     })
   }
 
@@ -29,11 +32,22 @@ export class StudioRepositoryPrisma implements IStudioRepository {
     return studio
   }
 
-  async updateStudio(studioId: number, studioData: { name: string }): Promise<Studio> {
-    await checkExists(this.prisma.studio, studioId, 'Studio')
+  async updateStudio(
+    studioId: number,
+    studioData: { name?: string; screen_placement?: string }
+  ): Promise<Studio> {
+    const studio = await this.prisma.studio.findUnique({ where: { id: studioId } })
+    if (!studio) {
+      throw new NotFoundException(`Studio dengan id ${studioId} tidak ditemukan`)
+    }
     return await this.prisma.studio.update({
       where: { id: studioId },
-      data: studioData
+      data: {
+        ...(studioData.name && { name: studioData.name }),
+        ...(studioData.screen_placement && {
+          screen_placement: studioData.screen_placement as ScreenPlacement
+        })
+      }
     })
   }
 
