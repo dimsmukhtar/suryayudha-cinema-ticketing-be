@@ -3,7 +3,7 @@ import { logger } from '../../shared/utils/logger'
 
 interface SeatData {
   seat_label: string
-  studio_id: number
+  studio_id: string
 }
 
 async function main() {
@@ -12,25 +12,28 @@ async function main() {
   logger.info('Creating 3 studio...⌛')
   const studio1 = await prisma.studio.create({
     data: {
+      id: 'cinema-1',
       name: 'Cinema 1',
       screen_placement: 'right'
     }
   })
   const studio2 = await prisma.studio.create({
     data: {
+      id: 'cinema-2',
       name: 'Cinema 2',
       screen_placement: 'left'
     }
   })
   const studio3 = await prisma.studio.create({
     data: {
+      id: 'cinema-3',
       name: 'Cinema 3',
       screen_placement: 'right'
     }
   })
   // seat for studio 1, total 155 seat
   const seatsDataForStudio1: SeatData[] = []
-  const studioId1: number = studio1.id
+  const studioId1: string = studio1.id
 
   logger.info('Creating seats for studio 1...⌛')
   for (let i = 1; i <= 15; i++) {
@@ -51,7 +54,7 @@ async function main() {
 
   // seat for studio 2, total 168 seat
   const seatsDataForStudio2: SeatData[] = []
-  const studioId2: number = studio2.id
+  const studioId2: string = studio2.id
 
   logger.info('Creating seats for studio 2...⌛')
   const columnStudio2 = ['A', 'B']
@@ -75,7 +78,7 @@ async function main() {
 
   // seat for studio 3, total 156 seat
   const seatsDataForStudio3: SeatData[] = []
-  const studioId3: number = studio3.id
+  const studioId3: string = studio3.id
 
   logger.info('Creating seats for studio 3...⌛')
   for (let i = 1; i <= 14; i++) {

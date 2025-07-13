@@ -33,7 +33,7 @@ export class StudioController {
 
   private getStudioById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const studio = await this.service.getStudioById(parseInt(req.params.id))
+      const studio = await this.service.getStudioById(req.params.id)
       res.status(200).json({ success: true, message: 'Studio berhasil diambil', data: studio })
     } catch (e) {
       next(e)
@@ -42,7 +42,8 @@ export class StudioController {
 
   private createStudio = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const studioCreatePayloadRequest: { name: string; screen_placement: string } = req.body
+      const studioCreatePayloadRequest: { id: string; name: string; screen_placement: string } =
+        req.body
       const studio = await this.service.createStudio(studioCreatePayloadRequest)
       res.status(201).json({ success: true, message: 'Studio berhasil dibuat', data: studio })
     } catch (e) {
@@ -52,11 +53,9 @@ export class StudioController {
 
   private updateStudio = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const studioUpdatePayloadRequest: { name?: string; screen_placement?: string } = req.body
-      const studio = await this.service.updateStudio(
-        parseInt(req.params.id),
-        studioUpdatePayloadRequest
-      )
+      const studioUpdatePayloadRequest: { id?: string; name?: string; screen_placement?: string } =
+        req.body
+      const studio = await this.service.updateStudio(req.params.id, studioUpdatePayloadRequest)
       res.status(200).json({ success: true, message: 'Studio berhasil diupdate', data: studio })
     } catch (e) {
       next(e)
@@ -65,7 +64,7 @@ export class StudioController {
 
   private deleteStudio = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.service.deleteStudio(parseInt(req.params.id))
+      await this.service.deleteStudio(req.params.id)
       res.status(200).json({ success: true, message: 'Studio berhasil dihapus' })
     } catch (e) {
       next(e)
@@ -74,7 +73,7 @@ export class StudioController {
 
   private uploadStudioPhotos = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const studioId = parseInt(req.params.id)
+      const studioId = req.params.id
       const files = req.files as Express.Multer.File[]
       await this.service.uploadStudioPhotos(studioId, files)
       res.status(200).json({ success: true, message: 'Foto studio berhasil diupload' })

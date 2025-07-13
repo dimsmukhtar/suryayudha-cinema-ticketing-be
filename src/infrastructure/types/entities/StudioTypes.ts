@@ -12,12 +12,15 @@ export type StudioWIthGalleriesAndSeats = Prisma.StudioGetPayload<{
 }>
 
 export interface IStudioRepository {
-  createStudio(studioData: { name: string }): Promise<Studio>
+  createStudio(studioData: { id: string; name: string; screen_placement: string }): Promise<Studio>
   getAllStudios(): Promise<Studio[]>
-  getStudioById(studioId: number): Promise<StudioWIthGalleriesAndSeats>
-  updateStudio(studioId: number, studioData: { name: string }): Promise<Studio>
-  deleteStudio(studioId: number): Promise<void>
-  uploadStudioPhotos(studioId: number, photos: Express.Multer.File[]): Promise<void>
+  getStudioById(studioId: string): Promise<StudioWIthGalleriesAndSeats>
+  updateStudio(
+    studioId: string,
+    studioData: { id?: string; name?: string; screen_placement?: string }
+  ): Promise<Studio>
+  deleteStudio(studioId: string): Promise<void>
+  uploadStudioPhotos(studioId: string, photos: Express.Multer.File[]): Promise<void>
   deletePhotoFromImageKit(photoId: number): Promise<void>
   getAllPhotos(): Promise<StudioGallery[]>
 }

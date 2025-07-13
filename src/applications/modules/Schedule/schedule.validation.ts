@@ -5,9 +5,9 @@ export class ScheduleValidation {
       required_error: 'Movie ID harus diisi',
       invalid_type_error: 'Movie ID harus berupa number'
     }),
-    studio_id: z.number({
+    studio_id: z.string({
       required_error: 'Studio ID harus diisi',
-      invalid_type_error: 'Studio ID harus berupa number'
+      invalid_type_error: 'Studio ID harus berupa string'
     }),
     price: z.number({
       required_error: 'Harga harus diisi',

@@ -1,3 +1,5 @@
+import { SeatStatus } from '@prisma/client'
+
 // prettier-ignore
 const cinema1LayoutTemplate: (string | null)[][] = [
   ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15'],
@@ -51,3 +53,44 @@ const cinema3LayoutTemplate: (string | null)[][] = [
   ['A13','B12','C12', 'D12','E12','F12','G12','H12','I12','J12','K12', 'L12'],
   ['A14','B13','C13', 'D13','E13','F13', null,'H13','I13','J13','K13', 'L13']
 ]
+
+type CombinedSeatData = {
+  seatId: number
+  label: string
+  status: SeatStatus
+}
+
+export const transformSeatsLayout = (
+  combinedSeatData: CombinedSeatData[],
+  studioId: string
+): (CombinedSeatData | null)[][] => {
+  let template: (string | null)[][]
+
+  switch (studioId) {
+    case 'cinema-1':
+      template = cinema1LayoutTemplate
+      break
+    case 'cinema-2':
+      template = cinema2LayoutTemplate
+      break
+    case 'cinema-3':
+      template = cinema3LayoutTemplate
+      break
+    default:
+      return []
+  }
+
+  const seatMap = new Map<string, CombinedSeatData>()
+  combinedSeatData.forEach((seat) => seatMap.set(seat.label, seat))
+
+  const finalLayout = template.map((row) =>
+    row.map((seatLabel) => {
+      if (seatLabel === null) {
+        return null
+      }
+
+      return seatMap.get(seatLabel) || null
+    })
+  )
+  return finalLayout
+}

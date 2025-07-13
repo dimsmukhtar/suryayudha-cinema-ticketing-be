@@ -6,6 +6,7 @@ import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { ScheduleWithScheduleSeats } from '../types/entities/ScheduleTypes'
 import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
+import { transformSeatsLayout } from '../../shared/helpers/seatsLayout'
 
 export class ScheduleRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -151,12 +152,11 @@ export class ScheduleRepositoryPrisma {
   }
 
   async getScheduleLayout(scheduleId: number) {
-    // Langkah 1: Ambil data utama (jadwal, film, dan studio)
     const schedule = await this.prisma.schedule.findUnique({
       where: { id: scheduleId },
       include: {
         movie: { select: { title: true } },
-        studio: { select: { name: true } }
+        studio: { select: { name: true, screen_placement: true } }
       }
     })
 
@@ -164,56 +164,37 @@ export class ScheduleRepositoryPrisma {
       throw new NotFoundException(`Jadwal dengan id ${scheduleId} tidak ditemukan`)
     }
 
-    // Langkah 2: Ambil semua kursi fisik yang ada di studio tersebut
     const allStudioSeats = await this.prisma.seat.findMany({
-      where: { studio_id: schedule.studio_id },
-      orderBy: { seat_label: 'asc' }
+      where: { studio_id: schedule.studio_id }
     })
 
-    // Langkah 3: Ambil status kursi yang sudah terisi untuk jadwal ini
     const bookedOrReservedSeats = await this.prisma.scheduleSeat.findMany({
-      where: { schedule_id: scheduleId }
+      where: { schedule_id: scheduleId, status: { not: 'available' } }
     })
 
-    // Langkah 4: Buat Peta (Map) untuk pencarian status yang cepat
-    // Key: seat_id, Value: status
     const seatStatusMap = new Map<number, SeatStatus>()
     bookedOrReservedSeats.forEach((seat) => {
       seatStatusMap.set(seat.seat_id, seat.status)
     })
 
-    // Langkah 5: Gabungkan data kursi fisik dengan statusnya
     const combinedSeatData = allStudioSeats.map((seat) => ({
       seatId: seat.id,
       label: seat.seat_label,
-      // Jika kursi ada di map, gunakan statusnya. Jika tidak, berarti 'available'.
       status: seatStatusMap.get(seat.id) || SeatStatus.available
     }))
 
-    // Langkah 6 (Opsional tapi SANGAT direkomendasikan): Transformasi ke Grid 2D
-    // Di sini kita akan mengelompokkan kursi berdasarkan barisnya (A, B, C, dst.)
-    const layoutGrid: Record<string, typeof combinedSeatData> = {}
-    combinedSeatData.forEach((seat) => {
-      const row = seat.label.charAt(0) // Ambil huruf pertama sebagai baris
-      if (!layoutGrid[row]) {
-        layoutGrid[row] = []
-      }
-      layoutGrid[row].push(seat)
-    })
+    const finalSeatLayout = transformSeatsLayout(combinedSeatData, schedule.studio_id)
 
-    // Langkah 7: Siapkan data final untuk dikirim
     const responseData = {
       schedule: {
         id: schedule.id,
         movieTitle: schedule.movie.title,
         studioName: schedule.studio.name,
         startTime: schedule.start_time,
-        price: schedule.price
+        price: schedule.price,
+        screenPlacement: schedule.studio.screen_placement
       },
-      // Kirim layout sebagai array dari array agar urutannya terjaga
-      seatLayout: Object.keys(layoutGrid)
-        .sort()
-        .map((row) => layoutGrid[row])
+      seatLayout: finalSeatLayout
     }
 
     return responseData

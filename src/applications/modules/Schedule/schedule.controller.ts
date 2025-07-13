@@ -24,8 +24,7 @@ export class ScheduleController {
       const createSchedulePayload: SchedulePayload = {
         ...req.body,
         price: parseInt(req.body.price),
-        movie_id: parseInt(req.body.movie_id),
-        studio_id: parseInt(req.body.studio_id)
+        movie_id: parseInt(req.body.movie_id)
       }
       const userId = req.user!.id
       const schedule = await this.service.createSchedule(createSchedulePayload, userId)
@@ -65,8 +64,8 @@ export class ScheduleController {
 
   private getScheduleLayout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { seatLayout } = await this.service.getScheduleLayout(parseInt(req.params.id))
-      res.status(200).json({ success: true, message: 'Schedule Seats diambil', data: seatLayout })
+      const schedule = await this.service.getScheduleLayout(parseInt(req.params.id))
+      res.status(200).json({ success: true, message: 'Schedule Seats diambil', data: schedule })
     } catch (e) {
       next(e)
     }

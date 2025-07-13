@@ -126,17 +126,18 @@ api/v1/
 api/v1/
 - **schedules/** POST | **(ADMIN)**
  ```req.body = start_time,price,movie_id,studio_id```
-- **schedules/** GET | **(USER * ADMIN)**
-- **schedules/:id** GET | **(USER * ADMIN)**
+- **schedules/** GET | **(USER & ADMIN)**
+- **schedules/:id** GET | **(USER & ADMIN)**
 - **schedules/:id** DELETE | **(ADMIN)**
+- **schedules/:id/seats** get | **(USER & ADMIN)**
 - **schedules/:id/seats** PATCH | **(ADMIN)**
- ```req.body = status,schedule_id,seat_id```
+ ```req.body = status```
 
 #### Bookings & Transactions
 api/v1/
 - **transactions/** POST | **(USER)**
  ```req.body = schedule_id,seat_ids example [A2,A3],voucher_code```
-- **transactions/:id/proceed** POST | **(USER)**
+- **transactions/:id/pay** POST | **(USER)**
 - **payments/callback** POST | **(MIDTRANS)**
 - **transactions/my** GET | **(USER)**
 - **transactions/** GET | **(ADMIN)**

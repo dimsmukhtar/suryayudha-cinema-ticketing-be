@@ -8,7 +8,11 @@ import { IStudioRepository, StudioWIthGalleriesAndSeats } from '../types/entitie
 export class StudioRepositoryPrisma implements IStudioRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async createStudio(studioData: { name: string; screen_placement: string }): Promise<Studio> {
+  async createStudio(studioData: {
+    id: string
+    name: string
+    screen_placement: string
+  }): Promise<Studio> {
     return await this.prisma.studio.create({
       data: {
         ...studioData,
@@ -21,7 +25,7 @@ export class StudioRepositoryPrisma implements IStudioRepository {
     return await this.prisma.studio.findMany()
   }
 
-  async getStudioById(studioId: number): Promise<StudioWIthGalleriesAndSeats> {
+  async getStudioById(studioId: string): Promise<StudioWIthGalleriesAndSeats> {
     const studio = await this.prisma.studio.findUnique({
       where: { id: studioId },
       include: { galleries: true, seats: true }
@@ -33,8 +37,8 @@ export class StudioRepositoryPrisma implements IStudioRepository {
   }
 
   async updateStudio(
-    studioId: number,
-    studioData: { name?: string; screen_placement?: string }
+    studioId: string,
+    studioData: { id?: string; name?: string; screen_placement?: string }
   ): Promise<Studio> {
     const studio = await this.prisma.studio.findUnique({ where: { id: studioId } })
     if (!studio) {
@@ -43,6 +47,7 @@ export class StudioRepositoryPrisma implements IStudioRepository {
     return await this.prisma.studio.update({
       where: { id: studioId },
       data: {
+        ...(studioData.id && { id: studioData.id }),
         ...(studioData.name && { name: studioData.name }),
         ...(studioData.screen_placement && {
           screen_placement: studioData.screen_placement as ScreenPlacement
@@ -51,12 +56,12 @@ export class StudioRepositoryPrisma implements IStudioRepository {
     })
   }
 
-  async deleteStudio(studioId: number): Promise<void> {
+  async deleteStudio(studioId: string): Promise<void> {
     await checkExists(this.prisma.studio, studioId, 'Studio')
     await this.prisma.studio.delete({ where: { id: studioId } })
   }
 
-  async uploadStudioPhotos(studioId: number, photos: Express.Multer.File[]): Promise<void> {
+  async uploadStudioPhotos(studioId: string, photos: Express.Multer.File[]): Promise<void> {
     await checkExists(this.prisma.studio, studioId, 'Studio')
     if (!photos || photos.length === 0) {
       throw new BadRequestException('Tidak ada foto yang diupload')

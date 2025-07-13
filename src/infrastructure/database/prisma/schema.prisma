@@ -199,7 +199,7 @@ enum ScreenPlacement {
 
 
 model Studio {
-  id Int @id @default(autoincrement())
+  id String @id
   name String
   screen_placement ScreenPlacement
   created_at DateTime @default(now())
@@ -216,7 +216,7 @@ model StudioGallery {
   id Int @id @default(autoincrement())
   photo_url String
   photo_id String
-  studio_id Int
+  studio_id String
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
@@ -228,7 +228,7 @@ model StudioGallery {
 model Seat {
   id Int @id @default(autoincrement())
   seat_label String
-  studio_id Int
+  studio_id String
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt 
 
@@ -246,7 +246,7 @@ model Schedule {
   price Int
   created_by_id Int
   movie_id Int
-  studio_id Int
+  studio_id String
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt  
 

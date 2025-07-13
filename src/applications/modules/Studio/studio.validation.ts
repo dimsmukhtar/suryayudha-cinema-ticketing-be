@@ -2,6 +2,10 @@ import { z, ZodType } from 'zod'
 
 export class StudioValidation {
   static readonly CREATE: ZodType = z.object({
+    id: z.string({
+      required_error: 'Studio ID harus diisi',
+      invalid_type_error: 'Studio ID harus berupa string'
+    }),
     name: z
       .string({
         required_error: 'Studio name harus diisi',
@@ -15,6 +19,12 @@ export class StudioValidation {
   })
 
   static readonly UPDATE: ZodType = z.object({
+    id: z
+      .string({
+        required_error: 'Studio ID harus diisi',
+        invalid_type_error: 'Studio ID harus berupa string'
+      })
+      .optional(),
     name: z
       .string({
         invalid_type_error: 'Studio name harus berupa string'
