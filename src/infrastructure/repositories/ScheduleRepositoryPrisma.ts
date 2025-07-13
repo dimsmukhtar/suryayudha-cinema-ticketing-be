@@ -168,20 +168,32 @@ export class ScheduleRepositoryPrisma {
       where: { studio_id: schedule.studio_id }
     })
 
-    const bookedOrReservedSeats = await this.prisma.scheduleSeat.findMany({
-      where: { schedule_id: scheduleId, status: { not: 'available' } }
+    const allScheduleSeats = await this.prisma.scheduleSeat.findMany({
+      where: { schedule_id: scheduleId }
     })
 
-    const seatStatusMap = new Map<number, SeatStatus>()
-    bookedOrReservedSeats.forEach((seat) => {
-      seatStatusMap.set(seat.seat_id, seat.status)
+    const seatStatusMap = new Map<number, { id: number; status: SeatStatus }>()
+    allScheduleSeats.forEach((scheduleSeat) => {
+      seatStatusMap.set(scheduleSeat.seat_id, { id: scheduleSeat.id, status: scheduleSeat.status })
     })
 
-    const combinedSeatData = allStudioSeats.map((seat) => ({
-      seatId: seat.id,
-      label: seat.seat_label,
-      status: seatStatusMap.get(seat.id) || SeatStatus.available
-    }))
+    const combinedSeatData = allStudioSeats.map((seat) => {
+      const seatInfo = seatStatusMap.get(seat.id)
+      if (!seatInfo) {
+        return {
+          seatId: seat.id,
+          scheduleSeatId: null,
+          label: seat.seat_label,
+          status: SeatStatus.available
+        }
+      }
+      return {
+        seatId: seat.id,
+        scheduleSeatId: seatInfo.id,
+        label: seat.seat_label,
+        status: seatInfo.status
+      }
+    })
 
     const finalSeatLayout = transformSeatsLayout(combinedSeatData, schedule.studio_id)
 
@@ -199,4 +211,6 @@ export class ScheduleRepositoryPrisma {
 
     return responseData
   }
+
+  // async updateScheduleSeatStatus(seatId: number, status: SeatStatus)
 }

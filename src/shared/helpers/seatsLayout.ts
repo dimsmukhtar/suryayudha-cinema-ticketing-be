@@ -56,6 +56,7 @@ const cinema3LayoutTemplate: (string | null)[][] = [
 
 type CombinedSeatData = {
   seatId: number
+  scheduleSeatId: number | null
   label: string
   status: SeatStatus
 }
