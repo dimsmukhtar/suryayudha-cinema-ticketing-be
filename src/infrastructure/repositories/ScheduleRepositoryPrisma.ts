@@ -1,4 +1,11 @@
-import { MovieStatus, Prisma, PrismaClient, Schedule, SeatStatus } from '@prisma/client'
+import {
+  MovieStatus,
+  Prisma,
+  PrismaClient,
+  Schedule,
+  ScheduleSeat,
+  SeatStatus
+} from '@prisma/client'
 import { SchedulePayload, ScheduleQuery } from '../../infrastructure/types/entities/ScheduleTypes'
 import { parseDurationToMinutes } from '../../shared/helpers/parseDuration'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
@@ -111,12 +118,9 @@ export class ScheduleRepositoryPrisma {
     })
   }
 
-  async getScheduleById(scheduleId: number): Promise<ScheduleWithScheduleSeats> {
+  async getScheduleById(scheduleId: number): Promise<Schedule> {
     const schedule = await this.prisma.schedule.findUnique({
-      where: { id: scheduleId },
-      include: {
-        schedule_seats: true
-      }
+      where: { id: scheduleId }
     })
 
     if (!schedule) {
@@ -212,5 +216,11 @@ export class ScheduleRepositoryPrisma {
     return responseData
   }
 
-  // async updateScheduleSeatStatus(seatId: number, status: SeatStatus)
+  async updateScheduleSeatStatus(scheduleSeatId: number, status: string): Promise<ScheduleSeat> {
+    await checkExists(this.prisma.scheduleSeat, scheduleSeatId, 'Schedule Seat')
+    return await this.prisma.scheduleSeat.update({
+      where: { id: scheduleSeatId },
+      data: { status: status as SeatStatus }
+    })
+  }
 }

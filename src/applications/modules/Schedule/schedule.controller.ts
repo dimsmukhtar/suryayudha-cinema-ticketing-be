@@ -17,6 +17,7 @@ export class ScheduleController {
     this.scheduleRouter.get('/:id', this.getScheduleById)
     this.scheduleRouter.delete('/:id', this.deleteSchedule)
     this.scheduleRouter.get('/:id/seats', this.getScheduleLayout)
+    this.scheduleRouter.put('/seats/:id', this.updateScheduleSeatStatus)
   }
 
   private createSchedule = async (req: Request, res: Response, next: NextFunction) => {
@@ -66,6 +67,20 @@ export class ScheduleController {
     try {
       const schedule = await this.service.getScheduleLayout(parseInt(req.params.id))
       res.status(200).json({ success: true, message: 'Schedule Seats diambil', data: schedule })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private updateScheduleSeatStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const schedule = await this.service.updateScheduleSeatStatus(
+        parseInt(req.params.id),
+        req.body.status
+      )
+      res
+        .status(200)
+        .json({ success: true, message: 'Schedule Seat status berhasil di update', data: schedule })
     } catch (e) {
       next(e)
     }

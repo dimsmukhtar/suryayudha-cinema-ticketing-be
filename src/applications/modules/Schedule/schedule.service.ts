@@ -1,4 +1,4 @@
-import { Schedule } from '@prisma/client'
+import { Schedule, ScheduleSeat, SeatStatus } from '@prisma/client'
 import { ScheduleRepositoryPrisma } from '../../../infrastructure/repositories/ScheduleRepositoryPrisma'
 import {
   SchedulePayload,
@@ -8,6 +8,7 @@ import {
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { ScheduleValidation } from './schedule.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
+import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 
 export class ScheduleService {
   constructor(private readonly repository: ScheduleRepositoryPrisma) {}
@@ -33,7 +34,7 @@ export class ScheduleService {
     }
   }
 
-  async getScheduleById(scheduleId: number): Promise<ScheduleWithScheduleSeats> {
+  async getScheduleById(scheduleId: number): Promise<Schedule> {
     try {
       return await this.repository.getScheduleById(scheduleId)
     } catch (e) {
@@ -59,6 +60,24 @@ export class ScheduleService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil layout jadwal'
+      })
+    }
+  }
+
+  async updateScheduleSeatStatus(scheduleSeatId: number, status: string): Promise<ScheduleSeat> {
+    try {
+      const validSeatStatus: SeatStatus[] = [
+        SeatStatus.booked,
+        SeatStatus.reserved,
+        SeatStatus.available
+      ]
+      if (!validSeatStatus.includes(status as SeatStatus)) {
+        throw new BadRequestException('Invalid seat status')
+      }
+      return await this.repository.updateScheduleSeatStatus(scheduleSeatId, status)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengupdate schedule seat status'
       })
     }
   }

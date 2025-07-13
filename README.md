@@ -130,7 +130,7 @@ api/v1/
 - **schedules/:id** GET | **(USER & ADMIN)**
 - **schedules/:id** DELETE | **(ADMIN)**
 - **schedules/:id/seats** get | **(USER & ADMIN)**
-- **schedules/:id/seats** PATCH | **(ADMIN)**
+- **schedules/seats/:id** PATCH | **(ADMIN)**
  ```req.body = status```
 
 #### Bookings & Transactions
