@@ -52,7 +52,7 @@ export class MovieController {
 
   private getAllMovies = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const movies = await this.service.getAllMovies()
+      const movies = await this.service.getAllMovies(req.query)
       res.status(200).json({ success: true, message: 'Semua film berhasil diambil', data: movies })
     } catch (e) {
       next(e)

@@ -4,6 +4,7 @@ import { CustomHandleError } from '../../../shared/error-handling/middleware/cus
 import {
   MoviePayload,
   MoviePayloadUpdate,
+  MovieQuery,
   MovieWithRelations
 } from '../../../infrastructure/types/entities/MovieTypes'
 import { MovieValidation } from './movie.validation'
@@ -27,9 +28,9 @@ export class MovieService {
     }
   }
 
-  async getAllMovies(): Promise<Movie[]> {
+  async getAllMovies(query: MovieQuery): Promise<Movie[]> {
     try {
-      return await this.repository.getAllMovies()
+      return await this.repository.getAllMovies(query)
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil semua film'

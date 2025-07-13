@@ -1,6 +1,6 @@
-import { Movie, PrismaClient } from '@prisma/client'
+import { Movie, MovieStatus, Prisma, PrismaClient } from '@prisma/client'
 import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
-import { MoviePayload, MoviePayloadUpdate } from '../types/entities/MovieTypes'
+import { MoviePayload, MoviePayloadUpdate, MovieQuery } from '../types/entities/MovieTypes'
 import { IMovieRepository, MovieWithRelations } from '../types/entities/MovieTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
@@ -52,8 +52,45 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     })
   }
 
-  async getAllMovies(): Promise<Movie[]> {
-    return await this.prisma.movie.findMany()
+  async getAllMovies(query: MovieQuery): Promise<Movie[]> {
+    const where: Prisma.MovieWhereInput = {}
+    if (query.title) {
+      where.title = {
+        contains: query.title,
+        mode: 'insensitive'
+      }
+    }
+
+    if (query.status) {
+      where.status = query.status as MovieStatus
+    }
+
+    if (query.genre) {
+      const genreNames = query.genre.split(',').map((g) => g.trim())
+      where.movie_genres = {
+        some: {
+          genre: {
+            name: {
+              in: genreNames,
+              mode: 'insensitive'
+            }
+          }
+        }
+      }
+    }
+    return await this.prisma.movie.findMany({
+      where,
+      include: {
+        movie_genres: {
+          include: {
+            genre: true
+          }
+        }
+      },
+      orderBy: {
+        release_date: 'desc'
+      }
+    })
   }
 
   async getMovieById(movieId: number): Promise<MovieWithRelations> {

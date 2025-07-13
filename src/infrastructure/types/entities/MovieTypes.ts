@@ -14,6 +14,12 @@ export type MoviePayload = {
   status: 'coming_soon' | 'now_showing' | 'ended'
 }
 
+export type MovieQuery = {
+  title?: string
+  status?: string
+  genre?: string
+}
+
 export type MoviePayloadUpdate = Partial<MoviePayload>
 
 export type MovieResponse = MoviePayload
@@ -50,7 +56,7 @@ export type MovieWithRelations = Prisma.MovieGetPayload<{
 
 export interface IMovieRepository {
   createMovie(movieData: MoviePayload, userId: number, movie_genres?: number[]): Promise<Movie>
-  getAllMovies(): Promise<Movie[]>
+  getAllMovies(query: MovieQuery): Promise<Movie[]>
   getMovieById(movieId: number): Promise<MovieWithRelations>
   updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie>
   deleteMovie(movieId: number): Promise<void>
