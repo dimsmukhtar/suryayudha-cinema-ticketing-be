@@ -136,7 +136,7 @@ api/v1/
 #### Bookings & Transactions
 api/v1/
 - **transactions/** POST | **(USER)**
- ```req.body = schedule_id,seat_ids example [A2,A3],voucher_code```
+ ```req.body = schedule_id,seat_ids example [A2,A3]```
 - **transactions/:id/pay** POST | **(USER)**
 - **payments/callback** POST | **(MIDTRANS)**
 - **transactions/my** GET | **(USER)**
@@ -154,11 +154,11 @@ api/v1/
 #### Vouchers
 api/v1/
 - **vouchers/** POST | **(ADMIN)**
- ```req.body = code,type,value,expires_at,usage_limit,usage_count,min_purchase_amount```
+ ```req.body = code,type,value,expires_at,usage_limit,min_purchase_amount```
 - **vouchers/** GET | **(ADMIN)**
 - **vouchers/:id** GET | **(ADMIN)**
 - **vouchers/:id** PATCH | **(ADMIN)**
- ```req.body = code,type,value,expires_at,usage_limit,usage_count,min_purchase_amount```
+ ```req.body = code,type,value,expires_at,usage_limit,min_purchase_amount```
 - **vouchers/:id** DELETE | **(ADMIN)**
 
 #### Database Diagram
