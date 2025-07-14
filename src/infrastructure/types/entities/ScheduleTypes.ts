@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, ScreenPlacement, SeatStatus } from '@prisma/client'
 
 export type SchedulePayload = {
   price: number

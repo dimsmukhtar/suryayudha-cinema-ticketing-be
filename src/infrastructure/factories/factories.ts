@@ -20,6 +20,9 @@ import { StudioController } from '../../applications/modules/Studio/studio.contr
 import { ScheduleRepositoryPrisma } from '../repositories/ScheduleRepositoryPrisma'
 import { ScheduleService } from '../../applications/modules/Schedule/schedule.service'
 import { ScheduleController } from '../../applications/modules/Schedule/schedule.controller'
+import { VoucherRepositoryPrisma } from '../repositories/VoucherRepositoryPrisma'
+import { VoucherService } from '../../applications/modules/Voucher/voucher.service'
+import { VoucherController } from '../../applications/modules/Voucher/voucher.controller'
 
 export const factoriesMovieController = () => {
   const repository = new MovieRepositoryPrisma(prisma)
@@ -61,4 +64,10 @@ export const factoriesScheduleController = () => {
   const repository = new ScheduleRepositoryPrisma(prisma)
   const service = new ScheduleService(repository)
   return new ScheduleController(service)
+}
+
+export const factoriesVoucherController = () => {
+  const repository = new VoucherRepositoryPrisma(prisma)
+  const service = new VoucherService(repository)
+  return new VoucherController(service)
 }
