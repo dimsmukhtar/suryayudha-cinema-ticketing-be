@@ -5,9 +5,13 @@ import { BadRequestException } from '../../shared/error-handling/exceptions/bad-
 export class TransactionRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async createBooking(scheduleId: number, userId: number, seatIds: number[]): Promise<Transaction> {
-    if (!Array.isArray(seatIds) || seatIds.length === 0) {
-      throw new BadRequestException('Kursi tidak boleh kosong')
+  async createBooking(
+    scheduleId: number,
+    userId: number,
+    scheduleSeatIds: number[]
+  ): Promise<Transaction> {
+    if (!Array.isArray(scheduleSeatIds) || scheduleSeatIds.length === 0) {
+      throw new BadRequestException('Pilihan kursi tidak boleh kosong')
     }
     return await this.prisma.$transaction(async (tx) => {
       const schedule = await tx.schedule.findFirst({
@@ -19,22 +23,13 @@ export class TransactionRepositoryPrisma {
         throw new NotFoundException(`Schedule dengan id ${scheduleId} tidak ditemukan`)
       }
 
-      const totalBookingSeats = seatIds.length
+      const totalBookingSeats = scheduleSeatIds.length
       const totalAmount = totalBookingSeats * schedule.price
 
-      const seatsAvailable = await tx.scheduleSeat.count({
+      const availableSeats = await tx.scheduleSeat.findMany({
         where: {
+          id: { in: scheduleSeatIds },
           schedule_id: scheduleId,
-          status: SeatStatus.available
-        }
-      })
-      if (seatsAvailable < totalBookingSeats) {
-        throw new NotFoundException('Kursi sedang penuh')
-      }
-      const seats = await tx.scheduleSeat.findMany({
-        where: {
-          schedule_id: scheduleId,
-          id: { in: seatIds },
           status: SeatStatus.available
         },
         include: {
@@ -45,17 +40,18 @@ export class TransactionRepositoryPrisma {
           }
         }
       })
-      if (seats.length !== totalBookingSeats) {
-        throw new BadRequestException('Beberapa kursi sudah tidak tersedia')
+      if (availableSeats.length !== totalBookingSeats) {
+        throw new BadRequestException(
+          'Beberapa kursi yang Anda pilih sudah tidak tersedia. Silakan pilih ulang.'
+        )
       }
 
       await tx.scheduleSeat.updateMany({
         where: {
-          schedule_id: scheduleId,
-          id: { in: seatIds }
+          id: { in: scheduleSeatIds }
         },
         data: {
-          status: SeatStatus.booked
+          status: SeatStatus.reserved
         }
       })
 
@@ -67,7 +63,7 @@ export class TransactionRepositoryPrisma {
           total_amount: totalAmount,
           discount_amount: 0,
           final_amount: totalAmount,
-          payment_type: 'booking',
+          payment_type: 'pending',
           payment_status: 'not_initiated',
           booking_status: BookingStatus.initiated,
           transaction_time: now,
@@ -76,13 +72,18 @@ export class TransactionRepositoryPrisma {
         }
       })
 
+      const seatLabelMap = new Map<number, string>()
+      availableSeats.forEach((seat) => seatLabelMap.set(seat.id, seat.seat.seat_label))
+
+      const transactionItemData = scheduleSeatIds.map((scheduleSeatId) => ({
+        transaction_id: transaction.id,
+        schedule_seat_id: scheduleSeatId,
+        price: schedule.price,
+        seat_label: seatLabelMap.get(scheduleSeatId) || 'N/A'
+      }))
+
       await tx.transactionItem.createMany({
-        data: seatIds.map((seatId) => ({
-          transaction_id: transaction.id,
-          schedule_seat_id: seatId,
-          price: schedule.price,
-          seat_label: seats.find((seat) => seat.id === seatId)!.seat.seat_label
-        }))
+        data: transactionItemData
       })
 
       return transaction
