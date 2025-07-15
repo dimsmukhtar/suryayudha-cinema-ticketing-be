@@ -23,6 +23,12 @@ export class TransactionRepositoryPrisma {
         throw new NotFoundException(`Schedule dengan id ${scheduleId} tidak ditemukan`)
       }
 
+      const bookingToleratedMinutes = 30
+      const cutOffTime = new Date(schedule.start_time.getTime() + bookingToleratedMinutes * 60000)
+      if (new Date() > cutOffTime) {
+        throw new BadRequestException('Pemesanan online untuk jadwal ini sudah ditutup')
+      }
+
       if (schedule.finished_time < new Date()) {
         throw new BadRequestException('Jadwal film ini sudah berakhir')
       }
