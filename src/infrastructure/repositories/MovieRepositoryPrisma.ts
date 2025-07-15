@@ -1,7 +1,7 @@
 import { Movie, MovieStatus, Prisma, PrismaClient } from '@prisma/client'
 import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
 import { MoviePayload, MoviePayloadUpdate, MovieQuery } from '../types/entities/MovieTypes'
-import { IMovieRepository, MovieWithRelations } from '../types/entities/MovieTypes'
+import { IMovieRepository } from '../types/entities/MovieTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
@@ -23,7 +23,8 @@ export class MovieRepositoryPrisma implements IMovieRepository {
         }
       })
 
-      if (existingMovie) throw new ConflictException(`Film dengan id ${movieData.title} sudah ada`)
+      if (existingMovie)
+        throw new ConflictException(`Film dengan judul ${movieData.title} sudah ada`)
 
       const arrayGenreIds: number[] = Array.isArray(genreIds) ? genreIds : []
       if (arrayGenreIds.length) {
@@ -93,7 +94,7 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     })
   }
 
-  async getMovieById(movieId: number): Promise<MovieWithRelations> {
+  async getMovieById(movieId: number) {
     const movie = await this.prisma.movie.findUnique({
       where: { id: movieId },
       include: {
@@ -124,10 +125,16 @@ export class MovieRepositoryPrisma implements IMovieRepository {
         schedules: true
       }
     })
+
     if (!movie) {
       throw new NotFoundException(`Film dengan id ${movieId} tidak ditemukan`)
     }
-    return movie
+    const movie_genres = movie.movie_genres.map((mg) => mg.genre)
+    const movieData = {
+      ...movie,
+      movie_genres
+    }
+    return movieData
   }
 
   async updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {

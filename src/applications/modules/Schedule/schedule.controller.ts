@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from 'express'
 
 import { ScheduleService } from './schedule.service'
 import { SchedulePayload } from '../../../infrastructure/types/entities/ScheduleTypes'
-import { authenticate } from '../../../shared/error-handling/middleware/authenticate'
+import { authenticate } from '../../../shared/middlewares/authenticate'
 
 export class ScheduleController {
   private readonly scheduleRouter: Router

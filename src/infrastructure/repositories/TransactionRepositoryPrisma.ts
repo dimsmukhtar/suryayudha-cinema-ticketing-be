@@ -41,9 +41,7 @@ export class TransactionRepositoryPrisma {
         }
       })
       if (availableSeats.length !== totalBookingSeats) {
-        throw new BadRequestException(
-          'Beberapa kursi yang Anda pilih sudah tidak tersedia. Silakan pilih ulang.'
-        )
+        throw new BadRequestException('Beberapa kursi yang Anda pilih sudah tidak tersedia')
       }
 
       await tx.scheduleSeat.updateMany({
@@ -87,6 +85,111 @@ export class TransactionRepositoryPrisma {
       })
 
       return transaction
+    })
+  }
+
+  async getAllTransactions(): Promise<Transaction[]> {
+    return await this.prisma.transaction.findMany()
+  }
+
+  async getTransactionById(transactionId: number): Promise<Transaction> {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: {
+        id: transactionId
+      },
+      include: {
+        transaction_items: true
+      }
+    })
+    if (!transaction) {
+      throw new NotFoundException(`Transaksi dengan id ${transactionId} tidak ditemukan`)
+    }
+    return transaction
+  }
+  async getTransactionsByUserId(userId: number): Promise<Transaction[]> {
+    return await this.prisma.transaction.findMany({
+      where: {
+        user_id: userId
+      }
+    })
+  }
+
+  async applyVoucherToTransaction(
+    transactionId: number,
+    voucherCode: string
+  ): Promise<Transaction> {
+    return this.prisma.$transaction(async (tx) => {
+      const transaction = await tx.transaction.findUnique({
+        where: {
+          id: transactionId
+        }
+      })
+
+      if (!transaction) {
+        throw new NotFoundException(`Transaksi dengan id ${transactionId} tidak ditemukan`)
+      }
+
+      if (transaction.voucher_id) {
+        throw new BadRequestException('Voucher sudah diterapkan pada transaksi ini.')
+      }
+      const voucher = await tx.voucher.findUnique({
+        where: {
+          code: voucherCode
+        }
+      })
+
+      if (!voucher) {
+        throw new NotFoundException(`Voucher dengan kode ${voucherCode} tidak ditemukan`)
+      }
+
+      if (voucher.expires_at < new Date()) {
+        throw new BadRequestException('Voucher sudah kadaluarsa')
+      }
+
+      if (voucher.usage_count >= voucher.usage_limit) {
+        throw new BadRequestException('Voucher sudah tidak tersedia')
+      }
+
+      if (transaction.total_amount < voucher.min_purchase_amount) {
+        throw new BadRequestException(
+          `Minimum pembelian untuk voucher ini adalah Rp ${voucher.min_purchase_amount}`
+        )
+      }
+
+      let calculatedDiscountAmount = 0
+
+      if (voucher.type === 'percentage') {
+        calculatedDiscountAmount = transaction.total_amount * (voucher.value / 100)
+      } else {
+        // fixed
+        calculatedDiscountAmount = voucher.value
+      }
+
+      calculatedDiscountAmount = Math.min(calculatedDiscountAmount, transaction.total_amount)
+      const finalAmount = transaction.total_amount - calculatedDiscountAmount
+
+      await tx.voucher.update({
+        where: {
+          id: voucher.id
+        },
+        data: {
+          usage_count: {
+            increment: 1
+          }
+        }
+      })
+
+      const updatedTransaction = await tx.transaction.update({
+        where: {
+          id: transactionId
+        },
+        data: {
+          voucher_id: voucher.id,
+          discount_amount: calculatedDiscountAmount,
+          final_amount: finalAmount
+        }
+      })
+      return updatedTransaction
     })
   }
 }

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import { UnauthorizedException } from '../exceptions/unauthorized.exception'
-import { verifyJwtToken } from '../../../shared/utils/jwt'
-import { HttpException } from '../exceptions/http.exception'
-import { UserJwtPayload } from '../../../infrastructure/types/entities/UserTypes'
+import { UnauthorizedException } from '../error-handling/exceptions/unauthorized.exception'
+import { verifyJwtToken } from '../utils/jwt'
+import { HttpException } from '../error-handling/exceptions/http.exception'
+import { UserJwtPayload } from '../../infrastructure/types/entities/UserTypes'
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   try {

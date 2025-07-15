@@ -7,7 +7,8 @@ import {
   factoriesNotificationController,
   factoriesStudioController,
   factoriesScheduleController,
-  factoriesVoucherController
+  factoriesVoucherController,
+  factoriesTransactionController
 } from '../../infrastructure/factories/factories'
 import { IRoutes } from 'infrastructure/types/route.type'
 
@@ -21,6 +22,7 @@ export class Routes {
   private readonly studioRoutes: IRoutes = factoriesStudioController()
   private readonly scheduleRoutes: IRoutes = factoriesScheduleController()
   private readonly voucherRoutes: IRoutes = factoriesVoucherController()
+  private readonly transactionRoutes: IRoutes = factoriesTransactionController()
 
   constructor() {
     this.routes = Router()
@@ -36,6 +38,7 @@ export class Routes {
     this.routes.use('/v1/studios', this.studioRoutes.getRoutes())
     this.routes.use('/v1/schedules', this.scheduleRoutes.getRoutes())
     this.routes.use('/v1/vouchers', this.voucherRoutes.getRoutes())
+    this.routes.use('/v1/transactions', this.transactionRoutes.getRoutes())
   }
 
   public getRoutes(): Router {

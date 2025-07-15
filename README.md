@@ -11,7 +11,6 @@ api/v1/
 ```req.body = email,password```
 - **auths/admin/login** POST | **(ADMIN)**
 ```req.body = email,password```
-- **auths/refresh** POST | **(USER)**
 
 #### Users
 api/v1/
@@ -136,13 +135,15 @@ api/v1/
 #### Bookings & Transactions
 api/v1/
 - **transactions/** POST | **(USER)**
- ```req.body = schedule_id,seat_ids example [A2,A3]```
+ ```req.body = schedule_id,seat_ids example A2,A3```
+- **transactions/** GET | **(ADMIN)**
+- **transactions/user/:id** GET | **(ADMIN)**
+- **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
+- **transactions/:id** get | **(USER & ADMIN)**
+
+- **transactions/my** GET | **(USER)**
 - **transactions/:id/pay** POST | **(USER)**
 - **payments/callback** POST | **(MIDTRANS)**
-- **transactions/my** GET | **(USER)**
-- **transactions/** GET | **(ADMIN)**
-- **transactions/:id** GET | **(USER & ADMIN)**
-- **transactions/:id** DELETE | **(ADMIN)**
 
 #### Tickets
 api/v1/

@@ -4,8 +4,7 @@ import { CustomHandleError } from '../../../shared/error-handling/middleware/cus
 import {
   MoviePayload,
   MoviePayloadUpdate,
-  MovieQuery,
-  MovieWithRelations
+  MovieQuery
 } from '../../../infrastructure/types/entities/MovieTypes'
 import { MovieValidation } from './movie.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
@@ -38,7 +37,7 @@ export class MovieService {
     }
   }
 
-  async getMovieById(movieId: number): Promise<MovieWithRelations> {
+  async getMovieById(movieId: number) {
     try {
       return await this.repository.getMovieById(movieId)
     } catch (e) {

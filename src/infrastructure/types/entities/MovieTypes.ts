@@ -24,40 +24,39 @@ export type MoviePayloadUpdate = Partial<MoviePayload>
 
 export type MovieResponse = MoviePayload
 
-export type MovieWithRelations = Prisma.MovieGetPayload<{
-  include: {
-    created_by: {
-      select: {
-        id: true
-        name: true
-      }
-    }
-    casts: {
-      select: {
-        id: true
-        actor_name: true
-        actor_url: true
-      }
-    }
-    movie_genres: {
-      select: {
-        id: true
-        genre: {
-          select: {
-            id: true
-            name: true
-          }
-        }
-      }
-    }
-    schedules: true
-  }
-}>
+// export type MovieWithRelations = Prisma.MovieGetPayload<{
+//   include: {
+//     created_by: {
+//       select: {
+//         id: true
+//         name: true
+//       }
+//     }
+//     casts: {
+//       select: {
+//         id: true
+//         actor_name: true
+//         actor_url: true
+//       }
+//     }
+//     movie_genres: {
+//       select: {
+//         id: true
+//         genre: {
+//           select: {
+//             id: true
+//             name: true
+//           }
+//         }
+//       }
+//     }
+//     schedules: true
+//   }
+// }>
 
 export interface IMovieRepository {
   createMovie(movieData: MoviePayload, userId: number, movie_genres?: number[]): Promise<Movie>
   getAllMovies(query: MovieQuery): Promise<Movie[]>
-  getMovieById(movieId: number): Promise<MovieWithRelations>
   updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie>
   deleteMovie(movieId: number): Promise<void>
 }

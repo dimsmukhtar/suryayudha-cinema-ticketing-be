@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { NotificationService } from './notification.service'
 import { NotificationPayload } from '../../../infrastructure/types/entities/NotificationTypes'
-import { authenticate } from '../../../shared/error-handling/middleware/authenticate'
+import { authenticate } from '../../../shared/middlewares/authenticate'
 
 export class NotificationController {
   private readonly notificationRouter: Router

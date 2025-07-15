@@ -12,7 +12,7 @@ import {
 import { setAccessToken } from '../../../shared/helpers/setCookies'
 import { upload } from '../../../shared/utils/multer.config'
 import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
-import { authenticate } from '../../../shared/error-handling/middleware/authenticate'
+import { authenticate } from '../../../shared/middlewares/authenticate'
 export class UserController {
   private readonly userRouter: Router
   constructor(private readonly service: UserService) {

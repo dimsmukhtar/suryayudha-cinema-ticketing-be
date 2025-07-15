@@ -3,7 +3,7 @@ import { MovieService } from './movie.service'
 import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
 import { upload } from '../../../shared/utils/multer.config'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
-import { authenticate } from '../../../shared/error-handling/middleware/authenticate'
+import { authenticate } from '../../../shared/middlewares/authenticate'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -37,6 +37,9 @@ export class MovieController {
     try {
       const movieCreatePayloadRequest: MoviePayload = {
         ...req.body
+      }
+      if (!req.body.movie_genres) {
+        req.body.movie_genres = ''
       }
       const userId = req.user!.id
       const genreIds = req.body.movie_genres
