@@ -140,8 +140,8 @@ api/v1/
 - **transactions/user/:id** GET | **(ADMIN)**
 - **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
 - **transactions/:id** get | **(USER & ADMIN)**
-
 - **transactions/my** GET | **(USER)**
+
 - **transactions/:id/pay** POST | **(USER)**
 - **payments/callback** POST | **(MIDTRANS)**
 

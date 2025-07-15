@@ -13,6 +13,7 @@ export class TransactionController {
   private initializeTransactionRoutes(): void {
     this.transactionRouter.post('/', authenticate, this.createBooking)
     this.transactionRouter.get('/', this.getAllTransactions)
+    this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
     this.transactionRouter.get('/user/:id', this.getTransactionsByUserId)
     this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
     this.transactionRouter.get('/:id', this.getTransactionById)
@@ -63,6 +64,18 @@ export class TransactionController {
   private getTransactionsByUserId = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = parseInt(req.params.id)
+      const transactions = await this.service.getTransactionsByUserId(userId)
+      res
+        .status(200)
+        .json({ success: true, message: 'Semua transaksi berhasil diambil', data: transactions })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getMyTransactions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.id
       const transactions = await this.service.getTransactionsByUserId(userId)
       res
         .status(200)

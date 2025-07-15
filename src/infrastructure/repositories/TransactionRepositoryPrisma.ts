@@ -23,6 +23,10 @@ export class TransactionRepositoryPrisma {
         throw new NotFoundException(`Schedule dengan id ${scheduleId} tidak ditemukan`)
       }
 
+      if (schedule.finished_time < new Date()) {
+        throw new BadRequestException('Jadwal film ini sudah berakhir')
+      }
+
       const totalBookingSeats = scheduleSeatIds.length
       const totalAmount = totalBookingSeats * schedule.price
 
