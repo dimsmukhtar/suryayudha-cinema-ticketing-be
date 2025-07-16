@@ -16,8 +16,20 @@ const cancelExpiredBookings = async () => {
       },
       include: {
         transaction_items: {
-          select: {
-            schedule_seat_id: true
+          include: {
+            schedule_seat: {
+              include: {
+                schedule: {
+                  include: {
+                    movie: {
+                      select: {
+                        title: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -52,11 +64,14 @@ const cancelExpiredBookings = async () => {
           }
         })
 
+        const movieTitle =
+          transaction.transaction_items[0]?.schedule_seat.schedule.movie.title || 'Film'
+        const seatLabels = transaction.transaction_items.map((item) => item.seat_label).join(', ')
+        const notifDesc = `Booking Anda untuk film "${movieTitle}" (kursi ${seatLabels}) telah dibatalkan karena anda tidak menindaklanjuti ke proses pembayaran dalam waktu 10 menit`
         await tx.notification.create({
           data: {
             title: 'Booking Dibatalkan',
-            description:
-              'Booking Anda telah dibatalkan karena sudah melewati batas waktu yaitu 10 menit untuk melanjutkan ke proses pembayaran.',
+            description: notifDesc,
             target_audience: TARGET_AUDIENCE.spesific,
             notification_recipients: {
               create: {
