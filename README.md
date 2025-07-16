@@ -141,8 +141,8 @@ api/v1/
 - **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
 - **transactions/:id** get | **(USER & ADMIN)**
 - **transactions/my** GET | **(USER)**
-
 - **transactions/:id/pay** POST | **(USER)**
+
 - **/api/webhooks/midtrans** POST | **(MIDTRANS)**
 
 #### Tickets

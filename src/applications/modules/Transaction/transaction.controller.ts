@@ -16,7 +16,7 @@ export class TransactionController {
     this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
     this.transactionRouter.get('/user/:id', this.getTransactionsByUserId)
     this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
-    this.transactionRouter.post('/:id/pay', this.initiatePayment)
+    this.transactionRouter.post('/:id/pay', authenticate, this.initiatePayment)
     this.transactionRouter.get('/:id', this.getTransactionById)
   }
 
