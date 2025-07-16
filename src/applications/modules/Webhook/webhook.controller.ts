@@ -91,7 +91,7 @@ export class WebhookController {
             for (const item of transaction.transaction_items) {
               const ticket = await tx.ticket.create({
                 data: {
-                  code: `TICKET-${transaction.id}-${item.id}-${generateRandomCode(5)}`,
+                  code: `TICKET-${transaction.id}-${item.id}-${generateRandomCode(13)}`,
                   status: TicketStatus.active,
                   transaction_item_id: item.id
                 }
@@ -104,7 +104,7 @@ export class WebhookController {
             const seatLabels = transaction.transaction_items
               .map((item) => item.seat_label)
               .join(', ')
-            const notifDesc = `Terima kasih sudah melakukan pembayaran untuk tiket film ${movieTitle} pada kursi ${seatLabels}, silahkan cek e-tiket Anda di menu tiket saya atau di email Anda..`
+            const notifDesc = `Terima kasih sudah melakukan pembayaran untuk tiket film ${movieTitle} pada kursi ${seatLabels}, silahkan cek e-tiket Anda di menu tiket saya atau di email Anda.`
             await tx.notification.create({
               data: {
                 title: 'Pembayaran berhasil',

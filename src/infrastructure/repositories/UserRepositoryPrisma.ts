@@ -270,7 +270,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     const token = signJwt(
       { id: user.id, name: user.name, email: user.email, role: user.role },
       'ACCESS_TOKEN_PRIVATE_KEY',
-      { expiresIn: '15m' }
+      { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
     )
     return token
   }
@@ -289,7 +289,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     const token = signJwt(
       { id: user.id, email: user.email, role: user.role },
       'ACCESS_TOKEN_PRIVATE_KEY',
-      { expiresIn: '15m' }
+      { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
     )
     return token
   }

@@ -241,6 +241,22 @@ export class TransactionRepositoryPrisma {
       throw new BadRequestException('Waktu booking anda sudah habis, silahbkan buat booking baru')
     }
 
+    const itemDetails = transaction.transaction_items.map((item) => ({
+      id: item.id.toString(),
+      price: item.price,
+      quantity: 1,
+      name: `Tiket Bioskop: ${item.schedule_seat.schedule.movie.title} (Kursi ${item.seat_label})`
+    }))
+
+    if (transaction.discount_amount > 0) {
+      itemDetails.push({
+        id: `VOUCHER-${transaction.voucher_id}`,
+        price: -transaction.discount_amount,
+        quantity: 1,
+        name: 'Voucher Diskon'
+      })
+    }
+
     const orderId = `ORDER-${transaction.id}-${Date.now()}`
     const parameter = {
       transaction_details: {
@@ -251,19 +267,14 @@ export class TransactionRepositoryPrisma {
         first_name: transaction.user.name,
         email: transaction.user.email
       },
-      item_details: transaction.transaction_items.map((item) => ({
-        id: item.id.toString(),
-        price: item.price,
-        quantity: 1,
-        name: `Tiket Bioskop: ${item.schedule_seat.schedule.movie.title} (Kursi ${item.seat_label})`
-      })),
+      item_details: itemDetails,
       expiry: {
         unit: 'minutes',
         duration: 10 // 10 minutes
       }
     }
 
-    const midtransResponse = await snap.createTransactionToken(parameter)
+    const midtransResponse = await snap.createTransaction(parameter)
     const snapToken = midtransResponse.token
     const paymentUrl = midtransResponse.redirect_url
 
@@ -286,7 +297,10 @@ export class TransactionRepositoryPrisma {
       .replace('{{paymentUrl}}', paymentUrl)
       .replace('{{orderId}}', orderId)
       .replace('{{judulFilm}}', transaction.transaction_items[0].schedule_seat.schedule.movie.title)
+      .replace('{{jumlahTiket}}', transaction.transaction_items.length.toString())
       .replace('{{daftarKursi}}', transaction.transaction_items.map((i) => i.seat_label).join(', '))
+      .replace('{{subTotal}}', `Rp ${transaction.total_amount.toLocaleString('id-ID')}`)
+      .replace('{{discountAmount}}', `Rp ${transaction.discount_amount.toLocaleString('id-ID')}`)
       .replace('{{totalBayar}}', `Rp ${transaction.final_amount.toLocaleString('id-ID')}`)
 
     await sendEmail({
