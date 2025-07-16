@@ -205,3 +205,99 @@ export const ticketSuccessfullyCreatedTemplate = `<!DOCTYPE html>
 </body>
 </html>
 `
+
+export const paymentCancelledTemplate = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pemesanan Anda Dibatalkan</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f0f2f5;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #f0f2f5;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0f2f5;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Kontainer Utama -->
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+          
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding: 25px 20px; background-color: #4A5568; color: #ffffff; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+              <h1 style="margin: 0; font-size: 26px; font-weight: 600;">Pemesanan Dibatalkan</h1>
+            </td>
+          </tr>
+
+          <!-- Konten Utama -->
+          <tr>
+            <td style="padding: 30px 25px;">
+              <h2 style="margin: 0 0 15px; font-size: 22px; color: #2d3748;">Halo, {{namaUser}},</h2>
+              <p style="margin: 0 0 25px; font-size: 16px; line-height: 1.6; color: #4a5568;">
+                Kami informasikan bahwa pemesanan tiket Anda telah dibatalkan karena pembayaran tidak berhasil diselesaikan atau telah melewati batas waktu.
+              </p>
+              <p style="margin: 0 0 25px; font-size: 16px; line-height: 1.6; color: #4a5568;">
+                Jangan khawatir, Anda bisa mencoba memesan kembali. Kursi yang sebelumnya Anda pilih kini telah tersedia kembali untuk umum.
+              </p>
+
+              <!-- Tombol Call to Action (CTA) -->
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="center">
+                    <a href="{{linkHalamanFilm}}" target="_blank" style="display: inline-block; padding: 15px 35px; font-size: 18px; font-weight: bold; color: #ffffff; background-color: #4299e1; border-radius: 8px; text-decoration: none;">
+                      Coba Pesan Lagi
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Detail Booking yang Dibatalkan -->
+          <tr>
+            <td style="padding: 0 25px;">
+              <h3 style="margin: 0 0 15px; font-size: 18px; color: #2d3748; border-top: 1px solid #e2e8f0; padding-top: 25px;">Detail Booking yang Dibatalkan</h3>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 15px; color: #718096;">Film</td>
+                        <td align="right" style="padding: 8px 0; font-size: 15px; color: #2d3748; font-weight: 600;">{{judulFilm}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 15px; color: #718096;">Kursi</td>
+                        <td align="right" style="padding: 8px 0; font-size: 15px; color: #2d3748; font-weight: 600;">{{daftarKursi}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 15px; color: #718096;">ID Pesanan</td>
+                        <td align="right" style="padding: 8px 0; font-size: 15px; color: #2d3748; font-weight: 600;">{{orderId}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding: 30px 20px; font-size: 12px; color: #a0aec0;">
+              <p style="margin: 0;">Jika Anda merasa ada kesalahan, silakan hubungi customer service kami.</p>
+              <p style="margin: 5px 0 0;">&copy; 2025 Surya Yudha Cinema. All rights reserved.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`
