@@ -320,6 +320,7 @@ model Transaction {
   transaction_time DateTime
   booking_expires_at DateTime
   user_id Int
+  order_id String?
   voucher_id Int?
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt   

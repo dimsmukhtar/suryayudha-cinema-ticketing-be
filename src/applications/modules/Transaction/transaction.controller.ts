@@ -16,6 +16,7 @@ export class TransactionController {
     this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
     this.transactionRouter.get('/user/:id', this.getTransactionsByUserId)
     this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
+    this.transactionRouter.post('/:id/pay', this.initiatePayment)
     this.transactionRouter.get('/:id', this.getTransactionById)
   }
 
@@ -101,6 +102,22 @@ export class TransactionController {
       res
         .status(200)
         .json({ success: true, message: 'Voucher berhasil diterapkan', data: transaction })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private initiatePayment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const transactionId = parseInt(req.params.id)
+      const userId = req.user!.id
+      const midtransTokenTransaction = await this.service.initiatePayment(transactionId, userId)
+
+      res.status(200).json({
+        success: true,
+        message: 'Midtrans token berhasil dikirim',
+        data: midtransTokenTransaction
+      })
     } catch (e) {
       next(e)
     }

@@ -1,6 +1,7 @@
 import { BookingStatus, PrismaClient, SeatStatus, Transaction } from '@prisma/client'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { snap } from '../../shared/utils/midtrans'
 
 export class TransactionRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -201,5 +202,73 @@ export class TransactionRepositoryPrisma {
       })
       return updatedTransaction
     })
+  }
+
+  async initiatePayment(transactionId: number, userId: number) {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: {
+        id: transactionId,
+        user_id: userId
+      },
+      include: {
+        user: true,
+        transaction_items: {
+          include: {
+            schedule_seat: {
+              include: {
+                schedule: {
+                  include: {
+                    movie: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!transaction) {
+      throw new NotFoundException('Transaksi tidak ditemukan atau bukan milik Anda')
+    }
+    if (transaction.booking_status !== 'initiated') {
+      throw new BadRequestException('Transaksi ini sudah di proses atau dibatalkan')
+    }
+
+    if (transaction.booking_expires_at < new Date()) {
+      throw new BadRequestException('Waktu booking anda sudah habis, silahbkan buat booking baru')
+    }
+
+    const parameter = {
+      transaction_details: {
+        order_id: `ORDER-${transaction.id}-${Date.now()}`,
+        gross_amount: transaction.final_amount
+      },
+      customer_details: {
+        first_name: transaction.user.name,
+        email: transaction.user.email
+      },
+      item_details: transaction.transaction_items.map((item) => ({
+        id: item.id.toString(),
+        price: item.price,
+        quantity: 1,
+        name: `Tiket Bioskop: ${item.schedule_seat.schedule.movie.title} (Kursi ${item.seat_label})`
+      }))
+    }
+
+    const snapToken = await snap.createTransactionToken(parameter)
+
+    await this.prisma.transaction.update({
+      where: {
+        id: transactionId
+      },
+      data: {
+        order_id: parameter.transaction_details.order_id,
+        booking_status: 'pending',
+        payment_type: 'midtrans',
+        payment_status: 'pending'
+      }
+    })
+    return snapToken
   }
 }

@@ -46,7 +46,9 @@ class App implements IApp {
       IMAGEKIT_PRIVATE_KEY: str(),
       IMAGEKIT_URL_ENDPOINT: str(),
       APP_PASSWORD: str(),
-      USER_EMAIL: str()
+      USER_EMAIL: str(),
+      MIDTRANS_SERVER_KEY: str(),
+      MIDTRANS_CLIENT_KEY: str()
     })
   }
 

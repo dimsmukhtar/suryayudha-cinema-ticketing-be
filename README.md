@@ -143,7 +143,7 @@ api/v1/
 - **transactions/my** GET | **(USER)**
 
 - **transactions/:id/pay** POST | **(USER)**
-- **payments/callback** POST | **(MIDTRANS)**
+- **/api/webhooks/midtrans** POST | **(MIDTRANS)**
 
 #### Tickets
 api/v1/

@@ -71,4 +71,14 @@ export class TransactionService {
       })
     }
   }
+
+  async initiatePayment(transactionId: number, userId: number) {
+    try {
+      return await this.repository.initiatePayment(transactionId, userId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat proses melakukan pembayaran'
+      })
+    }
+  }
 }
