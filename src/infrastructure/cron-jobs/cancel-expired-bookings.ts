@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { BookingStatus, SeatStatus } from '@prisma/client'
+import { BookingStatus, SeatStatus, TARGET_AUDIENCE } from '@prisma/client'
 import { prisma } from '../../infrastructure/database/client'
 import { logger } from '../../shared/utils/logger'
 
@@ -49,6 +49,20 @@ const cancelExpiredBookings = async () => {
             booking_status: BookingStatus.cancelled,
             payment_type: 'cancelled',
             payment_status: 'cancelled'
+          }
+        })
+
+        await tx.notification.create({
+          data: {
+            title: 'Booking Dibatalkan',
+            description:
+              'Booking Anda telah dibatalkan karena sudah melewati batas waktu yaitu 10 menit untuk melanjutkan ke proses pembayaran.',
+            target_audience: TARGET_AUDIENCE.spesific,
+            notification_recipients: {
+              create: {
+                user_id: transaction.user_id
+              }
+            }
           }
         })
       })

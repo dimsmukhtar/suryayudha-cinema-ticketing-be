@@ -239,6 +239,7 @@ export class TransactionRepositoryPrisma {
       throw new BadRequestException('Waktu booking anda sudah habis, silahbkan buat booking baru')
     }
 
+    const orderId = `ORDER-${transaction.id}-${Date.now()}`
     const parameter = {
       transaction_details: {
         order_id: `ORDER-${transaction.id}-${Date.now()}`,
@@ -253,22 +254,29 @@ export class TransactionRepositoryPrisma {
         price: item.price,
         quantity: 1,
         name: `Tiket Bioskop: ${item.schedule_seat.schedule.movie.title} (Kursi ${item.seat_label})`
-      }))
+      })),
+      expiry: {
+        unit: 'minutes',
+        duration: 10 // 10 minutes
+      }
     }
 
-    const snapToken = await snap.createTransactionToken(parameter)
+    const midtransResponse = await snap.createTransactionToken(parameter)
+    const snapToken = midtransResponse.token
+    const paymentUrl = midtransResponse.redirect_url
 
     await this.prisma.transaction.update({
       where: {
         id: transactionId
       },
       data: {
-        order_id: parameter.transaction_details.order_id,
-        booking_status: 'pending',
+        order_id: orderId,
+        payment_url: paymentUrl,
+        booking_status: BookingStatus.pending,
         payment_type: 'midtrans',
         payment_status: 'pending'
       }
     })
-    return snapToken
+    return { snapToken, paymentUrl }
   }
 }

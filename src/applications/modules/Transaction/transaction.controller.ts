@@ -111,12 +111,15 @@ export class TransactionController {
     try {
       const transactionId = parseInt(req.params.id)
       const userId = req.user!.id
-      const midtransTokenTransaction = await this.service.initiatePayment(transactionId, userId)
+      const { snapToken, paymentUrl } = await this.service.initiatePayment(transactionId, userId)
 
       res.status(200).json({
         success: true,
-        message: 'Midtrans token berhasil dikirim',
-        data: midtransTokenTransaction
+        message: 'Midtrans token dan payment url berhasil dikirim',
+        data: {
+          snapToken,
+          paymentUrl
+        }
       })
     } catch (e) {
       next(e)
