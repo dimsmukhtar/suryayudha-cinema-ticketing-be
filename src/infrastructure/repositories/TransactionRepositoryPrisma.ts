@@ -2,6 +2,8 @@ import { BookingStatus, PrismaClient, SeatStatus, Transaction } from '@prisma/cl
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { snap } from '../../shared/utils/midtrans'
+import { sendEmail } from '../../shared/utils/nodemailer'
+import { initiatePaymentTemplate } from '../../shared/helpers/emailTemplate'
 
 export class TransactionRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -242,7 +244,7 @@ export class TransactionRepositoryPrisma {
     const orderId = `ORDER-${transaction.id}-${Date.now()}`
     const parameter = {
       transaction_details: {
-        order_id: `ORDER-${transaction.id}-${Date.now()}`,
+        order_id: orderId,
         gross_amount: transaction.final_amount
       },
       customer_details: {
@@ -276,6 +278,21 @@ export class TransactionRepositoryPrisma {
         payment_type: 'midtrans',
         payment_status: 'pending'
       }
+    })
+
+    const emailHtml = initiatePaymentTemplate
+      .replace('{{namaUser}}', transaction.user.name)
+      .replace('{{paymentUrl}}', paymentUrl)
+      .replace('{{paymentUrl}}', paymentUrl)
+      .replace('{{orderId}}', orderId)
+      .replace('{{judulFilm}}', transaction.transaction_items[0].schedule_seat.schedule.movie.title)
+      .replace('{{daftarKursi}}', transaction.transaction_items.map((i) => i.seat_label).join(', '))
+      .replace('{{totalBayar}}', `Rp ${transaction.final_amount.toLocaleString('id-ID')}`)
+
+    await sendEmail({
+      email: transaction.user.email,
+      subject: `Selesaikan Pembayaran Anda untuk Pesanan ${orderId}`,
+      html: emailHtml
     })
     return { snapToken, paymentUrl }
   }
