@@ -64,7 +64,7 @@ export const initiatePaymentTemplate = `<!DOCTYPE html>
                 </h2>
                 <p style="margin: 0 0 25px; font-size: 16px; line-height: 1.5; color: #e5e5e7">
                   Terima kasih telah melakukan pembelian tiket. Segera selesaikan pembayaran Anda
-                  dalam **10 menit** sebelum waktu pembayaran Anda habis.
+                  dalam 10 menit sebelum waktu pembayaran Anda habis.
                 </p>
 
                 <!-- Tombol Call to Action (CTA) -->
@@ -243,7 +243,7 @@ export const ticketSuccessfullyCreatedTemplate = `<!DOCTYPE html>
           <tr>
             <td style="padding: 30px 25px;">
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #4a5568;">
-                Halo **{{namaUser}}**, pembayaran Anda telah berhasil. Berikut adalah salah satu e-tiket Anda.
+                Halo {{namaUser}}, pembayaran Anda telah berhasil. Berikut adalah salah satu e-tiket Anda.
               </p>
 
               <!-- Detail Film -->

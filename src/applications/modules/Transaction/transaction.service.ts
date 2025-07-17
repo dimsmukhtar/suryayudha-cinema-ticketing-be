@@ -2,6 +2,7 @@ import { Transaction } from '@prisma/client'
 import { TransactionRepositoryPrisma } from '../../../infrastructure/repositories/TransactionRepositoryPrisma'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { snap } from '../../../shared/utils/midtrans'
 
 export class TransactionService {
   constructor(private readonly repository: TransactionRepositoryPrisma) {}
@@ -79,6 +80,26 @@ export class TransactionService {
       throw CustomHandleError(e, {
         context: 'Error saat proses melakukan pembayaran'
       })
+    }
+  }
+
+  async checkMidtransStatus(orderId: string) {
+    try {
+      const midtransStatusResponse = await snap.transaction.status(orderId)
+      return midtransStatusResponse
+    } catch (error: any) {
+      console.error('Error received while checking Midtrans status:', error.message)
+
+      try {
+        const midtransError = JSON.parse(error.message)
+        const errorMessage = midtransError.error_messages
+          ? midtransError.error_messages.join(', ')
+          : 'Unknown Midtrans error'
+
+        throw new BadRequestException(`Midtrans API Error: ${errorMessage}`)
+      } catch (parseError) {
+        throw new BadRequestException(`Midtrans API Error: ${error.message}`)
+      }
     }
   }
 }

@@ -30,7 +30,7 @@ api/v1/
 - **users/verify-email** POST | **(USER)**
 ```req.body = email,verificationCode```
 - **users/profile** GET | **(USER & ADMIN)**
-- **users/profile/update** PATCH | **(USER & ADMIN)**
+- **users/update-profile** PATCH | **(USER & ADMIN)**
 ```req.body = name,email,profile_url```
 - **users/change-password** PATCH | **(USER & ADMIN)**
 ```req.body = oldPassword,newPassword,newPasswordConfirmation```
@@ -61,7 +61,7 @@ api/v1/
   }
   ```
 - **movies/** GET | **(USER & ADMIN)**
- ```req.query = ?status=now_showing or coming_soon or ?page or ?limit```
+ ```req.query = ?status&?title?genre```
 - **movies/:id** GET | **(USER & ADMIN)**
 - **movies/:id** PATCH | **(ADMIN)**
  ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,created_by```
@@ -69,28 +69,25 @@ api/v1/
 
 #### Casts
 api/v1/
-- **casts/casts** POST | **(ADMIN)**
+- **casts/** GET | **(USER & ADMIN)**
+- **casts/** POST | **(ADMIN)**
  ```req.body = movie_id,actor_name,actor_url```
- - **casts/** GET | **(USER & ADMIN)**
 - **casts/:id** PATCH | **(ADMIN)**
  ```req.body = actor_name,actor_url```
 - **casts/:id** DELETE | **(ADMIN)**
 
 #### Genres
 api/v1/
-- **genres/** POST | **(ADMIN)**
- ```req.body = name```
 - **genres/** GET | **(USER & ADMIN)**
 - **genres/:id** GET | **(USER & ADMIN)**
+- **genres/** POST | **(ADMIN)**
+ ```req.body = name```
 - **genres/:id** PATCH | **(ADMIN)**
  ```req.body = name```
 - **genres/:id** DELETE | **(ADMIN)**
-
-#### MoviesGenres
-api/v1/
-- **movies/:id/genres/movie-genre** POST | **(ADMIN)**
+- **genres/movie-genre** POST | **(ADMIN)**
  ```req.body = movie_id,genre_id```
-- **movies/:id/genres/movie-genre/:id** DELETE | **(ADMIN)**
+- **genres/movie-genre/:id** DELETE | **(ADMIN)**
 
 #### Notifications
 api/v1/
@@ -102,23 +99,19 @@ api/v1/
 - **notifications/:id/my/hide** DELETE | **(USER & ADMIN)**
 
 
-
 #### Studios
 api/v1/
 - **studios/** POST | **(ADMIN)**
  ```req.body = name```
 - **studios/** GET | **(USER & ADMIN)**
+- **studios/photos** GET | **(USER & ADMIN)**
 - **studios/:id** GET | **(USER & ADMIN)**
-- **studios/:id** PATCH | **(ADMIN)**
+- **studios/:id** PUT | **(ADMIN)**
  ```req.body = name```
 - **studios/:id** DELETE | **(ADMIN)**
-
-#### StudioGalleries
-api/v1/
 - **studios/:id/upload/** POST | **(ADMIN)**
  ```req.body = photos```
 - **studios/photos/:id/delete** DELETE | **(ADMIN)**
-- **studios/photos** GET | **(USER & ADMIN)**
 
 
 #### Schedules

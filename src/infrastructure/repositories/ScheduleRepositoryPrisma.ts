@@ -92,20 +92,13 @@ export class ScheduleRepositoryPrisma {
     }
     if (query.date) {
       const startDate = new Date(query.date)
-      startDate.setUTCHours(0, 0, 0, 0)
 
       const endDate = new Date(startDate)
-      endDate.setUTCDate(startDate.getUTCDate() + 1)
+      endDate.setDate(startDate.getDate() + 1)
 
       where.start_time = {
         gte: startDate,
         lt: endDate
-      }
-    } else {
-      const today = new Date()
-      today.setUTCHours(0, 0, 0, 0)
-      where.start_time = {
-        gte: today
       }
     }
     return await this.prisma.schedule.findMany({

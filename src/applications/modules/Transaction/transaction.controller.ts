@@ -18,6 +18,7 @@ export class TransactionController {
     this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
     this.transactionRouter.post('/:id/pay', authenticate, this.initiatePayment)
     this.transactionRouter.get('/:id', this.getTransactionById)
+    this.transactionRouter.get('/check-status/:orderId', this.checkMidtransStatus)
   }
 
   private createBooking = async (req: Request, res: Response, next: NextFunction) => {
@@ -120,6 +121,21 @@ export class TransactionController {
           snapToken,
           paymentUrl
         }
+      })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private checkMidtransStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { orderId } = req.params
+      const midtransStatus = await this.service.checkMidtransStatus(orderId)
+
+      res.status(200).json({
+        success: true,
+        message: `Status untuk ${orderId} berhasil diambil dari Midtrans`,
+        data: midtransStatus
       })
     } catch (e) {
       next(e)
