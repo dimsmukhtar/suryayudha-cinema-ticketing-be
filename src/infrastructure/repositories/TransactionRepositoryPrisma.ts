@@ -257,6 +257,10 @@ export class TransactionRepositoryPrisma {
       })
     }
 
+    const now = new Date()
+    const MIDTRANS_EXPIRY_MINUTES = 15 // 15 menit
+    const paymentExpiresAt = new Date(now.getTime() + MIDTRANS_EXPIRY_MINUTES * 60 * 1000)
+
     const orderId = `ORDER-${transaction.id}-${Date.now()}`
     const parameter = {
       transaction_details: {
@@ -270,7 +274,7 @@ export class TransactionRepositoryPrisma {
       item_details: itemDetails,
       expiry: {
         unit: 'minutes',
-        duration: 10 // 10 minutes
+        duration: MIDTRANS_EXPIRY_MINUTES // 15 minutes
       }
     }
 
@@ -286,6 +290,7 @@ export class TransactionRepositoryPrisma {
         order_id: orderId,
         payment_url: paymentUrl,
         booking_status: BookingStatus.pending,
+        payment_expires_at: paymentExpiresAt,
         payment_type: 'midtrans',
         payment_status: 'pending'
       }

@@ -1,13 +1,12 @@
-import cron from 'node-cron'
 import { BookingStatus, SeatStatus, TARGET_AUDIENCE } from '@prisma/client'
 import { prisma } from '../../infrastructure/database/client'
 import { logger } from '../../shared/utils/logger'
 
-const cancelExpiredBookings = async () => {
+export const cancelExpiredBookings = async () => {
   logger.info('Running cron job: Mencari booking yang kadaluarsa...')
 
   try {
-    const expiredTransactions = await prisma.transaction.findMany({
+    const expiredBookings = await prisma.transaction.findMany({
       where: {
         booking_status: BookingStatus.initiated,
         booking_expires_at: {
@@ -35,13 +34,13 @@ const cancelExpiredBookings = async () => {
       }
     })
 
-    if (expiredTransactions.length === 0) {
+    if (expiredBookings.length === 0) {
       logger.info('Tidak ada booking yang kadaluarsa ditemukan')
       return
     }
 
-    logger.warn(`Ditemukan ${expiredTransactions.length} booking yang kadaluarsa`)
-    for (const transaction of expiredTransactions) {
+    logger.warn(`Ditemukan ${expiredBookings.length} booking yang kadaluarsa`)
+    for (const transaction of expiredBookings) {
       await prisma.$transaction(async (tx) => {
         const movieTitle =
           transaction.transaction_items[0]?.schedule_seat.schedule.movie.title || 'Film'
@@ -92,9 +91,4 @@ const cancelExpiredBookings = async () => {
   } catch (e) {
     logger.error('Terjadi error saat menjalankan cron job pembatalan booking:', e)
   }
-}
-
-export const scheduleBookingCancellationJob = () => {
-  cron.schedule('* * * * *', cancelExpiredBookings)
-  logger.info('✅ Cron job untuk pembatalan booking kadaluarsa telah dijadwalkan.')
 }

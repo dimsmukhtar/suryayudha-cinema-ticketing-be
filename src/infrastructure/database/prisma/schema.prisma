@@ -319,6 +319,7 @@ model Transaction {
   booking_status BookingStatus
   transaction_time DateTime
   booking_expires_at DateTime
+  payment_expires_at DateTime?
   user_id Int
   order_id String?  @unique
   payment_url String?

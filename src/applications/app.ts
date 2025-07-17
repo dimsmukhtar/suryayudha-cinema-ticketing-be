@@ -10,7 +10,7 @@ import { prisma } from '../infrastructure/database/client'
 import { errorMiddleware } from '../shared/error-handling/middleware/error.middleware'
 import { IApp } from '../infrastructure/types/app.type'
 import { IRoutes } from '../infrastructure/types/route.type'
-import { scheduleBookingCancellationJob } from '../infrastructure/cron-jobs/cancel-expired-bookings'
+import { scheduleAllJobs } from '../infrastructure/cron-jobs'
 
 class App implements IApp {
   private app: Application
@@ -97,7 +97,7 @@ class App implements IApp {
       logger.info(`✅ Database with prisma connected`)
       this.server = this.app.listen(process.env.PORT, () => {
         logger.info(`✅ Server started on port ${process.env.PORT}`)
-        scheduleBookingCancellationJob()
+        scheduleAllJobs()
       })
       this.setupGracefulShutdown()
     } catch (error) {

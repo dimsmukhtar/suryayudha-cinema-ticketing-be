@@ -3,10 +3,7 @@ import { snap } from '../../../shared/utils/midtrans'
 import { prisma } from '../../../infrastructure/database/client'
 import { BookingStatus, SeatStatus, TARGET_AUDIENCE, TicketStatus } from '@prisma/client'
 import { generateRandomCode } from '../../../shared/helpers/randomCode'
-import {
-  paymentCancelledTemplate,
-  ticketSuccessfullyCreatedTemplate
-} from '../../../shared/helpers/emailTemplate'
+import { ticketSuccessfullyCreatedTemplate } from '../../../shared/helpers/emailTemplate'
 import { sendEmail } from '../../../shared/utils/nodemailer'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 
@@ -166,81 +163,6 @@ export class WebhookController {
             console.error('Gagal mengirim email e-tiket:', emailError)
           }
         }
-      } else if (
-        transactionStatus == 'cancel' ||
-        transactionStatus == 'deny' ||
-        transactionStatus == 'expire'
-      ) {
-        const movieTitle =
-          transaction.transaction_items[0]?.schedule_seat.schedule.movie.title || 'Film'
-        const seatLabels = transaction.transaction_items.map((item) => item.seat_label).join(', ')
-        const notifDesc = `Pembayaran Anda untuk ${movieTitle} (Kursi ${seatLabels}) telah dibatalkan karena pembayaran tidak berhasil diselesaikan atau telah melewati batas waktu.`
-
-        const scheduleSeatIds = transaction.transaction_items.map((item) => item.schedule_seat_id)
-
-        await prisma.$transaction(async (tx) => {
-          await tx.transactionItem.deleteMany({
-            where: {
-              transaction_id: transaction.id
-            }
-          })
-
-          await tx.transaction.update({
-            where: {
-              id: transaction.id
-            },
-            data: {
-              booking_status: BookingStatus.cancelled,
-              payment_status: transactionStatus
-            }
-          })
-
-          await tx.scheduleSeat.updateMany({
-            where: {
-              id: {
-                in: scheduleSeatIds
-              }
-            },
-            data: {
-              status: SeatStatus.available
-            }
-          })
-
-          await tx.notification.create({
-            data: {
-              title: 'Pembayaran dibatalkan',
-              description: notifDesc,
-              target_audience: TARGET_AUDIENCE.spesific,
-              notification_recipients: {
-                create: {
-                  user_id: transaction.user_id
-                }
-              }
-            }
-          })
-        })
-
-        const scheduleSeatLabels = transaction.transaction_items
-          .map((item) => item.seat_label)
-          .join(', ')
-        const emailHtml = paymentCancelledTemplate
-          .replace('{{namaUser}}', transaction.user.name)
-          .replace(
-            '{{linkHalamanFilm}}',
-            `${process.env.CLIENT_URL}/movies/${transaction.transaction_items[0].schedule_seat.schedule.movie_id}`
-          )
-          .replace(
-            '{{judulFilm}}',
-            transaction.transaction_items[0].schedule_seat.schedule.movie.title
-          )
-          .replace('{{daftarKursi}}', scheduleSeatLabels)
-          .replace('{{orderId}}', transaction.order_id || 'N/A')
-
-        await sendEmail({
-          email: transaction.user.email,
-          subject: 'Pembayaran Anda telah dibatalkan',
-          html: emailHtml
-        })
       }
       res.status(200).send('OK')
     } catch (e) {
