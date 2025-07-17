@@ -21,7 +21,6 @@ export class WebhookController {
   private midtransWebhookHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const notificationJson = req.body
-
       const statusResponse = await snap.transaction.notification(notificationJson)
       const orderId = statusResponse.order_id
       const transactionStatus = statusResponse.transaction_status

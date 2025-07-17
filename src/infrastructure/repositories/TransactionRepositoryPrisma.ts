@@ -26,9 +26,7 @@ export class TransactionRepositoryPrisma {
         throw new NotFoundException(`Schedule dengan id ${scheduleId} tidak ditemukan`)
       }
 
-      const bookingToleratedMinutes = 30
-      const cutOffTime = new Date(schedule.start_time.getTime() + bookingToleratedMinutes * 60000)
-      if (new Date() > cutOffTime) {
+      if (new Date() > schedule.start_time) {
         throw new BadRequestException('Pemesanan online untuk jadwal ini sudah ditutup')
       }
 
@@ -74,7 +72,7 @@ export class TransactionRepositoryPrisma {
           total_amount: totalAmount,
           discount_amount: 0,
           final_amount: totalAmount,
-          payment_type: 'pending',
+          payment_type: 'not_initiated',
           payment_status: 'not_initiated',
           booking_status: BookingStatus.initiated,
           transaction_time: now,
@@ -144,6 +142,14 @@ export class TransactionRepositoryPrisma {
 
       if (transaction.voucher_id) {
         throw new BadRequestException('Voucher sudah diterapkan pada transaksi ini.')
+      }
+
+      if (transaction.booking_status === 'cancelled') {
+        throw new BadRequestException('Transaksi ini sudah dibatalkan')
+      }
+
+      if (transaction.booking_status === 'settlement') {
+        throw new BadRequestException('Transaksi ini sudah selesai')
       }
       const voucher = await tx.voucher.findUnique({
         where: {
@@ -274,7 +280,7 @@ export class TransactionRepositoryPrisma {
       item_details: itemDetails,
       expiry: {
         unit: 'minutes',
-        duration: MIDTRANS_EXPIRY_MINUTES // 15 minutes
+        duration: MIDTRANS_EXPIRY_MINUTES // 15 menit
       }
     }
 

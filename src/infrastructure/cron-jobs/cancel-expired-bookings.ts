@@ -45,7 +45,7 @@ export const cancelExpiredBookings = async () => {
         const movieTitle =
           transaction.transaction_items[0]?.schedule_seat.schedule.movie.title || 'Film'
         const seatLabels = transaction.transaction_items.map((item) => item.seat_label).join(', ')
-        const notifDesc = `Booking Anda untuk film "${movieTitle}" (kursi ${seatLabels}) telah dibatalkan karena anda tidak menindaklanjuti ke proses pembayaran dalam waktu 10 menit`
+        const notifDesc = `Booking Anda untuk film ${movieTitle} (kursi ${seatLabels}) telah dibatalkan karena anda tidak menindaklanjuti ke proses pembayaran dalam waktu 10 menit`
         const scheduleSeatIds = transaction.transaction_items.map((item) => item.schedule_seat_id)
 
         await tx.transactionItem.deleteMany({
