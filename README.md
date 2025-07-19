@@ -136,6 +136,7 @@ api/v1/
 api/v1/
 - **tickets/** GET | **(ADMIN)**
 - **tickets/:id** GET | **(USER & ADMIN)**
+- **tickets/:code/find-code** GET | **(ADMIN)**
 - **tickets/:id** DELETE | **(ADMIN)**
 - **tickets/my** GET | **(USER)**
 - **tickets/validate** PATCH | **(ADMIN)**
