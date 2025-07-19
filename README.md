@@ -43,28 +43,12 @@ api/v1/
 #### Movies
 api/v1/
 - **movies/** POST | **(ADMIN)**
-```json
- req.body =
- {
-  "title": "example",
-  "synopsis": "example",
-  "director": "example",
-  "duration": "2h 30m",
-  "rating": "16+",
-  "language": "English",
-  "subtitle": "Indonesia",
-  "poster_url": "exampleg",
-  "trailer_url": "example",
-  "release_date": "2021-09-07",
-  "status": "coming_soon",
-  "movie_genres": "1,2,3"
-  }
-  ```
+ ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,movie_genres```
 - **movies/** GET | **(USER & ADMIN)**
  ```req.query = ?status&?title?genre```
 - **movies/:id** GET | **(USER & ADMIN)**
 - **movies/:id** PATCH | **(ADMIN)**
- ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,created_by```
+ ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,movie_genres```
 - **movies/:id** DELETE | **(ADMIN)**
 
 #### Casts
@@ -125,27 +109,7 @@ api/v1/
 - **schedules/seats/:id** PATCH | **(ADMIN)**
  ```req.body = status```
 
-#### Bookings & Transactions
-api/v1/
-- **transactions/** POST | **(USER)**
- ```req.body = schedule_id,seat_ids example A2,A3```
-- **transactions/** GET | **(ADMIN)**
-- **transactions/user/:id** GET | **(ADMIN)**
-- **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
-- **transactions/:id** get | **(USER & ADMIN)**
-- **transactions/my** GET | **(USER)**
-- **transactions/:id/pay** POST | **(USER)**
-
-- **/api/webhooks/midtrans** POST | **(MIDTRANS)**
-
-#### Tickets
-api/v1/
-- **tickets/** GET | **(ADMIN)**
-- **tickets/my** GET | **(USER)**
-- **tickets/:id** GET | **(USER & ADMIN)**
-- **tickets/:id** DELETE | **(ADMIN)**
-
-#### Vouchers
+ #### Vouchers
 api/v1/
 - **vouchers/** POST | **(ADMIN)**
  ```req.body = code,type,value,expires_at,usage_limit,min_purchase_amount```
@@ -154,6 +118,26 @@ api/v1/
 - **vouchers/:id** PATCH | **(ADMIN)**
  ```req.body = code,type,value,expires_at,usage_limit,min_purchase_amount```
 - **vouchers/:id** DELETE | **(ADMIN)**
+
+#### Bookings & Transactions
+api/v1/
+- **transactions/** POST | **(USER)**
+ ```req.body = schedule_id,seat_ids example A2,A3```
+- **transactions/** GET | **(ADMIN)**
+- **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
+ ```req.body = voucher_code```
+- **transactions/:id** get | **(USER & ADMIN)**
+- **transactions/my** GET | **(USER)**
+- **transactions/:id/pay** POST | **(USER)**
+- **/api/webhooks/midtrans** POST | **(MIDTRANS)**
+- **/transactions/check-status/:orderId** GET | **(ADMIN)**
+
+#### Tickets
+api/v1/
+- **tickets/** GET | **(ADMIN)**
+- **tickets/my** GET | **(USER)**
+- **tickets/:id** GET | **(USER & ADMIN)**
+- **tickets/:id** DELETE | **(ADMIN)**
 
 #### Database Diagram
 ![diagram](./public/img/cinema-booking.png)

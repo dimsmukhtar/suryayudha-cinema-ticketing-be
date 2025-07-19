@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { snap } from '../../../shared/utils/midtrans'
 import { prisma } from '../../../infrastructure/database/client'
-import { BookingStatus, SeatStatus, TARGET_AUDIENCE, TicketStatus } from '@prisma/client'
+import { SeatStatus, TARGET_AUDIENCE, TicketStatus, TransactionStatus } from '@prisma/client'
 import { generateRandomCode } from '../../../shared/helpers/randomCode'
 import { ticketSuccessfullyCreatedTemplate } from '../../../shared/helpers/emailTemplate'
 import { sendEmail } from '../../../shared/utils/nodemailer'
@@ -23,6 +23,7 @@ export class WebhookController {
       const notificationJson = req.body
       const statusResponse = await snap.transaction.notification(notificationJson)
       const orderId = statusResponse.order_id
+      const paymentType = statusResponse.payment_type
       const transactionStatus = statusResponse.transaction_status
       const fraudStatus = statusResponse.fraud_status
 
@@ -53,7 +54,7 @@ export class WebhookController {
         throw new NotFoundException('Transaction not found for the given order_id')
       }
 
-      if (transaction.booking_status === 'settlement') {
+      if (transaction.status === 'settlement') {
         res.status(200).send('Transaction already settled.')
         return
       }
@@ -64,8 +65,8 @@ export class WebhookController {
             await tx.transaction.update({
               where: { id: transaction.id },
               data: {
-                booking_status: BookingStatus.settlement,
-                payment_status: transactionStatus
+                status: TransactionStatus.settlement,
+                payment_type: paymentType
               }
             })
 

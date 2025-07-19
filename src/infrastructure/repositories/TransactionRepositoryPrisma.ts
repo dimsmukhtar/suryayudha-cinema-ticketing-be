@@ -1,4 +1,10 @@
-import { BookingStatus, PrismaClient, SeatStatus, Transaction } from '@prisma/client'
+import {
+  PrismaClient,
+  SeatStatus,
+  Transaction,
+  TransactionStatus,
+  TransactionType
+} from '@prisma/client'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 import { snap } from '../../shared/utils/midtrans'
@@ -73,8 +79,8 @@ export class TransactionRepositoryPrisma {
           discount_amount: 0,
           final_amount: totalAmount,
           payment_type: 'not_initiated',
-          payment_status: 'not_initiated',
-          booking_status: BookingStatus.initiated,
+          type: TransactionType.booking,
+          status: TransactionStatus.initiated,
           transaction_time: now,
           booking_expires_at: bookingExpiresAt,
           user_id: userId
@@ -100,6 +106,7 @@ export class TransactionRepositoryPrisma {
   }
 
   async getAllTransactions(): Promise<Transaction[]> {
+    // filter by user
     return await this.prisma.transaction.findMany()
   }
 
@@ -144,11 +151,11 @@ export class TransactionRepositoryPrisma {
         throw new BadRequestException('Voucher sudah diterapkan pada transaksi ini.')
       }
 
-      if (transaction.booking_status === 'cancelled') {
+      if (transaction.status === 'cancelled') {
         throw new BadRequestException('Transaksi ini sudah dibatalkan')
       }
 
-      if (transaction.booking_status === 'settlement') {
+      if (transaction.status === 'settlement') {
         throw new BadRequestException('Transaksi ini sudah selesai')
       }
       const voucher = await tx.voucher.findUnique({
@@ -239,7 +246,7 @@ export class TransactionRepositoryPrisma {
     if (!transaction) {
       throw new NotFoundException('Transaksi tidak ditemukan atau bukan milik Anda')
     }
-    if (transaction.booking_status !== 'initiated') {
+    if (transaction.status !== 'initiated') {
       throw new BadRequestException('Transaksi ini sudah di proses atau dibatalkan')
     }
 
@@ -295,10 +302,10 @@ export class TransactionRepositoryPrisma {
       data: {
         order_id: orderId,
         payment_url: paymentUrl,
-        booking_status: BookingStatus.pending,
+        status: TransactionStatus.pending,
         payment_expires_at: paymentExpiresAt,
         payment_type: 'midtrans',
-        payment_status: 'pending'
+        type: TransactionType.payment
       }
     })
 

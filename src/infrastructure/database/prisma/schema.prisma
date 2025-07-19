@@ -302,11 +302,16 @@ model Voucher {
   @@map("Vouchers")  
 }
 
-enum BookingStatus {
+enum TransactionStatus {
   initiated
   pending
   cancelled
   settlement
+}
+
+enum TransactionType {
+  booking
+  payment
 }
 
 model Transaction {
@@ -315,8 +320,8 @@ model Transaction {
   discount_amount Int
   final_amount Int
   payment_type String
-  payment_status String
-  booking_status BookingStatus
+  type TransactionType
+  status TransactionStatus
   transaction_time DateTime
   booking_expires_at DateTime
   payment_expires_at DateTime?

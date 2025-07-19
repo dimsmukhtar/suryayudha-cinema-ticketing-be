@@ -1,4 +1,4 @@
-import { BookingStatus, SeatStatus, TARGET_AUDIENCE } from '@prisma/client'
+import { SeatStatus, TARGET_AUDIENCE, TransactionStatus } from '@prisma/client'
 import { prisma } from '../../infrastructure/database/client'
 import { logger } from '../../shared/utils/logger'
 
@@ -8,7 +8,7 @@ export const cancelExpiredBookings = async () => {
   try {
     const expiredBookings = await prisma.transaction.findMany({
       where: {
-        booking_status: BookingStatus.initiated,
+        status: TransactionStatus.initiated,
         booking_expires_at: {
           lt: new Date()
         }
@@ -67,9 +67,7 @@ export const cancelExpiredBookings = async () => {
         await tx.transaction.update({
           where: { id: transaction.id },
           data: {
-            booking_status: BookingStatus.cancelled,
-            payment_type: 'cancelled',
-            payment_status: 'cancelled'
+            status: TransactionStatus.cancelled
           }
         })
 
