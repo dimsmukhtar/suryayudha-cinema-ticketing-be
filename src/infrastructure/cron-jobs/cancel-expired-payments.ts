@@ -1,4 +1,4 @@
-import { SeatStatus, TARGET_AUDIENCE, TransactionStatus } from '@prisma/client'
+import { SeatStatus, TARGET_AUDIENCE, TransactionStatus, TransactionType } from '@prisma/client'
 import { prisma } from '../../infrastructure/database/client'
 import { logger } from '../../shared/utils/logger'
 import { sendEmail } from '../../shared/utils/nodemailer'
@@ -10,6 +10,7 @@ export const cancelExpiredPayments = async () => {
   try {
     const expiredPayments = await prisma.transaction.findMany({
       where: {
+        type: TransactionType.payment,
         status: TransactionStatus.pending,
         payment_expires_at: {
           lt: new Date()

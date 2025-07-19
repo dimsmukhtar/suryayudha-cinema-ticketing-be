@@ -3,6 +3,7 @@ import { TransactionRepositoryPrisma } from '../../../infrastructure/repositorie
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { snap } from '../../../shared/utils/midtrans'
+import { query } from '../../../infrastructure\/types/entities/TransactionTypes'
 
 export class TransactionService {
   constructor(private readonly repository: TransactionRepositoryPrisma) {}
@@ -44,9 +45,9 @@ export class TransactionService {
     }
   }
 
-  async getTransactionsByUserId(userId: number): Promise<Transaction[]> {
+  async getMyTransactions(userId: number, query: query): Promise<Transaction[]> {
     try {
-      return await this.repository.getTransactionsByUserId(userId)
+      return await this.repository.getMyTransactions(userId, query)
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil transaksi berdasarkan user id'

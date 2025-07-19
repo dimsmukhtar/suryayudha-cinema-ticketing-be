@@ -26,6 +26,9 @@ import { VoucherController } from '../../applications/modules/Voucher/voucher.co
 import { TransactionRepositoryPrisma } from '../repositories/TransactionRepositoryPrisma'
 import { TransactionService } from '../../applications/modules/Transaction/transaction.service'
 import { TransactionController } from '../../applications/modules/Transaction/transaction.controller'
+import { TicketRepositoryPrisma } from '../repositories/TicketRepositoryPrisma'
+import { TicketService } from '../../applications/modules/Ticket/ticket.service'
+import { TicketController } from '../../applications/modules/Ticket/ticket.controller'
 
 export const factoriesMovieController = () => {
   const repository = new MovieRepositoryPrisma(prisma)
@@ -79,4 +82,10 @@ export const factoriesTransactionController = () => {
   const repository = new TransactionRepositoryPrisma(prisma)
   const service = new TransactionService(repository)
   return new TransactionController(service)
+}
+
+export const factoriesTicketController = () => {
+  const repository = new TicketRepositoryPrisma(prisma)
+  const service = new TicketService(repository)
+  return new TicketController(service)
 }

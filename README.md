@@ -1,4 +1,4 @@
-### Api Specifications
+### create an e-ticket backend based on the planned API specifications
 
 #### Health
 
@@ -25,7 +25,7 @@ api/v1/
 
 - **users/register** POST | **(USER)**
  ```req.body = name,email,password, passwordConfirmation```
- - **users/resend-verification-token** POST | **(USER)**
+- **users/resend-verification-token** POST | **(USER)**
 ```req.body = email```
 - **users/verify-email** POST | **(USER)**
 ```req.body = email,verificationCode```
@@ -135,9 +135,10 @@ api/v1/
 #### Tickets
 api/v1/
 - **tickets/** GET | **(ADMIN)**
-- **tickets/my** GET | **(USER)**
 - **tickets/:id** GET | **(USER & ADMIN)**
 - **tickets/:id** DELETE | **(ADMIN)**
+- **tickets/my** GET | **(USER)**
+- **tickets/validate** PATCH | **(ADMIN)**
 
 #### Database Diagram
 ![diagram](./public/img/cinema-booking.png)

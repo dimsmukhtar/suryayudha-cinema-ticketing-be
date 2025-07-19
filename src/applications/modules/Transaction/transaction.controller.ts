@@ -65,7 +65,7 @@ export class TransactionController {
   private getMyTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.id
-      const transactions = await this.service.getTransactionsByUserId(userId)
+      const transactions = await this.service.getMyTransactions(userId, req.query)
       res
         .status(200)
         .json({ success: true, message: 'Semua transaksi berhasil diambil', data: transactions })

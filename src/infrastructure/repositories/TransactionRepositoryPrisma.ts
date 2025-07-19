@@ -1,4 +1,5 @@
 import {
+  Prisma,
   PrismaClient,
   SeatStatus,
   Transaction,
@@ -10,6 +11,7 @@ import { BadRequestException } from '../../shared/error-handling/exceptions/bad-
 import { snap } from '../../shared/utils/midtrans'
 import { sendEmail } from '../../shared/utils/nodemailer'
 import { initiatePaymentTemplate } from '../../shared/helpers/emailTemplate'
+import { query } from '../types/entities/TransactionTypes'
 
 export class TransactionRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -124,11 +126,15 @@ export class TransactionRepositoryPrisma {
     }
     return transaction
   }
-  async getTransactionsByUserId(userId: number): Promise<Transaction[]> {
+  async getMyTransactions(userId: number, query: query): Promise<Transaction[]> {
+    const where: Prisma.TransactionWhereInput = {
+      user_id: userId
+    }
+    if (query.type) {
+      where.type = query.type
+    }
     return await this.prisma.transaction.findMany({
-      where: {
-        user_id: userId
-      }
+      where: where
     })
   }
 
