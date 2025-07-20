@@ -13,6 +13,7 @@ export class TransactionController {
   private initializeTransactionRoutes(): void {
     this.transactionRouter.post('/', authenticate, this.createBooking)
     this.transactionRouter.get('/', this.getAllTransactions)
+    this.transactionRouter.get('/bookings', this.getAllBokings)
     this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
     this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
     this.transactionRouter.post('/:id/pay', authenticate, this.initiatePayment)
@@ -42,10 +43,23 @@ export class TransactionController {
 
   private getAllTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const transactions = await this.service.getAllTransactions()
+      const transactions = await this.service.getAllTransactions(req.query)
+      res.status(200).json({
+        success: true,
+        message: 'Semua data transaksi berhasil diambil',
+        data: transactions
+      })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getAllBokings = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await this.service.getAllBookings()
       res
         .status(200)
-        .json({ success: true, message: 'Semua transaksi berhasil diambil', data: transactions })
+        .json({ success: true, message: 'Semua data booking berhasil diambil', data: bookings })
     } catch (e) {
       next(e)
     }

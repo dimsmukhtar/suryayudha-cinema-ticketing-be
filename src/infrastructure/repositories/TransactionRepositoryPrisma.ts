@@ -11,7 +11,7 @@ import { BadRequestException } from '../../shared/error-handling/exceptions/bad-
 import { snap } from '../../shared/utils/midtrans'
 import { sendEmail } from '../../shared/utils/nodemailer'
 import { initiatePaymentTemplate } from '../../shared/helpers/emailTemplate'
-import { query } from '../types/entities/TransactionTypes'
+import { queryGetAllTransactions, queryGetMyTransactions } from '../types/entities/TransactionTypes'
 
 export class TransactionRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
@@ -107,9 +107,47 @@ export class TransactionRepositoryPrisma {
     })
   }
 
-  async getAllTransactions(): Promise<Transaction[]> {
-    // filter by user
-    return await this.prisma.transaction.findMany()
+  async getAllTransactions(query: queryGetAllTransactions): Promise<Transaction[]> {
+    // filter by user email, order_id, status, date
+    // status = ['pending', 'settlement', 'cancelled']
+    const where: Prisma.TransactionWhereInput = {
+      type: TransactionType.payment
+    }
+    if (query.email) {
+      where.user = {
+        email: query.email
+      }
+    }
+
+    if (query.order_id) {
+      where.order_id = query.order_id
+    }
+
+    if (query.status) {
+      where.status = query.status
+    }
+
+    if (query.date) {
+      const startDate = new Date(query.date)
+      const endDate = new Date(startDate)
+      endDate.setDate(startDate.getDate() + 1)
+
+      where.transaction_time = {
+        gte: startDate,
+        lt: endDate
+      }
+    }
+    return await this.prisma.transaction.findMany({
+      where: where
+    })
+  }
+
+  async getAllBookings(): Promise<Transaction[]> {
+    return await this.prisma.transaction.findMany({
+      where: {
+        type: TransactionType.booking
+      }
+    })
   }
 
   async getTransactionById(transactionId: number): Promise<Transaction> {
@@ -126,7 +164,7 @@ export class TransactionRepositoryPrisma {
     }
     return transaction
   }
-  async getMyTransactions(userId: number, query: query): Promise<Transaction[]> {
+  async getMyTransactions(userId: number, query: queryGetMyTransactions): Promise<Transaction[]> {
     const where: Prisma.TransactionWhereInput = {
       user_id: userId
     }

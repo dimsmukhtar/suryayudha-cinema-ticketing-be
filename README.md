@@ -124,6 +124,7 @@ api/v1/
 - **transactions/** POST | **(USER)**
  ```req.body = schedule_id,seat_ids example A2,A3```
 - **transactions/** GET | **(ADMIN)**
+- **transactions/bookings** GET | **(ADMIN)**
 - **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
  ```req.body = voucher_code```
 - **transactions/:id** get | **(USER & ADMIN)**

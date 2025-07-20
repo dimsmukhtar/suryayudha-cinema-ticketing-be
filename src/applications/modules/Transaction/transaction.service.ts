@@ -3,7 +3,10 @@ import { TransactionRepositoryPrisma } from '../../../infrastructure/repositorie
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { snap } from '../../../shared/utils/midtrans'
-import { query } from '../../../infrastructure\/types/entities/TransactionTypes'
+import {
+  queryGetAllTransactions,
+  queryGetMyTransactions
+} from '../../../infrastructure\/types/entities/TransactionTypes'
 
 export class TransactionService {
   constructor(private readonly repository: TransactionRepositoryPrisma) {}
@@ -25,12 +28,22 @@ export class TransactionService {
     }
   }
 
-  async getAllTransactions(): Promise<Transaction[]> {
+  async getAllTransactions(query: queryGetAllTransactions): Promise<Transaction[]> {
     try {
-      return await this.repository.getAllTransactions()
+      return await this.repository.getAllTransactions(query)
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil semua transaksi'
+      })
+    }
+  }
+
+  async getAllBookings(): Promise<Transaction[]> {
+    try {
+      return await this.repository.getAllBookings()
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengambil semua booking'
       })
     }
   }
@@ -45,7 +58,7 @@ export class TransactionService {
     }
   }
 
-  async getMyTransactions(userId: number, query: query): Promise<Transaction[]> {
+  async getMyTransactions(userId: number, query: queryGetMyTransactions): Promise<Transaction[]> {
     try {
       return await this.repository.getMyTransactions(userId, query)
     } catch (e) {
