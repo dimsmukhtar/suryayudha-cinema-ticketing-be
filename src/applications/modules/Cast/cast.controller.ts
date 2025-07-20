@@ -3,6 +3,8 @@ import { CastService } from './cast.service'
 import { upload } from '../../../shared/utils/multer.config'
 import { CastPayload, CastPayloadUpdate } from '../../../infrastructure/types/entities/CastTypes'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { authenticate } from '../../../shared/middlewares/authenticate'
 
 export class CastController {
   private readonly castRouter: Router
@@ -15,6 +17,8 @@ export class CastController {
     this.castRouter.get('/', this.getAllCasts)
     this.castRouter.post(
       '/',
+      authenticate,
+      validateAdmin,
       upload.single('actor_url'),
       (req, _res, next) => {
         if (!req.body.actor_url && !req.file) {
@@ -25,8 +29,14 @@ export class CastController {
       },
       this.createCast
     )
-    this.castRouter.patch('/:id', upload.single('actor_url'), this.updateCast)
-    this.castRouter.delete('/:id', this.deleteCast)
+    this.castRouter.patch(
+      '/:id',
+      authenticate,
+      validateAdmin,
+      upload.single('actor_url'),
+      this.updateCast
+    )
+    this.castRouter.delete('/:id', authenticate, validateAdmin, this.deleteCast)
   }
 
   private createCast = async (req: Request, res: Response, next: NextFunction) => {

@@ -4,6 +4,7 @@ import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/
 import { upload } from '../../../shared/utils/multer.config'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -17,6 +18,7 @@ export class MovieController {
     this.movieRouter.post(
       '/',
       authenticate,
+      validateAdmin,
       upload.single('poster_url'),
       (req, _res, next) => {
         if (!req.body.poster_url && !req.file) {
@@ -29,8 +31,14 @@ export class MovieController {
     )
     this.movieRouter.get('/', this.getAllMovies)
     this.movieRouter.get('/:id', this.getMovieById)
-    this.movieRouter.patch('/:id', upload.single('poster_url'), this.updateMovie)
-    this.movieRouter.delete('/:id', this.deleteMovie)
+    this.movieRouter.patch(
+      '/:id',
+      authenticate,
+      validateAdmin,
+      upload.single('poster_url'),
+      this.updateMovie
+    )
+    this.movieRouter.delete('/:id', authenticate, validateAdmin, this.deleteMovie)
   }
 
   private createMovie = async (req: Request, res: Response, next: NextFunction) => {

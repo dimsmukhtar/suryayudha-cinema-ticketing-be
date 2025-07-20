@@ -28,7 +28,7 @@ api/v1/
 - **users/resend-verification-token** POST | **(USER)**
 ```req.body = email```
 - **users/verify-email** POST | **(USER)**
-```req.body = email,verificationCode```
+```req.body = email,verification_token```
 - **users/profile** GET | **(USER & ADMIN)**
 - **users/update-profile** PATCH | **(USER & ADMIN)**
 ```req.body = name,email,profile_url```
@@ -37,7 +37,7 @@ api/v1/
 - **users/forgot-password** POST | **(USER & ADMIN)**
 ```req.body = email```
 - **users/reset-password** POST | **(USER & ADMIN)**
-```req.body = passwordResetCode, newPassword, newPasswordConfirmation```
+```req.body = email, passwordResetCode, newPassword, newPasswordConfirmation```
 - **users/logout** POST | **(USER & ADMIN)**
 
 #### Movies
@@ -45,7 +45,7 @@ api/v1/
 - **movies/** POST | **(ADMIN)**
  ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,movie_genres```
 - **movies/** GET | **(USER & ADMIN)**
- ```req.query = ?status&?title?genre```
+ ```req.query = status, title, genre```
 - **movies/:id** GET | **(USER & ADMIN)**
 - **movies/:id** PATCH | **(ADMIN)**
  ```req.body = title,synopsis,director,duration,rating,language,subtitle,poster_url,trailer_url,release_date,status,movie_genres```
@@ -70,7 +70,7 @@ api/v1/
  ```req.body = name```
 - **genres/:id** DELETE | **(ADMIN)**
 - **genres/movie-genre** POST | **(ADMIN)**
- ```req.body = movie_id,genre_id```
+ ```req.body = movie_id,genre_id to add genre to movie```
 - **genres/movie-genre/:id** DELETE | **(ADMIN)**
 
 #### Notifications
@@ -94,7 +94,7 @@ api/v1/
  ```req.body = name```
 - **studios/:id** DELETE | **(ADMIN)**
 - **studios/:id/upload/** POST | **(ADMIN)**
- ```req.body = photos```
+ ```req.body = photos to add multiple photos```
 - **studios/photos/:id/delete** DELETE | **(ADMIN)**
 
 
@@ -105,7 +105,7 @@ api/v1/
 - **schedules/** GET | **(USER & ADMIN)**
 - **schedules/:id** GET | **(USER & ADMIN)**
 - **schedules/:id** DELETE | **(ADMIN)**
-- **schedules/:id/seats** get | **(USER & ADMIN)**
+- **schedules/:id/seats** GET | **(USER & ADMIN)**
 - **schedules/seats/:id** PATCH | **(ADMIN)**
  ```req.body = status```
 
@@ -121,15 +121,17 @@ api/v1/
 
 #### Bookings & Transactions
 api/v1/
-- **transactions/** POST | **(USER)**
- ```req.body = schedule_id,seat_ids example A2,A3```
+- **transactions/** POST | **(USER & ADMIN)**
+ ```req.body = schedule_id,schedule_seat_ids example A2,A3```
 - **transactions/** GET | **(ADMIN)**
+ ```req.query = email, order_Id, status, date ```
 - **transactions/bookings** GET | **(ADMIN)**
-- **transactions/:id/apply-voucher** PATCH | **(ADMIN)**
+- **transactions/:id/apply-voucher** PATCH | **(USER & ADMIN)**
  ```req.body = voucher_code```
-- **transactions/:id** get | **(USER & ADMIN)**
-- **transactions/my** GET | **(USER)**
-- **transactions/:id/pay** POST | **(USER)**
+- **transactions/:id** GET | **(USER & ADMIN)**
+- **transactions/my** GET | **(USER & ADMIN)**
+ ```req.query = type, the value is booking or payment ```
+- **transactions/:id/pay** POST | **(USER) & ADMIN**
 - **/api/webhooks/midtrans** POST | **(MIDTRANS)**
 - **/transactions/check-status/:orderId** GET | **(ADMIN)**
 
@@ -139,8 +141,9 @@ api/v1/
 - **tickets/:id** GET | **(USER & ADMIN)**
 - **tickets/:code/find-code** GET | **(ADMIN)**
 - **tickets/:id** DELETE | **(ADMIN)**
-- **tickets/my** GET | **(USER)**
+- **tickets/my** GET | **(USER & ADMIN)**
 - **tickets/validate** PATCH | **(ADMIN)**
+ ```req.body = code```
 
 #### Database Diagram
 ![diagram](./public/img/cinema-booking.png)

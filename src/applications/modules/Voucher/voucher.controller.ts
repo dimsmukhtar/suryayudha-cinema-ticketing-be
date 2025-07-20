@@ -4,6 +4,8 @@ import {
   UpdateVoucherPayload,
   VoucherPayload
 } from '../../../infrastructure/types/entities/VoucherTypes'
+import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class VoucherController {
   private readonly voucherRouter: Router
@@ -13,11 +15,11 @@ export class VoucherController {
   }
 
   private initializeVoucherRoutes(): void {
-    this.voucherRouter.post('/', this.createVoucher)
-    this.voucherRouter.get('/', this.getAllVouchers)
-    this.voucherRouter.get('/:id', this.getVoucherById)
-    this.voucherRouter.patch('/:id', this.updateVoucher)
-    this.voucherRouter.delete('/:id', this.deleteVoucher)
+    this.voucherRouter.post('/', authenticate, validateAdmin, this.createVoucher)
+    this.voucherRouter.get('/', authenticate, validateAdmin, this.getAllVouchers)
+    this.voucherRouter.get('/:id', authenticate, validateAdmin, this.getVoucherById)
+    this.voucherRouter.patch('/:id', authenticate, validateAdmin, this.updateVoucher)
+    this.voucherRouter.delete('/:id', authenticate, validateAdmin, this.deleteVoucher)
   }
 
   private createVoucher = async (req: Request, res: Response, next: NextFunction) => {

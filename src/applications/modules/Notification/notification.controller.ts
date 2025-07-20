@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, Router } from 'express'
 import { NotificationService } from './notification.service'
 import { NotificationPayload } from '../../../infrastructure/types/entities/NotificationTypes'
 import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class NotificationController {
   private readonly notificationRouter: Router
@@ -11,8 +12,8 @@ export class NotificationController {
   }
 
   private initializeNotificationRoutes(): void {
-    this.notificationRouter.get('/', this.getAllNotifications)
-    this.notificationRouter.post('/', this.createNotification)
+    this.notificationRouter.get('/', authenticate, validateAdmin, this.getAllNotifications)
+    this.notificationRouter.post('/', authenticate, validateAdmin, this.createNotification)
     this.notificationRouter.get('/my', authenticate, this.getMyNotifications)
     this.notificationRouter.post('/:id/my/mark', authenticate, this.markNofiticationAsRead)
     this.notificationRouter.delete('/:id/my/hide', authenticate, this.hideNotification)

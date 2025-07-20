@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { GenreService } from './genre.service'
 import { GenrePayload, GenrePayloadUpdate } from '../../../infrastructure/types/entities/GenreTypes'
+import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class GenreController {
   private readonly genreRouter: Router
@@ -12,11 +14,11 @@ export class GenreController {
   private initializeGenreRoutes() {
     this.genreRouter.get('/', this.getAllGenres)
     this.genreRouter.get('/:id', this.getGenreById)
-    this.genreRouter.post('/', this.createGenre)
-    this.genreRouter.patch('/:id', this.updateGenre)
-    this.genreRouter.delete('/:id', this.deleteGenre)
-    this.genreRouter.delete('/movie-genre/:id', this.deleteMovieGenre)
-    this.genreRouter.post('/movie-genre', this.addGenreToMovie)
+    this.genreRouter.post('/', authenticate, validateAdmin, this.createGenre)
+    this.genreRouter.patch('/:id', authenticate, validateAdmin, this.updateGenre)
+    this.genreRouter.delete('/:id', authenticate, validateAdmin, this.deleteGenre)
+    this.genreRouter.delete('/movie-genre/:id', authenticate, validateAdmin, this.deleteMovieGenre)
+    this.genreRouter.post('/movie-genre', authenticate, validateAdmin, this.addGenreToMovie)
   }
 
   private createGenre = async (req: Request, res: Response, next: NextFunction) => {

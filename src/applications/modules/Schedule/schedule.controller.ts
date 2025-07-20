@@ -3,6 +3,7 @@ import { Request, Response, NextFunction, Router } from 'express'
 import { ScheduleService } from './schedule.service'
 import { SchedulePayload } from '../../../infrastructure/types/entities/ScheduleTypes'
 import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class ScheduleController {
   private readonly scheduleRouter: Router
@@ -12,12 +13,17 @@ export class ScheduleController {
   }
 
   private initializeScheduleRoutes(): void {
-    this.scheduleRouter.post('/', authenticate, this.createSchedule)
+    this.scheduleRouter.post('/', authenticate, validateAdmin, this.createSchedule)
     this.scheduleRouter.get('/', this.getAllSchedules)
     this.scheduleRouter.get('/:id', this.getScheduleById)
-    this.scheduleRouter.delete('/:id', this.deleteSchedule)
+    this.scheduleRouter.delete('/:id', authenticate, validateAdmin, this.deleteSchedule)
     this.scheduleRouter.get('/:id/seats', this.getScheduleLayout)
-    this.scheduleRouter.put('/seats/:id', this.updateScheduleSeatStatus)
+    this.scheduleRouter.put(
+      '/seats/:id',
+      authenticate,
+      validateAdmin,
+      this.updateScheduleSeatStatus
+    )
   }
 
   private createSchedule = async (req: Request, res: Response, next: NextFunction) => {

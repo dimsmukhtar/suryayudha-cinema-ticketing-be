@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { TicketService } from './ticket.service'
 import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class TicketController {
   private readonly ticketRouter: Router
@@ -10,12 +11,12 @@ export class TicketController {
   }
 
   private initializeTicketRoutes(): void {
-    this.ticketRouter.get('/', this.getAllTickets)
+    this.ticketRouter.get('/', authenticate, validateAdmin, this.getAllTickets)
     this.ticketRouter.get('/my', authenticate, this.getMyTickets)
-    this.ticketRouter.patch('/validate', this.validateTicket)
-    this.ticketRouter.get('/:code/find-code', this.getTicketByCode)
-    this.ticketRouter.get('/:id', this.getTicketById)
-    this.ticketRouter.delete('/:id', this.deleteTicket)
+    this.ticketRouter.patch('/validate', authenticate, validateAdmin, this.validateTicket)
+    this.ticketRouter.get('/:code/find-code', authenticate, validateAdmin, this.getTicketByCode)
+    this.ticketRouter.get('/:id', authenticate, this.getTicketById)
+    this.ticketRouter.delete('/:id', authenticate, validateAdmin, this.deleteTicket)
   }
 
   private getAllTickets = async (req: Request, res: Response, next: NextFunction) => {

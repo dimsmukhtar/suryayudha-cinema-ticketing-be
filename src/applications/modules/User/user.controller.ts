@@ -13,6 +13,7 @@ import { setAccessToken } from '../../../shared/helpers/setCookies'
 import { upload } from '../../../shared/utils/multer.config'
 import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
 import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 export class UserController {
   private readonly userRouter: Router
   constructor(private readonly service: UserService) {
@@ -21,7 +22,7 @@ export class UserController {
   }
 
   private initializeUserRoutes() {
-    this.userRouter.get('/', this.getAllUsers)
+    this.userRouter.get('/', authenticate, validateAdmin, this.getAllUsers)
 
     this.userRouter.post('/register', this.register)
     this.userRouter.post('/resend-verification-token', this.resendVerificationToken)
@@ -40,10 +41,16 @@ export class UserController {
     this.userRouter.post('/forgot-password', this.sendTokenResetPassword)
     this.userRouter.post('/reset-password', this.resetPassword)
 
-    this.userRouter.post('/', this.createUser)
-    this.userRouter.patch('/:id', upload.single('profile_url'), this.updateUser)
-    this.userRouter.delete('/:id', this.deleteUser)
-    this.userRouter.get('/:id', this.getUserById)
+    this.userRouter.post('/', authenticate, validateAdmin, this.createUser)
+    this.userRouter.patch(
+      '/:id',
+      authenticate,
+      validateAdmin,
+      upload.single('profile_url'),
+      this.updateUser
+    )
+    this.userRouter.delete('/:id', authenticate, validateAdmin, this.deleteUser)
+    this.userRouter.get('/:id', authenticate, validateAdmin, this.getUserById)
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {

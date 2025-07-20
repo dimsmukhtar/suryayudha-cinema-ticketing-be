@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { StudioService } from './studio.service'
 import { uploadMultiple } from '../../../shared/utils/multer.config'
+import { authenticate } from '../../../shared/middlewares/authenticate'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class StudioController {
   private readonly studioRouter: Router
@@ -12,12 +14,23 @@ export class StudioController {
   private initializeStudioRoutes(): void {
     this.studioRouter.get('/', this.getAllStudios)
     this.studioRouter.get('/photos', this.getAllPhotos)
-    this.studioRouter.post('/', this.createStudio)
+    this.studioRouter.post('/', authenticate, validateAdmin, this.createStudio)
     this.studioRouter.get('/:id', this.getStudioById)
-    this.studioRouter.put('/:id', this.updateStudio)
-    this.studioRouter.delete('/:id', this.deleteStudio)
-    this.studioRouter.post('/:id/upload', uploadMultiple.array('photos'), this.uploadStudioPhotos)
-    this.studioRouter.delete('/photos/:id/delete', this.deletePhotoFromImageKit)
+    this.studioRouter.put('/:id', authenticate, validateAdmin, this.updateStudio)
+    this.studioRouter.delete('/:id', authenticate, validateAdmin, this.deleteStudio)
+    this.studioRouter.post(
+      '/:id/upload',
+      authenticate,
+      validateAdmin,
+      uploadMultiple.array('photos'),
+      this.uploadStudioPhotos
+    )
+    this.studioRouter.delete(
+      '/photos/:id/delete',
+      authenticate,
+      validateAdmin,
+      this.deletePhotoFromImageKit
+    )
   }
 
   private getAllStudios = async (req: Request, res: Response, next: NextFunction) => {

@@ -13,7 +13,6 @@ import {
 } from 'infrastructure/types/entities/UserTypes'
 import { UserValidation } from './user.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 
 export class UserService {
   constructor(private readonly repository: UserRepositoryPrisma) {}

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, Router } from 'express'
 import { TransactionService } from './transaction.service'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 
 export class TransactionController {
   private readonly transactionRouter: Router
@@ -12,13 +13,18 @@ export class TransactionController {
 
   private initializeTransactionRoutes(): void {
     this.transactionRouter.post('/', authenticate, this.createBooking)
-    this.transactionRouter.get('/', this.getAllTransactions)
-    this.transactionRouter.get('/bookings', this.getAllBokings)
+    this.transactionRouter.get('/', authenticate, validateAdmin, this.getAllTransactions)
+    this.transactionRouter.get('/bookings', authenticate, validateAdmin, this.getAllBokings)
     this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
     this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
     this.transactionRouter.post('/:id/pay', authenticate, this.initiatePayment)
-    this.transactionRouter.get('/:id', this.getTransactionById)
-    this.transactionRouter.get('/check-status/:orderId', this.checkMidtransStatus)
+    this.transactionRouter.get('/:id', authenticate, this.getTransactionById)
+    this.transactionRouter.get(
+      '/check-status/:orderId',
+      authenticate,
+      validateAdmin,
+      this.checkMidtransStatus
+    )
   }
 
   private createBooking = async (req: Request, res: Response, next: NextFunction) => {
