@@ -72,7 +72,8 @@ export const cancelExpiredPayments = async () => {
             id: transaction.id
           },
           data: {
-            status: TransactionStatus.cancelled
+            status: TransactionStatus.cancelled,
+            status_sort_order: 4
           }
         })
 

@@ -66,7 +66,8 @@ export class WebhookController {
               where: { id: transaction.id },
               data: {
                 status: TransactionStatus.settlement,
-                payment_type: paymentType
+                payment_type: paymentType,
+                status_sort_order: 3
               }
             })
 

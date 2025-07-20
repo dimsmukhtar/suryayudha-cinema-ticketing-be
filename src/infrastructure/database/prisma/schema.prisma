@@ -329,6 +329,7 @@ model Transaction {
   order_id String?  @unique
   payment_url String?
   voucher_id Int?
+  status_sort_order Int
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt   
 

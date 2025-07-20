@@ -68,7 +68,8 @@ export const cancelExpiredBookings = async () => {
         await tx.transaction.update({
           where: { id: transaction.id },
           data: {
-            status: TransactionStatus.cancelled
+            status: TransactionStatus.cancelled,
+            status_sort_order: 4
           }
         })
 

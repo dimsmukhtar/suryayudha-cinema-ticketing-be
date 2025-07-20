@@ -30,6 +30,11 @@ export class TransactionRepositoryPrisma {
           id: scheduleId
         }
       })
+      const user = await tx.user.findUnique({
+        where: {
+          id: userId
+        }
+      })
       if (!schedule) {
         throw new NotFoundException(`Schedule dengan id ${scheduleId} tidak ditemukan`)
       }
@@ -40,6 +45,10 @@ export class TransactionRepositoryPrisma {
 
       if (schedule.finished_time < new Date()) {
         throw new BadRequestException('Jadwal film ini sudah berakhir')
+      }
+
+      if (user!.is_verified === false) {
+        throw new BadRequestException('Email belum terverifikasi')
       }
 
       const totalBookingSeats = scheduleSeatIds.length
@@ -85,6 +94,7 @@ export class TransactionRepositoryPrisma {
           status: TransactionStatus.initiated,
           transaction_time: now,
           booking_expires_at: bookingExpiresAt,
+          status_sort_order: 1,
           user_id: userId
         }
       })
@@ -349,6 +359,7 @@ export class TransactionRepositoryPrisma {
         status: TransactionStatus.pending,
         payment_expires_at: paymentExpiresAt,
         payment_type: 'midtrans',
+        status_sort_order: 2,
         type: TransactionType.payment
       }
     })
