@@ -148,7 +148,15 @@ export class TransactionRepositoryPrisma {
       }
     }
     return await this.prisma.transaction.findMany({
-      where: where
+      where: where,
+      orderBy: [
+        {
+          status_sort_order: 'asc'
+        },
+        {
+          transaction_time: 'desc'
+        }
+      ]
     })
   }
 
@@ -156,7 +164,15 @@ export class TransactionRepositoryPrisma {
     return await this.prisma.transaction.findMany({
       where: {
         type: TransactionType.booking
-      }
+      },
+      orderBy: [
+        {
+          status_sort_order: 'asc'
+        },
+        {
+          transaction_time: 'desc'
+        }
+      ]
     })
   }
 
@@ -182,7 +198,15 @@ export class TransactionRepositoryPrisma {
       where.type = query.type
     }
     return await this.prisma.transaction.findMany({
-      where: where
+      where: where,
+      orderBy: [
+        {
+          status_sort_order: 'asc'
+        },
+        {
+          transaction_time: 'desc'
+        }
+      ]
     })
   }
 
