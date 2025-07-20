@@ -86,12 +86,12 @@ api/v1/
 #### Studios
 api/v1/
 - **studios/** POST | **(ADMIN)**
- ```req.body = name```
+ ```req.body = id,name```
 - **studios/** GET | **(USER & ADMIN)**
 - **studios/photos** GET | **(USER & ADMIN)**
 - **studios/:id** GET | **(USER & ADMIN)**
 - **studios/:id** PUT | **(ADMIN)**
- ```req.body = name```
+ ```req.body = id,name```
 - **studios/:id** DELETE | **(ADMIN)**
 - **studios/:id/upload/** POST | **(ADMIN)**
  ```req.body = photos to add multiple photos```
