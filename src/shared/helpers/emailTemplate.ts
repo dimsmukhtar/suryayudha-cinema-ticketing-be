@@ -573,3 +573,47 @@ export const paymentCancelledTemplate = `<!DOCTYPE html>
   </body>
 </html>
 `
+
+export const verificationEmailTemplate = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Verifikasi Akun Anda</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 8px;">
+      <tr>
+        <td align="center" style="padding: 40px 0; background-color: #1a202c; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+          <h1 style="margin: 0;">Selamat Datang di Surya Yudha Cinema!</h1>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 40px 30px;">
+          <h2 style="color: #333333;">Halo, {{namaUser}}!</h2>
+          <p style="color: #555555; line-height: 1.6;">
+            Terima kasih telah mendaftar. Hanya satu langkah lagi untuk mengaktifkan akun Anda. Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.
+          </p>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td align="center" style="padding: 20px 0;">
+                <a href="{{verificationLink}}" target="_blank" style="background-color: #007bff; color: #ffffff; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                  Verifikasi Akun Saya
+                </a>
+              </td>
+            </tr>
+          </table>
+         
+          <p style="color: #555555; line-height: 1.6;">
+            Link ini akan kadaluarsa dalam 15 menit. Jika Anda tidak mendaftar, abaikan saja email ini.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 20px 30px; background-color: #f4f4f9; color: #888888; font-size: 12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+          <p style="margin: 0;">&copy; 2025 Surya Yudha Cinema. All rights reserved.</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+`

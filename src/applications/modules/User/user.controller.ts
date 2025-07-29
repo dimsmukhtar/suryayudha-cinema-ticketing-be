@@ -6,14 +6,14 @@ import {
   RegisterPayload,
   ResetPasswordPayload,
   UserPayload,
-  UserUpdatePayload,
-  VerifyEmailPayload
+  UserUpdatePayload
 } from '../../../infrastructure/types/entities/UserTypes'
 import { setAccessToken } from '../../../shared/helpers/setCookies'
 import { upload } from '../../../shared/utils/multer.config'
 import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 export class UserController {
   private readonly userRouter: Router
   constructor(private readonly service: UserService) {
@@ -25,8 +25,8 @@ export class UserController {
     this.userRouter.get('/', authenticate, validateAdmin, this.getAllUsers)
 
     this.userRouter.post('/register', this.register)
-    this.userRouter.post('/resend-verification-token', this.resendVerificationToken)
-    this.userRouter.post('/verify-email', this.verifyEmail)
+    this.userRouter.post('/resend-verification-token', this.resendVerificationLink)
+    this.userRouter.get('/verify-email', this.verifyEmail)
     this.userRouter.post('/login', this.login)
     this.userRouter.post('/login-admin', this.loginAdmin)
     this.userRouter.post('/logout', this.logout)
@@ -121,7 +121,7 @@ export class UserController {
       res.status(201).json({
         success: true,
         message:
-          'Berhasil register dan token verifikasi telah dikirim ke email anda!, silahkan cek email untuk verifikasi'
+          'Berhasil register dan verifikasi link telah dikirim ke email anda!, silahkan cek email untuk verifikasi'
       })
     } catch (e) {
       console.log(e)
@@ -129,10 +129,10 @@ export class UserController {
     }
   }
 
-  private resendVerificationToken = async (req: Request, res: Response, next: NextFunction) => {
+  private resendVerificationLink = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.service.resendVerificationToken(req.body.email)
-      res.status(200).json({ success: true, message: 'Token verifikasi berhasil dikirim ulang' })
+      await this.service.resendVerificationLink(req.body.email)
+      res.status(200).json({ success: true, message: 'Link verifikasi berhasil dikirim ulang' })
     } catch (e) {
       next(e)
     }
@@ -140,8 +140,11 @@ export class UserController {
 
   private verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const verifyEmailPayload: VerifyEmailPayload = req.body
-      await this.service.verifyEmail(verifyEmailPayload)
+      const { token, email } = req.query
+      if (!token || !email) {
+        throw new BadRequestException('Token dan email diperlukan untuk verifikasi')
+      }
+      await this.service.verifyEmail(token as string, email as string)
       res.status(200).json({ success: true, message: 'Email berhasil diverifikasi' })
     } catch (e) {
       next(e)
@@ -182,7 +185,6 @@ export class UserController {
 
   private getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.user)
       const userId = req.user!.id
       const user = await this.service.getProfile(userId)
       const {

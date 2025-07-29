@@ -115,19 +115,6 @@ export class UserValidation {
       path: ['passwordConfirmation']
     })
 
-  static readonly VERIFY_EMAIL: ZodType = z.object({
-    email: z
-      .string({
-        required_error: 'Email harus diisi',
-        invalid_type_error: 'Email harus berupa string'
-      })
-      .email('Email tidak valid'),
-    verification_token: z.string({
-      required_error: 'Token verifikasi harus diisi',
-      invalid_type_error: 'Token verifikasi harus berupa string'
-    })
-  })
-
   static readonly LOGIN: ZodType = z.object({
     email: z
       .string({

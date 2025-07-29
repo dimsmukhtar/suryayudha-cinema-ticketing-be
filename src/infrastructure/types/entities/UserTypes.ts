@@ -61,9 +61,9 @@ export type ResetPasswordPayload = {
   newPasswordConfirmation: string
 }
 
-export type VerifyEmailPayload = {
+export type VerifyEmailQuery = {
+  token: string
   email: string
-  verification_token: string
 }
 
 export type ProfileUpdatePayload = {
@@ -83,8 +83,8 @@ export interface IUserRepository {
   updateUser(id: number, data: UserUpdatePayload): Promise<User>
   deleteUser(id: number): Promise<void>
   register(data: RegisterPayload): Promise<User>
-  resendVerificationToken(email: string): Promise<void>
-  verifyEmail(data: VerifyEmailPayload): Promise<void>
+  resendVerificationLink(email: string): Promise<void>
+  verifyEmail(token: string, email: string): Promise<void>
   login(data: LoginPayload): Promise<string>
   loginAdmin(data: LoginPayload): Promise<string>
   getProfile(userId: number): Promise<User>

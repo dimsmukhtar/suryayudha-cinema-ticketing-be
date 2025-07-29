@@ -5,7 +5,7 @@ import {
   UserPayload,
   UserUpdatePayload,
   RegisterPayload,
-  VerifyEmailPayload,
+  VerifyEmailQuery,
   LoginPayload,
   ProfileUpdatePayload,
   ChangePasswordPayload,
@@ -19,6 +19,7 @@ import { sendEmail } from '../../shared/utils/nodemailer'
 import { generateVerificationToken } from '../../shared/helpers/generateVerificationToken'
 import { hashPassword, verifyPassword } from '../../shared/utils/passwordEncrypt'
 import { signJwt } from '../../shared/utils/jwt'
+import { verificationEmailTemplate } from '../../shared/helpers/emailTemplate'
 
 export class UserRepositoryPrisma implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -77,67 +78,14 @@ export class UserRepositoryPrisma implements IUserRepository {
     if (user) {
       throw new BadRequestException(`Email ${data.email} sudah terdaftar`)
     }
+    const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${data.verification_token}&email=${data.email}`
+    const emailHtml = verificationEmailTemplate
+      .replace('{{namaUser}}', data.name)
+      .replace('{{verificationLink}}', verificationLink)
     await sendEmail({
       email: data.email,
-      subject: 'Token untuk Verifikasi Email Anda',
-      html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Email Verification</title>
-</head>
-<body
-  style="
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-  "
->
-  <div
-    style="
-      background: linear-gradient(to right, #5f6fff, #5f6fff);
-      padding: 20px;
-      text-align: center;
-    "
-  >
-    <h1 style="color: white; margin: 0">Verifikasi Email Anda</h1>
-  </div>
-  <div
-    style="
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 0 0 5px 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    "
-  >
-    <p>Hallo</p>
-    <p>
-      Terimakasih sudah mendaftarkan diri anda di Website Surya Yudha Cinema, berikut adalah kode
-      verifikasi anda!.
-    </p>
-    <div style="text-align: center; margin: 30px 0">
-      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #5f6fff"
-        >${data.verification_token}</span
-      >
-    </div>
-    <p>Gunakan kode diatas untuk memverifikasi akun anda.</p>
-    <p>
-      Kode ini akan kedaluwarsa dalam 15 menit demi alasan keamanan, jadi pastikan anda verifikasi
-      sebelum 15 menit!..
-    </p>
-    <p>Best regards,<br />Developer Team</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em">
-    <p>Jika Anda tidak membuat akun dengan kami, harap abaikan email ini.</p>
-  </div>
-</body>
-</html>
-,
-`
+      subject: 'Verifikasi Akun Surya Yudha Cinema Anda',
+      html: emailHtml
     })
     const { passwordConfirmation, ...prismaData } = data
 
@@ -149,70 +97,21 @@ export class UserRepositoryPrisma implements IUserRepository {
     })
   }
 
-  async resendVerificationToken(email: string): Promise<void> {
+  async resendVerificationLink(email: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (!user) {
+      throw new NotFoundException(`User dengan email ${email} tidak ditemukan`)
+    }
     const verificationToken = generateVerificationToken()
     const verificationTokenExpiresAt = new Date(Date.now() + 15 * 60 * 1000)
+    const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}&email=${email}`
+    const emailHtml = verificationEmailTemplate
+      .replace('{{namaUser}}', email)
+      .replace('{{verificationLink}}', verificationLink)
     await sendEmail({
       email: email,
-      subject: 'Token untuk Verifikasi Email Anda',
-      html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Email Verification</title>
-</head>
-<body
-  style="
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-  "
->
-  <div
-    style="
-      background: linear-gradient(to right, #5f6fff, #5f6fff);
-      padding: 20px;
-      text-align: center;
-    "
-  >
-    <h1 style="color: white; margin: 0">Verifikasi Email Anda</h1>
-  </div>
-  <div
-    style="
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 0 0 5px 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    "
-  >
-    <p>Hallo</p>
-    <p>
-      Terimakasih sudah mendaftarkan diri anda di Website Surya Yudha Cinema, berikut adalah kode
-      verifikasi anda!.
-    </p>
-    <div style="text-align: center; margin: 30px 0">
-      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #5f6fff"
-        >${verificationToken}</span
-      >
-    </div>
-    <p>Gunakan kode diatas untuk memverifikasi akun anda.</p>
-    <p>
-      Kode ini akan kedaluwarsa dalam 15 menit demi alasan keamanan, jadi pastikan anda verifikasi
-      sebelum 15 menit!..
-    </p>
-    <p>Best regards,<br />Developer Team</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em">
-    <p>Jika Anda tidak membuat akun dengan kami, harap abaikan email ini.</p>
-  </div>
-</body>
-</html>
-,
-`
+      subject: 'Link Verifikasi Akun Baru Anda',
+      html: emailHtml
     })
     await this.prisma.user.update({
       where: {
@@ -225,16 +124,16 @@ export class UserRepositoryPrisma implements IUserRepository {
     })
   }
 
-  async verifyEmail(data: VerifyEmailPayload): Promise<void> {
+  async verifyEmail(token: string, email: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where: {
-        email: data.email
+        email: email
       }
     })
     if (!user) {
-      throw new NotFoundException(`User dengan email ${data.email} tidak ditemukan`)
+      throw new NotFoundException(`User dengan email ${email} tidak ditemukan`)
     }
-    if (user.verification_token !== data.verification_token) {
+    if (user.verification_token !== token) {
       throw new BadRequestException('Token verifikasi salah')
     }
 
@@ -247,7 +146,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     }
     await this.prisma.user.update({
       where: {
-        email: data.email
+        email: email
       },
       data: {
         is_verified: true
