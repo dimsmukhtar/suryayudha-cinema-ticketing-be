@@ -14,6 +14,7 @@ import { generateVerificationToken } from '../../../shared/helpers/generateVerif
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { UnauthorizedException } from '../../../shared/error-handling/exceptions/unauthorized.exception'
 export class UserController {
   private readonly userRouter: Router
   constructor(private readonly service: UserService) {
@@ -28,6 +29,7 @@ export class UserController {
     this.userRouter.post('/resend-verification-token', this.resendVerificationLink)
     this.userRouter.get('/verify-email', this.verifyEmail)
     this.userRouter.post('/login', this.login)
+    this.userRouter.get('/check-auth', this.checkAuthentication)
     this.userRouter.post('/login-admin', this.loginAdmin)
     this.userRouter.post('/logout', this.logout)
     this.userRouter.get('/profile', authenticate, this.getProfile)
@@ -247,6 +249,18 @@ export class UserController {
       const user = await this.service.resetPassword(resetPasswordPayload)
       const { password, ...rest } = user
       res.status(200).json({ success: true, message: 'Password berhasil direset', data: rest })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private checkAuthentication = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.cookies.accessToken
+      if (!token) {
+        return next(new UnauthorizedException('Tidak terautentikasi'))
+      }
+      res.status(200).json({ success: true, message: 'Autentikasi berhasil' })
     } catch (e) {
       next(e)
     }

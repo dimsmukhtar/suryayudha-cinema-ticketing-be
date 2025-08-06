@@ -41,7 +41,7 @@ class App implements IApp {
       ACCESS_TOKEN_PUBLIC_KEY: str(),
       REFRESH_TOKEN_PRIVATE_KEY: str(),
       REFRESH_TOKEN_PUBLIC_KEY: str(),
-      CORS_ORIGIN: str({ default: '*' }),
+      CORS_ORIGIN: str(),
       IMAGEKIT_PUBLIC_KEY: str(),
       IMAGEKIT_PRIVATE_KEY: str(),
       IMAGEKIT_URL_ENDPOINT: str(),

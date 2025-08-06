@@ -122,7 +122,11 @@ export class MovieRepositoryPrisma implements IMovieRepository {
             }
           }
         },
-        schedules: true
+        schedules: {
+          include: {
+            studio: true
+          }
+        }
       }
     })
 
