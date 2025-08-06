@@ -182,7 +182,21 @@ export class TransactionRepositoryPrisma {
         id: transactionId
       },
       include: {
-        transaction_items: true
+        user: true,
+        transaction_items: {
+          include: {
+            schedule_seat: {
+              include: {
+                schedule: {
+                  include: {
+                    movie: true,
+                    studio: true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     })
     if (!transaction) {

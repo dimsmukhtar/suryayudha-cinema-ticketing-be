@@ -27,8 +27,8 @@ api/v1/
  ```req.body = name,email,password, passwordConfirmation```
 - **users/resend-verification-token** POST | **(USER)**
 ```req.body = email```
-- **users/verify-email** POST | **(USER)**
-```req.body = email,verification_token```
+- **users/verify-email** GET | **(USER)**
+```req.body = email,token```
 - **users/profile** GET | **(USER & ADMIN)**
 - **users/update-profile** PATCH | **(USER & ADMIN)**
 ```req.body = name,email,profile_url```
