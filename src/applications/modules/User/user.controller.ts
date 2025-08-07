@@ -39,7 +39,7 @@ export class UserController {
       upload.single('profile_url'),
       this.updateProfile
     )
-    this.userRouter.put('/change-password', authenticate, this.changePassword)
+    this.userRouter.patch('/change-password', authenticate, this.changePassword)
     this.userRouter.post('/forgot-password', this.sendTokenResetPassword)
     this.userRouter.post('/reset-password', this.resetPassword)
 

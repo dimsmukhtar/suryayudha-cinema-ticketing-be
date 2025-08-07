@@ -213,6 +213,21 @@ export class TransactionRepositoryPrisma {
     }
     return await this.prisma.transaction.findMany({
       where: where,
+      include: {
+        transaction_items: {
+          include: {
+            schedule_seat: {
+              include: {
+                schedule: {
+                  include: {
+                    movie: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       orderBy: [
         {
           status_sort_order: 'asc'
