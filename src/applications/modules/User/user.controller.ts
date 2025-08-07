@@ -26,6 +26,7 @@ export class UserController {
     this.userRouter.get('/', authenticate, validateAdmin, this.getAllUsers)
 
     this.userRouter.post('/register', this.register)
+    this.userRouter.get('/dashboard/admin', this.getDashboardStats)
     this.userRouter.post('/resend-verification-token', this.resendVerificationLink)
     this.userRouter.get('/verify-email', this.verifyEmail)
     this.userRouter.post('/login', this.login)
@@ -261,6 +262,17 @@ export class UserController {
         return next(new UnauthorizedException('Tidak terautentikasi'))
       }
       res.status(200).json({ success: true, message: 'Autentikasi berhasil' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await this.service.getDashboardStats()
+      res
+        .status(200)
+        .json({ success: true, message: 'Statistik dashboard berhasil diambil', data: stats })
     } catch (e) {
       next(e)
     }

@@ -7,9 +7,9 @@
 
 #### Auths
 api/v1/
-- **auths/login** POST | **(USER)**
+- **ussers/login** POST | **(USER)**
 ```req.body = email,password```
-- **auths/admin/login** POST | **(ADMIN)**
+- **users/login-admin** POST | **(ADMIN)**
 ```req.body = email,password```
 
 #### Users

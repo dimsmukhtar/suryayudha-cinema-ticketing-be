@@ -1,11 +1,10 @@
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient, TransactionStatus, User } from '@prisma/client'
 import {
   IUserRepository,
   UserWithRelations,
   UserPayload,
   UserUpdatePayload,
   RegisterPayload,
-  VerifyEmailQuery,
   LoginPayload,
   ProfileUpdatePayload,
   ChangePasswordPayload,
@@ -323,5 +322,45 @@ export class UserRepositoryPrisma implements IUserRepository {
       where: { email: data.email },
       data: { password: hash, reset_password_token: null, reset_password_token_expires_at: null }
     })
+  }
+
+  async getDashboardStats() {
+    const [totalRevenue, totalTicketsSold, totalMovies, totalUsers, recentTransactions] =
+      await Promise.all([
+        this.prisma.transaction.aggregate({
+          _sum: {
+            final_amount: true
+          },
+          where: {
+            status: TransactionStatus.settlement
+          }
+        }),
+        this.prisma.ticket.count(),
+
+        this.prisma.movie.count(),
+
+        this.prisma.user.count({ where: { role: 'user' } }),
+
+        this.prisma.transaction.findMany({
+          where: {
+            status: TransactionStatus.settlement
+          },
+          take: 5,
+          orderBy: {
+            updated_at: 'desc'
+          },
+          include: {
+            user: { select: { name: true, email: true } }
+          }
+        })
+      ])
+
+    return {
+      totalRevenue: totalRevenue._sum.final_amount || 0,
+      totalTicketsSold,
+      totalMovies,
+      totalUsers,
+      recentTransactions
+    }
   }
 }

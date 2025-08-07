@@ -168,4 +168,14 @@ export class UserService {
       })
     }
   }
+
+  async getDashboardStats() {
+    try {
+      return await this.repository.getDashboardStats()
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengambil data dashboard stats'
+      })
+    }
+  }
 }
