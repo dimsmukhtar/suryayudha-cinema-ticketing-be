@@ -22,6 +22,7 @@ api/v1/
 - **users/:id** PATCH | **(ADMIN)**
  ```req.body = name,email,role,password,is_verified,profile_url```
 - **users/:id** DELETE | **(ADMIN)**
+- **users/dashboard/admin** GET | **(ADMIN)**
 
 - **users/register** POST | **(USER)**
  ```req.body = name,email,password, passwordConfirmation```

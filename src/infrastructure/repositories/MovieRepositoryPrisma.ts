@@ -1,4 +1,4 @@
-import { Movie, MovieStatus, Prisma, PrismaClient } from '@prisma/client'
+import { Movie, MovieStatus, Prisma, PrismaClient, MovieGenre } from '@prisma/client'
 import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
 import { MoviePayload, MoviePayloadUpdate, MovieQuery } from '../types/entities/MovieTypes'
 import { IMovieRepository } from '../types/entities/MovieTypes'
@@ -86,7 +86,8 @@ export class MovieRepositoryPrisma implements IMovieRepository {
           include: {
             genre: true
           }
-        }
+        },
+        casts: true
       },
       orderBy: {
         release_date: 'desc'
@@ -141,25 +142,70 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     return movieData
   }
 
-  async updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
+  async updateMovie(movieId: number, movieData: any): Promise<Movie> {
     await checkExists(this.prisma.movie, movieId, 'Film')
+
+    const { movie_genres, ...otherMovieData } = movieData
+
     let posterUrl: string | undefined
-    if (movieData.poster_url) {
+    if (movieData.poster_url && typeof movieData.poster_url !== 'string') {
       const { url } = await uploadImageToImageKit('poster', '/posters', movieData.poster_url)
       posterUrl = url
     }
-    const data: any = {
-      ...movieData,
+
+    const dataToUpdate: any = {
+      ...otherMovieData,
       ...(posterUrl && { poster_url: posterUrl }),
-      ...(movieData.release_date && {
-        release_date: new Date(movieData.release_date)
+      ...(otherMovieData.release_date && {
+        release_date: new Date(otherMovieData.release_date)
       })
     }
-    return await this.prisma.movie.update({
-      where: {
-        id: movieId
-      },
-      data: data
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.movie.update({
+        where: { id: movieId },
+        data: dataToUpdate
+      })
+
+      if (movie_genres && typeof movie_genres === 'string') {
+        await tx.movieGenre.deleteMany({
+          where: {
+            movie_id: movieId
+          }
+        })
+
+        const genreIds = movie_genres
+          .split(',')
+          .map((id: string) => parseInt(id.trim()))
+          .filter((id: number) => !isNaN(id))
+
+        if (genreIds.length > 0) {
+          await tx.movieGenre.createMany({
+            data: genreIds.map((genreId: number) => ({
+              movie_id: movieId,
+              genre_id: genreId
+            }))
+          })
+        }
+      }
+
+      const updatedMovieWithRelations = await tx.movie.findUnique({
+        where: { id: movieId },
+        include: {
+          movie_genres: {
+            include: {
+              genre: true
+            }
+          },
+          casts: true
+        }
+      })
+
+      if (!updatedMovieWithRelations) {
+        throw new NotFoundException('Gagal mengambil data film setelah update')
+      }
+
+      return updatedMovieWithRelations
     })
   }
 
