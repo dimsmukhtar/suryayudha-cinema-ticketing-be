@@ -18,14 +18,20 @@ export class CastRepositoryPrisma implements ICastRepository {
   async updateCast(castId: number, castData: CastPayloadUpdate): Promise<Cast> {
     await checkExists(this.prisma.cast, castId, 'Cast')
     let actorUrlString: string | undefined
-    if (castData.actor_url) {
+    if (castData.actor_url && typeof castData.actor_url !== 'string') {
       const { url } = await uploadImageToImageKit('actor', '/casts', castData.actor_url)
       actorUrlString = url
     }
-    const data: Partial<Cast> = {
-      ...('actor_name' in castData && { actor_name: castData.actor_name }),
-      ...(actorUrlString && { actor_url: actorUrlString })
+    const data: Partial<Cast> = {}
+
+    if (castData.actor_name) {
+      data.actor_name = castData.actor_name
     }
+
+    if (actorUrlString) {
+      data.actor_url = actorUrlString
+    }
+
     return await this.prisma.cast.update({
       where: {
         id: castId
