@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, Router } from 'express'
 import { TicketService } from './ticket.service'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { string } from 'zod'
 
 export class TicketController {
   private readonly ticketRouter: Router
@@ -21,7 +22,7 @@ export class TicketController {
 
   private getAllTickets = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const tickets = await this.service.getAllTickets()
+      const tickets = await this.service.getAllTickets(req.query)
       res
         .status(200)
         .json({ success: true, message: 'Semua tiket berhasil diambil', data: tickets })

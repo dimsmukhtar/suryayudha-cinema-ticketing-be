@@ -1,14 +1,13 @@
-import { PrismaClient, Ticket, TicketStatus, TransactionStatus } from '@prisma/client'
+import { Prisma, PrismaClient, Ticket, TicketStatus, TransactionStatus } from '@prisma/client'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
 
 export class TicketRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getAllTickets(): Promise<Ticket[]> {
-    return await this.prisma.ticket.findMany()
+  async getAllTickets(filter: { code?: string }): Promise<Ticket[]> {
+    return await this.prisma.ticket.findMany({ where: { code: filter.code } })
   }
-
   async getTicketById(ticketId: number): Promise<any> {
     const ticket = await this.prisma.ticket.findUnique({
       where: { id: ticketId },

@@ -6,9 +6,9 @@ import { BadRequestException } from '../../../shared/error-handling/exceptions/b
 export class TicketService {
   constructor(private readonly repository: TicketRepositoryPrisma) {}
 
-  async getAllTickets(): Promise<Ticket[]> {
+  async getAllTickets(filter: { code?: string }): Promise<Ticket[]> {
     try {
-      return await this.repository.getAllTickets()
+      return await this.repository.getAllTickets(filter)
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil semua tiket'
