@@ -5,8 +5,38 @@ import { checkExists } from '../../shared/helpers/checkExistingRow'
 export class TicketRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getAllTickets(filter: { code?: string }): Promise<Ticket[]> {
-    return await this.prisma.ticket.findMany({ where: { code: filter.code } })
+  async getAllTickets(filter: { code?: string }) {
+    const tickets = await this.prisma.ticket.findMany({
+      where: { code: filter.code },
+      include: {
+        transaction_item: {
+          select: {
+            seat_label: true,
+            schedule_seat: {
+              include: {
+                schedule: {
+                  include: {
+                    movie: {
+                      select: { title: true }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    return tickets.map((ticket) => ({
+      id: ticket.id,
+      code: ticket.code,
+      status: ticket.status,
+      movie_title: ticket.transaction_item.schedule_seat.schedule.movie.title,
+      seat_label: ticket.transaction_item.seat_label,
+      created_at: ticket.created_at
+    }))
   }
   async getTicketById(ticketId: number): Promise<any> {
     const ticket = await this.prisma.ticket.findUnique({
@@ -18,18 +48,15 @@ export class TicketRepositoryPrisma {
               include: {
                 schedule: {
                   include: {
-                    movie: {
-                      select: {
-                        title: true
-                      }
-                    },
-                    studio: {
-                      select: {
-                        name: true
-                      }
-                    }
+                    movie: true,
+                    studio: true
                   }
                 }
+              }
+            },
+            transaction: {
+              include: {
+                user: true
               }
             }
           }
@@ -48,7 +75,8 @@ export class TicketRepositoryPrisma {
       finished_time: ticket.transaction_item.schedule_seat.schedule.finished_time,
       seat_label: ticket.transaction_item.seat_label,
       code: ticket.code,
-      status: ticket.status
+      status: ticket.status,
+      user: ticket.transaction_item.transaction.user.name
     }
     return customedTicket
   }
@@ -62,18 +90,15 @@ export class TicketRepositoryPrisma {
               include: {
                 schedule: {
                   include: {
-                    movie: {
-                      select: {
-                        title: true
-                      }
-                    },
-                    studio: {
-                      select: {
-                        name: true
-                      }
-                    }
+                    movie: true,
+                    studio: true
                   }
                 }
+              }
+            },
+            transaction: {
+              include: {
+                user: true
               }
             }
           }
@@ -92,7 +117,8 @@ export class TicketRepositoryPrisma {
       finished_time: ticket.transaction_item.schedule_seat.schedule.finished_time,
       seat_label: ticket.transaction_item.seat_label,
       code: ticket.code,
-      status: ticket.status
+      status: ticket.status,
+      user: ticket.transaction_item.transaction.user.name
     }
     return customedTicket
   }
@@ -150,7 +176,12 @@ export class TicketRepositoryPrisma {
           include: {
             schedule_seat: {
               include: {
-                schedule: true
+                schedule: {
+                  include: {
+                    movie: true,
+                    studio: true
+                  }
+                }
               }
             }
           }
@@ -163,7 +194,9 @@ export class TicketRepositoryPrisma {
     }
 
     if (ticket.status === TicketStatus.used) {
-      throw new NotFoundException(`Tiket dengan kode ${code} sudah pernah digunakan`)
+      throw new NotFoundException(
+        `Tiket dengan kode ${code} sudah di validasi sebelumnya dan pernah digunakan`
+      )
     }
 
     if (ticket.transaction_item.schedule_seat.schedule.finished_time < new Date()) {
@@ -172,7 +205,7 @@ export class TicketRepositoryPrisma {
       )
     }
 
-    const validatedTicket = await this.prisma.ticket.update({
+    await this.prisma.ticket.update({
       where: {
         id: ticket.id
       },
@@ -181,6 +214,6 @@ export class TicketRepositoryPrisma {
       }
     })
 
-    return validatedTicket
+    return ticket
   }
 }
