@@ -58,6 +58,12 @@ export class StudioRepositoryPrisma implements IStudioRepository {
 
   async deleteStudio(studioId: string): Promise<void> {
     await checkExists(this.prisma.studio, studioId, 'Studio')
+    const schedulesInStudio = await this.prisma.schedule.findMany({
+      where: { studio_id: studioId }
+    })
+    if (schedulesInStudio.length > 0) {
+      throw new BadRequestException('Studio ini masih memiliki jadwal')
+    }
     await this.prisma.studio.delete({ where: { id: studioId } })
   }
 
