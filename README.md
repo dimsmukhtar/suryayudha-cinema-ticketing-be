@@ -1,4 +1,4 @@
-### create an e-ticket backend based on the planned API specifications
+### create an e-ticket backend for movie cinema booking based on the planned API specifications
 
 #### Health
 
