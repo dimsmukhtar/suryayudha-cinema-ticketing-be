@@ -363,4 +363,47 @@ export class UserRepositoryPrisma implements IUserRepository {
       recentTransactions
     }
   }
+
+  async getRevenueChartData(
+    startDate: Date,
+    endDate: Date
+  ): Promise<{ date: string; revenue: number }[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        status: 'settlement',
+        updated_at: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
+      select: {
+        final_amount: true,
+        updated_at: true
+      }
+    })
+
+    const dailyRevenue = new Map<string, number>()
+
+    let currentDate = new Date(startDate)
+    while (currentDate <= endDate) {
+      const dateString = currentDate.toISOString().split('T')[0]
+      dailyRevenue.set(dateString, 0)
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    transactions.forEach((trx) => {
+      const dateString = trx.updated_at!.toISOString().split('T')[0]
+      const currentRevenue = dailyRevenue.get(dateString) || 0
+      dailyRevenue.set(dateString, currentRevenue + trx.final_amount)
+    })
+
+    const chartData = Array.from(dailyRevenue.entries())
+      .map(([date, revenue]) => ({
+        date: new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+        revenue
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+    return chartData
+  }
 }

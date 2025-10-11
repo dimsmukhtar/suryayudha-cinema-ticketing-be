@@ -26,7 +26,8 @@ export class UserController {
     this.userRouter.get('/', authenticate, validateAdmin, this.getAllUsers)
 
     this.userRouter.post('/register', this.register)
-    this.userRouter.get('/dashboard/admin', this.getDashboardStats)
+    this.userRouter.get('/dashboard/admin-stats', this.getDashboardStats)
+    this.userRouter.get('/dashboard/admin-chart', this.getDashboardStats)
     this.userRouter.post('/resend-verification-token', this.resendVerificationLink)
     this.userRouter.get('/verify-email', this.verifyEmail)
     this.userRouter.post('/login', this.login)
@@ -273,6 +274,25 @@ export class UserController {
       res
         .status(200)
         .json({ success: true, message: 'Statistik dashboard berhasil diambil', data: stats })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getRevenueChart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const endDate = req.query.endDate ? new Date(req.query.endDate as string) : new Date()
+      const startDate = req.query.startDate
+        ? new Date(req.query.startDate as string)
+        : new Date(new Date().setDate(endDate.getDate() - 6))
+
+      startDate.setHours(0, 0, 0, 0)
+      endDate.setHours(23, 59, 59, 999)
+
+      const chartData = await this.service.getRevenueChartData(startDate, endDate)
+      res
+        .status(200)
+        .json({ success: true, message: 'Data grafik berhasil diambil', data: chartData })
     } catch (e) {
       next(e)
     }

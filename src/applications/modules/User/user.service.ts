@@ -178,4 +178,14 @@ export class UserService {
       })
     }
   }
+
+  async getRevenueChartData(startDate: Date, endDate: Date) {
+    try {
+      return await this.repository.getRevenueChartData(startDate, endDate)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengambil data dashboard chart'
+      })
+    }
+  }
 }
