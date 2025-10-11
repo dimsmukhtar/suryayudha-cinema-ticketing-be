@@ -96,6 +96,7 @@ export class UserRepositoryPrisma implements IUserRepository {
 
     const customedTickets = (await allMyTickets).map((ticket) => ({
       id: ticket.id,
+      code: ticket.code,
       movie_title: ticket.transaction_item.schedule_seat.schedule.movie.title,
       seat_label: ticket.transaction_item.seat_label
     }))
@@ -118,7 +119,7 @@ export class UserRepositoryPrisma implements IUserRepository {
   async updateUser(id: number, data: UserUpdatePayload): Promise<User> {
     await checkExists(this.prisma.user, id, 'User')
     let profileUrl: string | undefined
-    if (data.profile_url) {
+    if (data.profile_url && typeof data.profile_url !== 'string') {
       const { url } = await uploadImageToImageKit('profile', '/users', data.profile_url)
       profileUrl = url
     }
