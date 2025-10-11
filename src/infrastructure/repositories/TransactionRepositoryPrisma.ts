@@ -122,10 +122,7 @@ export class TransactionRepositoryPrisma {
     limit: number,
     query: any
   ): Promise<{ transactions: Transaction[]; total: number }> {
-    const where: Prisma.TransactionWhereInput = {
-      // Kita hanya ambil yang sudah masuk tahap pembayaran
-      // status: { not: 'initiated' }
-    }
+    const where: Prisma.TransactionWhereInput = {}
 
     if (query.email) {
       where.user = { email: { contains: query.email, mode: 'insensitive' } }
