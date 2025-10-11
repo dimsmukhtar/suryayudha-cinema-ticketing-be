@@ -49,11 +49,21 @@ export class TransactionController {
 
   private getAllTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const transactions = await this.service.getAllTransactions(req.query)
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 10
+
+      const { transactions, total } = await this.service.getAllTransactions(page, limit, req.query)
+
       res.status(200).json({
         success: true,
-        message: 'Semua data transaksi berhasil diambil',
-        data: transactions
+        message: 'Semua transaksi berhasil diambil',
+        data: transactions,
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
       })
     } catch (e) {
       next(e)

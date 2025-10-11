@@ -28,9 +28,14 @@ export class TransactionService {
     }
   }
 
-  async getAllTransactions(query: queryGetAllTransactions): Promise<Transaction[]> {
+  async getAllTransactions(
+    page: number,
+    limit: number,
+    query: any
+  ): Promise<{ transactions: Transaction[]; total: number }> {
     try {
-      return await this.repository.getAllTransactions(query)
+      const { transactions, total } = await this.repository.getAllTransactions(page, limit, query)
+      return { transactions, total }
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil semua transaksi'

@@ -117,47 +117,46 @@ export class TransactionRepositoryPrisma {
     })
   }
 
-  async getAllTransactions(query: queryGetAllTransactions): Promise<Transaction[]> {
-    // filter by user email, order_id, status, date
-    // status = ['pending', 'settlement', 'cancelled']
+  async getAllTransactions(
+    page: number,
+    limit: number,
+    query: any
+  ): Promise<{ transactions: Transaction[]; total: number }> {
     const where: Prisma.TransactionWhereInput = {
-      type: TransactionType.payment
+      // Kita hanya ambil yang sudah masuk tahap pembayaran
+      // status: { not: 'initiated' }
     }
+
     if (query.email) {
-      where.user = {
-        email: query.email
-      }
+      where.user = { email: { contains: query.email, mode: 'insensitive' } }
     }
-
     if (query.order_id) {
-      where.order_id = query.order_id
+      where.order_id = { contains: query.order_id, mode: 'insensitive' }
     }
-
     if (query.status) {
       where.status = query.status
     }
-
     if (query.date) {
       const startDate = new Date(query.date)
       const endDate = new Date(startDate)
       endDate.setDate(startDate.getDate() + 1)
-
-      where.transaction_time = {
-        gte: startDate,
-        lt: endDate
-      }
+      where.transaction_time = { gte: startDate, lt: endDate }
     }
-    return await this.prisma.transaction.findMany({
-      where: where,
-      orderBy: [
-        {
-          status_sort_order: 'asc'
+
+    const [transactions, total] = await this.prisma.$transaction([
+      this.prisma.transaction.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          user: { select: { name: true, email: true } } // Ambil info user
         },
-        {
-          transaction_time: 'desc'
-        }
-      ]
-    })
+        orderBy: [{ status_sort_order: 'asc' }, { transaction_time: 'desc' }]
+      }),
+      this.prisma.transaction.count({ where })
+    ])
+
+    return { transactions, total }
   }
 
   async getAllBookings(): Promise<Transaction[]> {
