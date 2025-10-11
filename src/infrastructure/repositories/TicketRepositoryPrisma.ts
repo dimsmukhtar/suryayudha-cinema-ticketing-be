@@ -5,38 +5,51 @@ import { checkExists } from '../../shared/helpers/checkExistingRow'
 export class TicketRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getAllTickets(filter: { code?: string }) {
-    const tickets = await this.prisma.ticket.findMany({
-      where: { code: filter.code },
-      include: {
-        transaction_item: {
-          select: {
-            seat_label: true,
-            schedule_seat: {
-              include: {
-                schedule: {
-                  include: {
-                    movie: {
-                      select: { title: true }
+  async getAllTickets(page: number, limit: number, code?: string) {
+    const where: Prisma.TicketWhereInput = {}
+    if (code) {
+      where.code = {
+        contains: code,
+        mode: 'insensitive'
+      }
+    }
+
+    const [tickets, total] = await this.prisma.$transaction([
+      this.prisma.ticket.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          transaction_item: {
+            select: {
+              seat_label: true,
+              schedule_seat: {
+                include: {
+                  schedule: {
+                    include: {
+                      movie: { select: { title: true } }
                     }
                   }
                 }
               }
             }
           }
-        }
-      },
-      orderBy: { created_at: 'desc' }
-    })
+        },
+        orderBy: { created_at: 'desc' }
+      }),
+      this.prisma.ticket.count({ where })
+    ])
 
-    return tickets.map((ticket) => ({
+    const formattedTickets = tickets.map((ticket) => ({
       id: ticket.id,
       code: ticket.code,
       status: ticket.status,
-      movie_title: ticket.transaction_item.schedule_seat.schedule.movie.title,
-      seat_label: ticket.transaction_item.seat_label,
+      movie_title: ticket.transaction_item?.schedule_seat?.schedule?.movie?.title || 'N/A',
+      seat_label: ticket.transaction_item?.seat_label || 'N/A',
       created_at: ticket.created_at
     }))
+
+    return { tickets: formattedTickets, total }
   }
   async getTicketById(ticketId: number): Promise<any> {
     const ticket = await this.prisma.ticket.findUnique({

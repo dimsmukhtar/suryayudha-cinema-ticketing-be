@@ -22,10 +22,23 @@ export class TicketController {
 
   private getAllTickets = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const tickets = await this.service.getAllTickets(req.query)
-      res
-        .status(200)
-        .json({ success: true, message: 'Semua tiket berhasil diambil', data: tickets })
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 10
+      const code = req.query.code as string | undefined
+
+      const { tickets, total } = await this.service.getAllTickets(page, limit, code)
+
+      res.status(200).json({
+        success: true,
+        message: 'Semua tiket berhasil diambil',
+        data: tickets,
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      })
     } catch (e) {
       next(e)
     }
