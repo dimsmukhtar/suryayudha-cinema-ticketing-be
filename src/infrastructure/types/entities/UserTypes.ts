@@ -77,7 +77,7 @@ export type ForgotPasswordPayload = {
 }
 
 export interface IUserRepository {
-  getAllUsers(): Promise<User[]>
+  getAllUsers(page: number, limit: number, name?: string): Promise<{ users: User[]; total: number }>
   getUserById(id: number): Promise<UserWithRelations>
   createUser(data: UserPayload): Promise<User>
   updateUser(id: number, data: UserUpdatePayload): Promise<User>

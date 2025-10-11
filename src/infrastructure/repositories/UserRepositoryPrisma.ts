@@ -1,4 +1,4 @@
-import { PrismaClient, TransactionStatus, User } from '@prisma/client'
+import { Prisma, PrismaClient, TransactionStatus, User } from '@prisma/client'
 import {
   IUserRepository,
   UserWithRelations,
@@ -23,8 +23,32 @@ import { verificationEmailTemplate } from '../../shared/helpers/emailTemplate'
 export class UserRepositoryPrisma implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getAllUsers(): Promise<User[]> {
-    return await this.prisma.user.findMany()
+  async getAllUsers(
+    page: number,
+    limit: number,
+    name?: string
+  ): Promise<{ users: User[]; total: number }> {
+    const where: Prisma.UserWhereInput = {}
+    if (name) {
+      where.name = {
+        contains: name,
+        mode: 'insensitive'
+      }
+    }
+
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          created_at: 'desc'
+        }
+      }),
+      this.prisma.user.count({ where })
+    ])
+
+    return { users, total }
   }
 
   async getUserById(id: number): Promise<UserWithRelations> {
@@ -38,6 +62,44 @@ export class UserRepositoryPrisma implements IUserRepository {
       throw new NotFoundException(`User dengan id ${id} tidak ditemukan`)
     }
     return user
+  }
+
+  async getTicketsForUser(userId: number): Promise<any> {
+    const allMyTickets = this.prisma.ticket.findMany({
+      where: {
+        transaction_item: {
+          transaction: {
+            user_id: userId
+          }
+        }
+      },
+      include: {
+        transaction_item: {
+          include: {
+            schedule_seat: {
+              include: {
+                schedule: {
+                  include: {
+                    movie: {
+                      select: {
+                        title: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const customedTickets = (await allMyTickets).map((ticket) => ({
+      id: ticket.id,
+      movie_title: ticket.transaction_item.schedule_seat.schedule.movie.title,
+      seat_label: ticket.transaction_item.seat_label
+    }))
+    return customedTickets
   }
 
   async createUser(data: UserPayload): Promise<User> {

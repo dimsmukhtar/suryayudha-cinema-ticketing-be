@@ -17,9 +17,14 @@ import { ZodValidation } from '../../../shared/middlewares/validation.middleware
 export class UserService {
   constructor(private readonly repository: UserRepositoryPrisma) {}
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(
+    page: number,
+    limit: number,
+    name?: string
+  ): Promise<{ users: User[]; total: number }> {
     try {
-      return await this.repository.getAllUsers()
+      const { users, total } = await this.repository.getAllUsers(page, limit, name)
+      return { users, total }
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil semua user'
@@ -185,6 +190,16 @@ export class UserService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil data dashboard chart'
+      })
+    }
+  }
+
+  async getTicketsForUser(userId: number) {
+    try {
+      return await this.repository.getTicketsForUser(userId)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat mengambil data tiket'
       })
     }
   }

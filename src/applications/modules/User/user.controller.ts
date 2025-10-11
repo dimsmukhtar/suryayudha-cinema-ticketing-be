@@ -27,7 +27,7 @@ export class UserController {
 
     this.userRouter.post('/register', this.register)
     this.userRouter.get('/dashboard/admin-stats', this.getDashboardStats)
-    this.userRouter.get('/dashboard/admin-chart', this.getDashboardStats)
+    this.userRouter.get('/dashboard/admin-chart', this.getRevenueChart)
     this.userRouter.post('/resend-verification-token', this.resendVerificationLink)
     this.userRouter.get('/verify-email', this.verifyEmail)
     this.userRouter.post('/login', this.login)
@@ -55,12 +55,28 @@ export class UserController {
     )
     this.userRouter.delete('/:id', authenticate, validateAdmin, this.deleteUser)
     this.userRouter.get('/:id', authenticate, validateAdmin, this.getUserById)
+    this.userRouter.get('/:id/tickets', authenticate, validateAdmin, this.getTicketsForUser)
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const users = await this.service.getAllUsers()
-      res.status(200).json({ success: true, message: 'Data user berhasil didapatkan', data: users })
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 10
+      const name = req.query.name as string | undefined
+
+      const { users, total } = await this.service.getAllUsers(page, limit, name)
+
+      res.status(200).json({
+        success: true,
+        message: 'Semua user berhasil diambil',
+        data: users,
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      })
     } catch (e) {
       next(e)
     }
@@ -70,6 +86,16 @@ export class UserController {
     try {
       const user = await this.service.getUserById(parseInt(req.params.id))
       res.status(200).json({ success: true, message: 'Data user berhasil didapatkan', data: user })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private getTicketsForUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = parseInt(req.params.id)
+      const tickets = await this.service.getTicketsForUser(userId)
+      res.status(200).json({ success: true, message: 'Tiket user berhasil diambil', data: tickets })
     } catch (e) {
       next(e)
     }
