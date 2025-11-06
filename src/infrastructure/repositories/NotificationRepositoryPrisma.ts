@@ -29,8 +29,12 @@ export class NotificationRepositoryPrisma implements INotificationRepository {
   }
 
   async getMyNotifications(userId: number): Promise<NotificationWithIsRead[]> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } })
     const notificationsFromDb = await this.prisma.notification.findMany({
       where: {
+        created_at: {
+          gt: user?.created_at
+        },
         OR: [
           {
             target_audience: 'all'

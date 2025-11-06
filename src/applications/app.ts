@@ -35,8 +35,6 @@ class App implements IApp {
       PORT: num({ default: 3000 }),
       NODE_ENV: str({ choices: ['DEVELOPMENT', 'PRODUCTION', 'TEST'], default: 'DEVELOPMENT' }),
       DATABASE_URL: str(),
-      NODEMAILER_APP_EMAIL: str(),
-      NODEMAILER_APP_PASSWORD: str(),
       ACCESS_TOKEN_PRIVATE_KEY: str(),
       ACCESS_TOKEN_PUBLIC_KEY: str(),
       REFRESH_TOKEN_PRIVATE_KEY: str(),
