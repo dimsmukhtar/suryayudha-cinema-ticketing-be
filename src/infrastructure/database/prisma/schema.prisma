@@ -18,18 +18,26 @@ enum Role {
   admin
 }
 
+enum Provider {
+  local
+  google
+  facebook
+}
+
 model User {
   id Int @id @default(autoincrement())
-  name String
+  name String?
   role Role @default(user)
-  email String @unique
-  password String
+  email String? @unique
+  password String?
   is_verified Boolean @default(false)
   verification_token String?
   verification_token_expires_at DateTime?
   reset_password_token String?
   reset_password_token_expires_at DateTime?
   profile_url String?
+  provider  Provider @default(local)
+  providerId  String? @unique
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
