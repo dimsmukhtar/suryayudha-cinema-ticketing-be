@@ -10,7 +10,8 @@ import {
   factoriesVoucherController,
   factoriesTransactionController,
   factoriesTicketController,
-  factoriesDashboardController
+  factoriesDashboardController,
+  factoriesAuthController
 } from '../../infrastructure/factories/factories'
 import { IRoutes } from 'infrastructure/types/route.type'
 import { WebhookController } from '../../applications/modules/Webhook/webhook.controller'
@@ -31,6 +32,7 @@ export class Routes {
   private readonly webhookRoutes: IRoutes = webhookController
   private readonly ticketRoutes: IRoutes = factoriesTicketController()
   private readonly dashboardRoutes: IRoutes = factoriesDashboardController()
+  private readonly authRoutes: IRoutes = factoriesAuthController()
 
   constructor() {
     this.routes = Router()
@@ -38,10 +40,11 @@ export class Routes {
   }
 
   private initializeRoutes(): void {
-    this.routes.use('/v1/movies', this.movieRouter.getRoutes())
-    this.routes.use('/v1/casts', this.castRoutes.getRoutes())
-    this.routes.use('/v1/genres', this.genreRoutes.getRoutes())
+    this.routes.use('/v1/auth', this.authRoutes.getRoutes())
     this.routes.use('/v1/users', this.userRoutes.getRoutes())
+    this.routes.use('/v1/genres', this.genreRoutes.getRoutes())
+    this.routes.use('/v1/casts', this.castRoutes.getRoutes())
+    this.routes.use('/v1/movies', this.movieRouter.getRoutes())
     this.routes.use('/v1/notifications', this.notificationRoutes.getRoutes())
     this.routes.use('/v1/studios', this.studioRoutes.getRoutes())
     this.routes.use('/v1/schedules', this.scheduleRoutes.getRoutes())

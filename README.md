@@ -7,10 +7,27 @@
 
 #### Auths
 api/v1/
-- **users/login** POST | **(USER)**
+- **auth/register** POST | **(USER)**
+ ```req.body = name,email,password, passwordConfirmation```
+- **auth/login** POST | **(USER)**
 ```req.body = email,password```
-- **users/login-admin** POST | **(ADMIN)**
+- **auth/login-admin** POST | **(ADMIN)**
 ```req.body = email,password```
+- **auth/resend-verification-token** POST | **(USER)**
+```req.body = email```
+- **auth/verify-email** GET | **(USER)**
+```req.query = email,token```
+- **auth/profile** GET | **(USER & ADMIN)**
+- **auth/update-profile** PATCH | **(USER & ADMIN)**
+```req.body = name,email,profile_url```
+- **auth/change-password** PATCH | **(USER & ADMIN)**
+```req.body = oldPassword,newPassword,newPasswordConfirmation```
+- **auth/forgot-password** POST | **(USER & ADMIN)**
+```req.body = email```
+- **auth/reset-password** POST | **(USER & ADMIN)**
+```req.body = email, passwordResetCode, newPassword, newPasswordConfirmation```
+- **auth/check-auth** GET | **(USER)**
+- **auth/logout** POST | **(USER & ADMIN)**
 
 #### Dashboard
 api/v1/
@@ -27,22 +44,6 @@ api/v1/
 - **users/:id** PATCH | **(ADMIN)**
  ```req.body = name,email,role,password,is_verified,profile_url```
 - **users/:id** DELETE | **(ADMIN)**
-- **users/register** POST | **(USER)**
- ```req.body = name,email,password, passwordConfirmation```
-- **users/resend-verification-token** POST | **(USER)**
-```req.body = email```
-- **users/verify-email** GET | **(USER)**
-```req.body = email,token```
-- **users/profile** GET | **(USER & ADMIN)**
-- **users/update-profile** PATCH | **(USER & ADMIN)**
-```req.body = name,email,profile_url```
-- **users/change-password** PATCH | **(USER & ADMIN)**
-```req.body = oldPassword,newPassword,newPasswordConfirmation```
-- **users/forgot-password** POST | **(USER & ADMIN)**
-```req.body = email```
-- **users/reset-password** POST | **(USER & ADMIN)**
-```req.body = email, passwordResetCode, newPassword, newPasswordConfirmation```
-- **users/logout** POST | **(USER & ADMIN)**
 
 #### Movies
 api/v1/

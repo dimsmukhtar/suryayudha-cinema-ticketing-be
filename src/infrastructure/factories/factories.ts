@@ -32,6 +32,9 @@ import { TicketController } from '../../applications/modules/Ticket/ticket.contr
 import { DashboardRepositoryPrisma } from '../repositories/DashboardRepositoryPrisma'
 import { DashboardService } from '../../applications/modules/Dashboard/dashboard.service'
 import { DashboardController } from '../../applications/modules/Dashboard/dashboard.controller'
+import { AuthRepositoryPrisma } from '../repositories/AuthRepositoryPrisma'
+import { AuthService } from '../../applications/modules/Auth/auth.service'
+import { AuthController } from '../../applications/modules/Auth/auth.controller'
 
 export const factoriesMovieController = () => {
   const repository = new MovieRepositoryPrisma(prisma)
@@ -97,4 +100,10 @@ export const factoriesDashboardController = () => {
   const repository = new DashboardRepositoryPrisma(prisma)
   const service = new DashboardService(repository)
   return new DashboardController(service)
+}
+
+export const factoriesAuthController = () => {
+  const repository = new AuthRepositoryPrisma(prisma)
+  const service = new AuthService(repository)
+  return new AuthController(service)
 }
