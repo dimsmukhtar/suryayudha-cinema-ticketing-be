@@ -9,7 +9,8 @@ import {
   factoriesScheduleController,
   factoriesVoucherController,
   factoriesTransactionController,
-  factoriesTicketController
+  factoriesTicketController,
+  factoriesDashboardController
 } from '../../infrastructure/factories/factories'
 import { IRoutes } from 'infrastructure/types/route.type'
 import { WebhookController } from '../../applications/modules/Webhook/webhook.controller'
@@ -29,6 +30,7 @@ export class Routes {
   private readonly transactionRoutes: IRoutes = factoriesTransactionController()
   private readonly webhookRoutes: IRoutes = webhookController
   private readonly ticketRoutes: IRoutes = factoriesTicketController()
+  private readonly dashboardRoutes: IRoutes = factoriesDashboardController()
 
   constructor() {
     this.routes = Router()
@@ -47,6 +49,7 @@ export class Routes {
     this.routes.use('/v1/transactions', this.transactionRoutes.getRoutes())
     this.routes.use('/webhooks', this.webhookRoutes.getRoutes())
     this.routes.use('/v1/tickets', this.ticketRoutes.getRoutes())
+    this.routes.use('/v1/dashboard', this.dashboardRoutes.getRoutes())
   }
 
   public getRoutes(): Router {
