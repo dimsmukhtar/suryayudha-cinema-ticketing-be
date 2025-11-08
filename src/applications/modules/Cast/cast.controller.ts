@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { CastService } from './cast.service'
-import { upload } from '../../../shared/utils/multer.config'
+import { upload } from '../../../infrastructure/config/multer.config'
 import { CastPayload, CastPayloadUpdate } from '../../../infrastructure/types/entities/CastTypes'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'

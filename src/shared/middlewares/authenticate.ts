@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { UnauthorizedException } from '../error-handling/exceptions/unauthorized.exception'
-import { verifyJwtToken } from '../utils/jwt'
+import { verifyJwtToken } from '../../infrastructure/config/jwt'
 import { HttpException } from '../error-handling/exceptions/http.exception'
 import { UserJwtPayload } from '../../infrastructure/types/entities/UserTypes'
 

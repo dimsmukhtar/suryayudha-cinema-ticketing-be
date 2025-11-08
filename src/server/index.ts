@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import App from '../applications/app'
-import { logger } from '../shared/utils/logger'
+import { logger } from '../infrastructure/config/logger'
 import { Routes } from '../applications/routes/routes'
 
 async function bootstrap() {

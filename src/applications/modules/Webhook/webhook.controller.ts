@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { snap } from '../../../shared/utils/midtrans'
-import { prisma } from '../../../infrastructure/database/client'
+import { snap } from '../../../infrastructure/config/midtrans'
+import { prisma } from '../../../infrastructure/config/clientPrisma'
 import { SeatStatus, TARGET_AUDIENCE, TicketStatus, TransactionStatus } from '@prisma/client'
 import { generateRandomCode } from '../../../shared/helpers/randomCode'
 import { ticketSuccessfullyCreatedTemplate } from '../../../shared/helpers/emailTemplate'
-import { sendEmail } from '../../../shared/utils/nodemailer'
+import { sendEmail } from '../../../infrastructure/config/nodemailer'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
 
 export class WebhookController {

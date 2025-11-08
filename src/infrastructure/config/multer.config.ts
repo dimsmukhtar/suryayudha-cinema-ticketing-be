@@ -1,6 +1,6 @@
 import multer from 'multer'
 import { Request } from 'express'
-import { BadRequestException } from '../error-handling/exceptions/bad-request.exception'
+import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 
 const storage = multer.memoryStorage()
 

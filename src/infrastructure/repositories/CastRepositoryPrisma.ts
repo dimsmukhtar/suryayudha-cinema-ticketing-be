@@ -1,7 +1,7 @@
 import { Cast, PrismaClient } from '@prisma/client'
 import { CastPayload, CastPayloadUpdate, ICastRepository } from '../types/entities/CastTypes'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
+import { uploadImageToImageKit } from '../config/imagekit.config'
 
 export class CastRepositoryPrisma implements ICastRepository {
   constructor(private readonly prisma: PrismaClient) {}

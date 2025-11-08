@@ -1,5 +1,5 @@
 import ImageKit from 'imagekit'
-import { HttpException } from '../error-handling/exceptions/http.exception'
+import { HttpException } from '../../shared/error-handling/exceptions/http.exception'
 
 export const imageKit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,

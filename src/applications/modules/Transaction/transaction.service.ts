@@ -2,7 +2,7 @@ import { Transaction } from '@prisma/client'
 import { TransactionRepositoryPrisma } from '../../../infrastructure/repositories/TransactionRepositoryPrisma'
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
-import { snap } from '../../../shared/utils/midtrans'
+import { snap } from '../../../infrastructure/config/midtrans'
 import {
   queryGetAllTransactions,
   queryGetMyTransactions

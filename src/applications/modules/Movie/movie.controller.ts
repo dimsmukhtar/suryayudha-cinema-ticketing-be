@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { MovieService } from './movie.service'
 import { MoviePayload, MoviePayloadUpdate } from '../../../infrastructure/types/entities/MovieTypes'
-import { upload } from '../../../shared/utils/multer.config'
+import { upload } from '../../../infrastructure/config/multer.config'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'

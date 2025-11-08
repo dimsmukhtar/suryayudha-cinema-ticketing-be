@@ -1,6 +1,6 @@
 import { SeatStatus, TARGET_AUDIENCE, TransactionStatus, TransactionType } from '@prisma/client'
-import { prisma } from '../../infrastructure/database/client'
-import { logger } from '../../shared/utils/logger'
+import { prisma } from '../config/clientPrisma'
+import { logger } from '../config/logger'
 
 export const cancelExpiredBookings = async () => {
   logger.info('Running cron job: Mencari booking yang kadaluarsa...')

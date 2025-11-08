@@ -1,7 +1,7 @@
 import { SeatStatus, TARGET_AUDIENCE, TransactionStatus, TransactionType } from '@prisma/client'
-import { prisma } from '../../infrastructure/database/client'
-import { logger } from '../../shared/utils/logger'
-import { sendEmail } from '../../shared/utils/nodemailer'
+import { prisma } from '../config/clientPrisma'
+import { logger } from '../config/logger'
+import { sendEmail } from '../config/nodemailer'
 import { paymentCancelledTemplate } from '../../shared/helpers/emailTemplate'
 
 export const cancelExpiredPayments = async () => {

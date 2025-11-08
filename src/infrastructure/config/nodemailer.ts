@@ -1,6 +1,6 @@
 import nodemailer, { Transporter } from 'nodemailer'
 import { logger } from './logger'
-import { InternalServerErrorException } from '../error-handling/exceptions/internal-server.exception'
+import { InternalServerErrorException } from '../../shared/error-handling/exceptions/internal-server.exception'
 
 const transporter: Transporter = nodemailer.createTransport({
   service: 'gmail',

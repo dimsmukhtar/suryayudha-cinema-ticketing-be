@@ -1,4 +1,4 @@
-import { prisma } from '../database/client'
+import { prisma } from '../config/clientPrisma'
 import { MovieRepositoryPrisma } from '../repositories/MovieRepositoryPrisma'
 import { MovieService } from '../../applications/modules/Movie/movie.service'
 import { MovieController } from '../../applications/modules/Movie/movie.controller'

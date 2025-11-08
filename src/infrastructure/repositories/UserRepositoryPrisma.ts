@@ -7,10 +7,10 @@ import {
 } from '../../infrastructure/types/entities/UserTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
+import { uploadImageToImageKit } from '../config/imagekit.config'
 import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
 
-import { hashPassword } from '../../shared/utils/passwordEncrypt'
+import { hashPassword } from '../../shared/helpers/passwordEncrypt'
 
 export class UserRepositoryPrisma implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}

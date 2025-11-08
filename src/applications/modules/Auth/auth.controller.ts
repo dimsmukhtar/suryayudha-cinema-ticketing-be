@@ -9,7 +9,7 @@ import {
 
 import { UserUpdatePayload } from 'infrastructure/types/entities/UserTypes'
 import { setAccessToken } from '../../../shared/helpers/setCookies'
-import { upload } from '../../../shared/utils/multer.config'
+import { upload } from '../../../infrastructure/config/multer.config'
 import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { StudioService } from './studio.service'
-import { uploadMultiple } from '../../../shared/utils/multer.config'
+import { uploadMultiple } from '../../../infrastructure/config/multer.config'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
 

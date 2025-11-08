@@ -4,7 +4,7 @@ import { MoviePayload, MoviePayloadUpdate, MovieQuery } from '../types/entities/
 import { IMovieRepository } from '../types/entities/MovieTypes'
 import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
 import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { uploadImageToImageKit } from '../../shared/utils/imagekit.config'
+import { uploadImageToImageKit } from '../config/imagekit.config'
 
 export class MovieRepositoryPrisma implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}
