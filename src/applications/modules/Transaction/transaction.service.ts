@@ -73,25 +73,6 @@ export class TransactionService {
     }
   }
 
-  async applyVoucherToTransaction(
-    transactionId: number,
-    voucherCode: string
-  ): Promise<Transaction> {
-    try {
-      if (!transactionId) {
-        throw new BadRequestException('Transaction ID tidak boleh kosong')
-      }
-      if (!voucherCode) {
-        throw new BadRequestException('Voucher code tidak boleh kosong')
-      }
-      return await this.repository.applyVoucherToTransaction(transactionId, voucherCode)
-    } catch (e) {
-      throw CustomHandleError(e, {
-        context: 'Error saat menerapkan voucher ke transaksi'
-      })
-    }
-  }
-
   async initiatePayment(transactionId: number, userId: number) {
     try {
       return await this.repository.initiatePayment(transactionId, userId)

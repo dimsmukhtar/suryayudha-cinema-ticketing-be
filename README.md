@@ -12,6 +12,11 @@ api/v1/
 - **users/login-admin** POST | **(ADMIN)**
 ```req.body = email,password```
 
+#### Dashboard
+api/v1/
+- **dashboard/admin-stats** GET | **(ADMIN)**
+- **dashboard/admin-chart** GET | **(ADMIN)**
+
 #### Users
 api/v1/
 
@@ -22,9 +27,6 @@ api/v1/
 - **users/:id** PATCH | **(ADMIN)**
  ```req.body = name,email,role,password,is_verified,profile_url```
 - **users/:id** DELETE | **(ADMIN)**
-- **users/dashboard/admin-stats** GET | **(ADMIN)**
-- **users/dashboard/admin-chart** GET | **(ADMIN)**
-
 - **users/register** POST | **(USER)**
  ```req.body = name,email,password, passwordConfirmation```
 - **users/resend-verification-token** POST | **(USER)**
@@ -120,6 +122,8 @@ api/v1/
 - **vouchers/:id** PATCH | **(ADMIN)**
  ```req.body = code,type,value,expires_at,usage_limit,min_purchase_amount```
 - **vouchers/:id** DELETE | **(ADMIN)**
+- **vouchers/:transactionId/apply** PATCH | **(USER & ADMIN)**
+ ```req.body = voucher_code```
 
 #### Bookings & Transactions
 api/v1/
@@ -128,8 +132,6 @@ api/v1/
 - **transactions/** GET | **(ADMIN)**
  ```req.query = email, order_Id, status, date ```
 - **transactions/bookings** GET | **(ADMIN)**
-- **transactions/:id/apply-voucher** PATCH | **(USER & ADMIN)**
- ```req.body = voucher_code```
 - **transactions/:id** GET | **(USER & ADMIN)**
 - **transactions/my** GET | **(USER & ADMIN)**
  ```req.query = type, the value is booking or payment ```

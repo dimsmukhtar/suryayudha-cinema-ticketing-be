@@ -1,4 +1,4 @@
-import { Voucher } from '@prisma/client'
+import { Transaction, Voucher } from '@prisma/client'
 import {
   UpdateVoucherPayload,
   VoucherPayload
@@ -7,6 +7,7 @@ import { VoucherRepositoryPrisma } from '../../../infrastructure/repositories/Vo
 import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
 import { VoucherValidaton } from './voucher.validation'
+import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 
 export class VoucherService {
   constructor(private readonly repository: VoucherRepositoryPrisma) {}
@@ -65,6 +66,25 @@ export class VoucherService {
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat menghapus voucher'
+      })
+    }
+  }
+
+  async applyVoucherToTransaction(
+    transactionId: number,
+    voucherCode: string
+  ): Promise<Transaction> {
+    try {
+      if (!transactionId) {
+        throw new BadRequestException('Transaction ID tidak boleh kosong')
+      }
+      if (!voucherCode) {
+        throw new BadRequestException('Voucher code tidak boleh kosong')
+      }
+      return await this.repository.applyVoucherToTransaction(transactionId, voucherCode)
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat menerapkan voucher ke transaksi'
       })
     }
   }

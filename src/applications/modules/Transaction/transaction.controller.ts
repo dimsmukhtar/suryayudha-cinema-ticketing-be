@@ -16,7 +16,6 @@ export class TransactionController {
     this.transactionRouter.get('/', authenticate, validateAdmin, this.getAllTransactions)
     this.transactionRouter.get('/bookings', authenticate, validateAdmin, this.getAllBokings)
     this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
-    this.transactionRouter.patch('/:id/apply-voucher', this.applyVoucherToTransaction)
     this.transactionRouter.post('/:id/pay', authenticate, this.initiatePayment)
     this.transactionRouter.get('/:id', authenticate, this.getTransactionById)
     this.transactionRouter.get(
@@ -99,27 +98,6 @@ export class TransactionController {
       res
         .status(200)
         .json({ success: true, message: 'Semua transaksi berhasil diambil', data: transactions })
-    } catch (e) {
-      next(e)
-    }
-  }
-
-  private applyVoucherToTransaction = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const transactionId = parseInt(req.params.id)
-      if (!req.body.voucher_code) {
-        throw new BadRequestException('Voucher code tidak boleh kosong')
-      }
-      const voucherCode = req.body.voucher_code
-      const uppercaseVoucherCode = voucherCode.toUpperCase()
-
-      const transaction = await this.service.applyVoucherToTransaction(
-        transactionId,
-        uppercaseVoucherCode
-      )
-      res
-        .status(200)
-        .json({ success: true, message: 'Voucher berhasil diterapkan', data: transaction })
     } catch (e) {
       next(e)
     }

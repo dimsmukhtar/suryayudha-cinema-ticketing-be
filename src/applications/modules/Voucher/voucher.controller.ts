@@ -6,6 +6,7 @@ import {
 } from '../../../infrastructure/types/entities/VoucherTypes'
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 
 export class VoucherController {
   private readonly voucherRouter: Router
@@ -17,6 +18,7 @@ export class VoucherController {
   private initializeVoucherRoutes(): void {
     this.voucherRouter.post('/', authenticate, validateAdmin, this.createVoucher)
     this.voucherRouter.get('/', authenticate, validateAdmin, this.getAllVouchers)
+    this.voucherRouter.patch('/:transactionId/apply', this.applyVoucherToTransaction)
     this.voucherRouter.get('/:id', authenticate, validateAdmin, this.getVoucherById)
     this.voucherRouter.patch('/:id', authenticate, validateAdmin, this.updateVoucher)
     this.voucherRouter.delete('/:id', authenticate, validateAdmin, this.deleteVoucher)
@@ -82,6 +84,27 @@ export class VoucherController {
     try {
       await this.service.deleteVoucher(parseInt(req.params.id))
       res.status(200).json({ success: true, message: 'Voucher berhasil dihapus' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private applyVoucherToTransaction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const transactionId = parseInt(req.params.transactionId)
+      if (!req.body.voucher_code) {
+        throw new BadRequestException('Voucher code tidak boleh kosong')
+      }
+      const voucherCode = req.body.voucher_code
+      const uppercaseVoucherCode = voucherCode.toUpperCase()
+
+      const transaction = await this.service.applyVoucherToTransaction(
+        transactionId,
+        uppercaseVoucherCode
+      )
+      res
+        .status(200)
+        .json({ success: true, message: 'Voucher berhasil diterapkan', data: transaction })
     } catch (e) {
       next(e)
     }
