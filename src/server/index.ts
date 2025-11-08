@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import '../infrastructure/config/oauthPassportStrategy'
 import App from '../applications/app'
 import { logger } from '../infrastructure/config/logger'
 import { Routes } from '../applications/routes/routes'

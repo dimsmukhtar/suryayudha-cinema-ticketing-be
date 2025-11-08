@@ -46,7 +46,12 @@ class App implements IApp {
       APP_PASSWORD: str(),
       USER_EMAIL: str(),
       MIDTRANS_SERVER_KEY: str(),
-      MIDTRANS_CLIENT_KEY: str()
+      MIDTRANS_CLIENT_KEY: str(),
+      CLIENT_URL: str(),
+      GOOGLE_CLIENT_ID: str(),
+      GOOGLE_CLIENT_SECRET: str(),
+      FACEBOOK_CLIENT_ID: str(),
+      FACEBOOK_CLIENT_SECRET: str()
     })
   }
 
