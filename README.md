@@ -13,7 +13,11 @@ api/v1/
 ```req.body = email,password```
 - **auth/login-admin** POST | **(ADMIN)**
 ```req.body = email,password```
-- **auth/resend-verification-token** POST | **(USER)**
+- **auth/google** GET | **(USER)**
+- **auth/google/callback** GET | **(USER)**
+- **auth/facebook** GET | **(USER)**
+- **auth/facebook/callback** GET | **(USER)**
+- **auth/resend-verification-token** GET | **(USER)**
 ```req.body = email```
 - **auth/verify-email** GET | **(USER)**
 ```req.query = email,token```
