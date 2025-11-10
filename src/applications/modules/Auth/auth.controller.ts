@@ -29,12 +29,24 @@ export class AuthController {
     this.authRouter.post('/login', this.login)
     this.authRouter.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
     this.authRouter.get(
+      '/facebook',
+      passport.authenticate('facebook', { scope: ['public_profile', 'email'] })
+    )
+    this.authRouter.get(
       '/google/callback',
       passport.authenticate('google', {
         session: false,
         failureRedirect: process.env.CLIENT_URL + '/login'
       }),
-      this.googleOauthCallback.bind(this)
+      this.googleOauthCallback
+    )
+    this.authRouter.get(
+      '/facebook/callback',
+      passport.authenticate('facebook', {
+        session: false,
+        failureRedirect: process.env.CLIENT_URL + '/login'
+      }),
+      this.facebookOauthCallback
     )
     this.authRouter.post('/login-admin', this.loginAdmin)
     this.authRouter.post('/resend-verification-token', this.resendVerificationLink)
@@ -114,6 +126,23 @@ export class AuthController {
       const user = req.user
       if (!user) {
         throw new UnauthorizedException('User tidak ditemukan dari google oauth')
+      }
+      const token = signJwt(
+        { id: user.id, name: user.name, email: user.email, role: user.role },
+        'ACCESS_TOKEN_PRIVATE_KEY',
+        { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+      )
+      setAccessToken(token, res)
+      res.redirect(process.env.CLIENT_URL!)
+    } catch (e) {
+      next(e)
+    }
+  }
+  private facebookOauthCallback = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user
+      if (!user) {
+        throw new UnauthorizedException('User tidak ditemukan dari facebook oauth')
       }
       const token = signJwt(
         { id: user.id, name: user.name, email: user.email, role: user.role },

@@ -8,8 +8,7 @@ export async function findOrCreateUser(provider: 'google' | 'facebook', profile:
 
   let user = await prisma.user.findFirst({
     where: {
-      provider,
-      providerId
+      email
     }
   })
   if (!user) {
@@ -24,6 +23,18 @@ export async function findOrCreateUser(provider: 'google' | 'facebook', profile:
         password: 'not needed'
       }
     })
+  } else {
+    if (!user.providerId) {
+      user = await prisma.user.update({
+        where: {
+          id: user.id
+        },
+        data: {
+          provider,
+          providerId
+        }
+      })
+    }
   }
   return user
 }
