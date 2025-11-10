@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction, Router } from 'express'
+import passport from 'passport'
 import { AuthService } from './auth.service'
 import {
   ChangePasswordPayload,
@@ -14,6 +15,7 @@ import { generateVerificationToken } from '../../../shared/helpers/generateVerif
 import { authenticate } from '../../../shared/middlewares/authenticate'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { UnauthorizedException } from '../../../shared/error-handling/exceptions/unauthorized.exception'
+import { signJwt } from '../../../infrastructure/config/jwt'
 
 export class AuthController {
   private readonly authRouter: Router
@@ -25,6 +27,15 @@ export class AuthController {
   private initializeAuthRoutes() {
     this.authRouter.post('/register', this.register)
     this.authRouter.post('/login', this.login)
+    this.authRouter.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
+    this.authRouter.get(
+      '/google/callback',
+      passport.authenticate('google', {
+        session: false,
+        failureRedirect: process.env.CLIENT_URL + '/login'
+      }),
+      this.googleOauthCallback.bind(this)
+    )
     this.authRouter.post('/login-admin', this.loginAdmin)
     this.authRouter.post('/resend-verification-token', this.resendVerificationLink)
     this.authRouter.get('/verify-email', this.verifyEmail)
@@ -93,6 +104,24 @@ export class AuthController {
       const token = await this.service.login('user', loginPayload)
       setAccessToken(token, res)
       res.status(200).json({ success: true, message: 'Login berhasil', token })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private googleOauthCallback = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user
+      if (!user) {
+        throw new UnauthorizedException('User tidak ditemukan dari google oauth')
+      }
+      const token = signJwt(
+        { id: user.id, name: user.name, email: user.email, role: user.role },
+        'ACCESS_TOKEN_PRIVATE_KEY',
+        { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+      )
+      setAccessToken(token, res)
+      res.redirect(process.env.CLIENT_URL!)
     } catch (e) {
       next(e)
     }

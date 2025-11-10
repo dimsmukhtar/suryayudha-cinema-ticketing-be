@@ -1,3 +1,4 @@
+import '../infrastructure/config/oauthPassportStrategy'
 import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
@@ -68,7 +69,7 @@ class App implements IApp {
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
       })
     )
-    this.app.use(passport.initialize({ userProperty: 'ignoredUser' }))
+    this.app.use(passport.initialize())
     this.app.use(morgan(this.isProduction ? 'combined' : 'dev'))
     this.app.use(compression())
     this.app.use(express.json())

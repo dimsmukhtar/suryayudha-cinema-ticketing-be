@@ -2,10 +2,8 @@ import passport from 'passport'
 import PassportGoogle from 'passport-google-oauth20'
 import PassportFacebook from 'passport-facebook'
 
-import { prisma } from './clientPrisma'
-import { UserJwtPayload } from 'infrastructure/types/entities/UserTypes'
-import { findOrCreateUser } from 'shared/helpers/authLogic'
-import { buildJwtPayload } from 'shared/helpers/builtJwtPayload'
+import { findOrCreateUser } from '../../shared/helpers/authLogic'
+import { buildJwtPayload } from '../../shared/helpers/builtJwtPayload'
 
 const GoogleStrategy = PassportGoogle.Strategy
 const FacebookStrategy = PassportFacebook.Strategy

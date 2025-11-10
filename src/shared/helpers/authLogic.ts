@@ -18,6 +18,7 @@ export async function findOrCreateUser(provider: 'google' | 'facebook', profile:
         providerId,
         provider,
         name,
+        is_verified: true,
         email,
         profile_url,
         password: 'not needed'
