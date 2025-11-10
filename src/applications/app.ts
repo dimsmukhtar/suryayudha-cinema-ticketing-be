@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import compression from 'compression'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import passport from 'passport'
 import { cleanEnv, str, num } from 'envalid'
 import { logger } from '../infrastructure/config/logger'
 import { prisma } from '../infrastructure/config/clientPrisma'
@@ -65,6 +66,7 @@ class App implements IApp {
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
       })
     )
+    this.app.use(passport.initialize({ userProperty: 'ignoredUser' }))
     this.app.use(morgan(this.isProduction ? 'combined' : 'dev'))
     this.app.use(compression())
     this.app.use(express.json())
