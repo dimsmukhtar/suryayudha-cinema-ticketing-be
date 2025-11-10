@@ -52,7 +52,9 @@ class App implements IApp {
       GOOGLE_CLIENT_ID: str(),
       GOOGLE_CLIENT_SECRET: str(),
       FACEBOOK_CLIENT_ID: str(),
-      FACEBOOK_CLIENT_SECRET: str()
+      FACEBOOK_CLIENT_SECRET: str(),
+      GOOGLE_CALLBACK_URL: str(),
+      FACEBOOK_CALLBACK_URL: str()
     })
   }
 
