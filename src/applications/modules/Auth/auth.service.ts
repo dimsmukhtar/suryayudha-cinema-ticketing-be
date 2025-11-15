@@ -11,15 +11,19 @@ import { UserUpdatePayload } from 'infrastructure/types/entities/UserTypes'
 import { AuthValidation } from './auth.validation'
 import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
 import { AuthRepositoryPrisma } from '../../../infrastructure/repositories/AuthRepositoryPrisma'
+import { logger } from '../../../shared/logger/logger'
 
 export class AuthService {
   constructor(private readonly repository: AuthRepositoryPrisma) {}
 
   async register(data: RegisterPayload): Promise<User> {
+    logger.debug(`[auth:register:service] start register for ${data.email}`)
     try {
       const userPayloadRequest = ZodValidation.validate(AuthValidation.REGISTER, data)
+
       return await this.repository.register(userPayloadRequest)
     } catch (e) {
+      logger.error(`[auth:register:service] failed register for ${data.email}`)
       throw CustomHandleError(e, {
         context: 'Error saat membuat user'
       })

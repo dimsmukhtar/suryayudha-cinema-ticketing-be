@@ -4,7 +4,7 @@ import { NotFoundException } from '../exceptions/not-found.exception'
 import { HttpException } from '../exceptions/http.exception'
 import { BadRequestException } from '../exceptions/bad-request.exception'
 import { InternalServerErrorException } from '../exceptions/internal-server.exception'
-import { logger } from '../../../infrastructure/config/logger'
+import { logger } from '../../../shared/logger/logger'
 import { ZodError } from 'zod'
 
 type HandleErrorOptions = {

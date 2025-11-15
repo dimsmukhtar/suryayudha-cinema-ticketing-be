@@ -1,5 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer'
-import { logger } from './logger'
+import { logger } from '../../shared/logger/logger'
 import { InternalServerErrorException } from '../../shared/error-handling/exceptions/internal-server.exception'
 
 const transporter: Transporter = nodemailer.createTransport({

@@ -17,31 +17,37 @@ import { generateVerificationToken } from '../../shared/helpers/generateVerifica
 import { hashPassword, verifyPassword } from '../../shared/helpers/passwordEncrypt'
 import { signJwt } from '../config/jwt'
 import { verificationEmailTemplate } from '../../shared/helpers/emailTemplate'
+import { logger } from '../../shared/logger/logger'
 
 export class AuthRepositoryPrisma implements IAuthRepository {
   constructor(private readonly prisma: PrismaClient) {}
   async register(data: RegisterPayload): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email: data.email } })
     if (user) {
+      logger.warn(`[auth:register:repository] email already registered: ${data.email}`)
       throw new BadRequestException(`Email ${data.email} sudah terdaftar`)
     }
     const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${data.verification_token}&email=${data.email}`
     const emailHtml = verificationEmailTemplate
       .replace('{{namaUser}}', data.name)
       .replace('{{verificationLink}}', verificationLink)
+
+    logger.debug(`[auth:register:repository] sending verification email to ${data.email}`)
+
     await sendEmail({
       email: data.email,
       subject: 'Verifikasi Akun Surya Yudha Cinema Anda',
       html: emailHtml
     })
     const { passwordConfirmation, ...prismaData } = data
-
-    return await this.prisma.user.create({
+    const userCreated = await this.prisma.user.create({
       data: {
         ...prismaData,
         password: await hashPassword(data.password)
       }
     })
+    logger.info(`[auth:register:repository] success register user ${data.email}`)
+    return userCreated
   }
 
   async resendVerificationLink(email: string): Promise<void> {

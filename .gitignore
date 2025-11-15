@@ -5,17 +5,16 @@
 /coverage
 
 # production
-/dist
 /build
-/src/infrastructure/database/generated
 /keys
 
 # misc
 .DC_Store
-/package-lock.json
 
 # IDE
 .vscode
 
 # env
 .env
+
+/logs

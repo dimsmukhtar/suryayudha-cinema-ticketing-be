@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { logger } from './logger'
+import { logger } from '../../shared/logger/logger'
 
 export const prisma = new PrismaClient({
   log: [
@@ -23,17 +23,21 @@ export const prisma = new PrismaClient({
 })
 
 prisma.$on('error', (e) => {
-  logger.error(`[Prisma Error] ${e.message}`)
+  logger.error(`prisma:error ${e.message}`)
 })
 
 prisma.$on('warn', (e) => {
-  logger.warn(`[Prisma Warning] ${e.message}`)
+  logger.warn(`prisma:warning ${e.message}`)
 })
 
 prisma.$on('info', (e) => {
-  logger.info(`[Prisma Info] ${e.message}`)
+  logger.info(`prisma:info ${e.message}`)
 })
 
 prisma.$on('query', (e) => {
-  logger.info(`[Prisma query] ${e.query}`)
+  logger.info('prisma:query', {
+    query: e.query,
+    params: e.params,
+    duration: e.duration
+  })
 })

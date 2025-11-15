@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpException } from '../exceptions/http.exception'
 import multer from 'multer'
+import { logger } from '../../../shared/logger/logger'
+import { asyncContext } from '../../../shared/logger/async-context'
 
 interface ErrorRequestHandler {
   (error: Error, req: Request, res: Response, next: NextFunction): void
@@ -26,6 +28,17 @@ export const errorMiddleware: ErrorRequestHandler = (
     })
   }
 
+  logger.error('unhandled:error', {
+    message: error?.message ?? String(error),
+    name: error?.name,
+    stack: error?.stack,
+    method: req.method,
+    url: req.originalUrl || req.url,
+    body: req.body,
+    params: req.params,
+    query: req.query,
+    statusCode: 500
+  })
   const isProduction = process.env.NODE_ENV === 'PRODUCTION'
   res.status(500).json({
     success: false,

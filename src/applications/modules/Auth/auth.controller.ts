@@ -16,6 +16,8 @@ import { authenticate } from '../../../shared/middlewares/authenticate'
 import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
 import { UnauthorizedException } from '../../../shared/error-handling/exceptions/unauthorized.exception'
 import { signJwt } from '../../../infrastructure/config/jwt'
+import { logger } from '../../../shared/logger/logger'
+import { sanitizeBody } from '../../../shared/helpers/sanitizeBody'
 
 export class AuthController {
   private readonly authRouter: Router
@@ -66,6 +68,10 @@ export class AuthController {
   }
 
   private register = async (req: Request, res: Response, next: NextFunction) => {
+    logger.info({
+      message: `[auth:register:controller] - register request untuk email: ${req.body.email}`,
+      body: sanitizeBody(req.body)
+    })
     try {
       const verificationToken = generateVerificationToken()
       const verificationTokenExpiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 menit
@@ -77,13 +83,13 @@ export class AuthController {
         'https://ik.imagekit.io/yxctvbjvh/profilepic.png?updatedAt=1734338115538'
       const registerPayload: RegisterPayload = req.body
       await this.service.register(registerPayload)
+      logger.info(`[auth:register:controller] - register berhasil untuk email: ${req.body.email}`)
       res.status(201).json({
         success: true,
         message:
           'Berhasil register dan verifikasi link telah dikirim ke email anda!, silahkan cek email untuk verifikasi'
       })
     } catch (e) {
-      console.log(e)
       next(e)
     }
   }

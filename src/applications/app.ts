@@ -7,7 +7,8 @@ import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
 import { cleanEnv, str, num } from 'envalid'
-import { logger } from '../infrastructure/config/logger'
+import { logger } from '../shared/logger/logger'
+import { requestLogger } from '../shared/logger/request-logger.middleware'
 import { prisma } from '../infrastructure/config/clientPrisma'
 import { errorMiddleware } from '../shared/error-handling/middleware/error.middleware'
 import { IApp } from '../infrastructure/types/app.type'
@@ -73,6 +74,7 @@ class App implements IApp {
     this.app.use(morgan(this.isProduction ? 'combined' : 'dev'))
     this.app.use(compression())
     this.app.use(express.json())
+    this.app.use(requestLogger)
     this.app.use(cookieParser())
     this.app.use(express.urlencoded({ extended: true }))
   }

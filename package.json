@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "main": "./build/server/index.js",
   "scripts": {
-    "build:watch": "npx tsc -w",
-    "dev": "npx nodemon",
-    "build": "npx tsc",
+    "build:watch": "tsc -w",
+    "dev": "nodemon",
+    "build": "tsc",
     "prod": "node ./build/server/index.js",
-    "format": "npx prettier . --write",
-    "check-types": "npx tsc --noEmit --pretty",
-    "check-format": "npx prettier . --check",
-    "prisma:generate": "npx prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:migrate": "npx prisma migrate dev --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:migrate:deploy": "npx prisma migrate deploy --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:studio": "npx prisma studio --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:seed": "npm run build && node ./build/infrastructure/database/seed.js"
+    "format": "prettier . --write",
+    "check-types": "tsc --noEmit --pretty",
+    "check-format": "prettier . --check",
+    "prisma:generate": "prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:migrate:deploy": "prisma migrate deploy --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:studio": "prisma studio --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:seed": "pnpm build && node ./build/infrastructure/database/seed.js"
   },
   "keywords": [
     "cinema",
@@ -48,6 +48,7 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {
@@ -68,5 +69,6 @@
     "prettier": "^3.5.3",
     "prisma": "^6.6.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
 }
