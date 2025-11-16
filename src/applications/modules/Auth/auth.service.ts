@@ -17,13 +17,15 @@ export class AuthService {
   constructor(private readonly repository: AuthRepositoryPrisma) {}
 
   async register(data: RegisterPayload): Promise<User> {
-    logger.debug(`[auth:register:service] start register for ${data.email}`)
     try {
       const userPayloadRequest = ZodValidation.validate(AuthValidation.REGISTER, data)
 
       return await this.repository.register(userPayloadRequest)
     } catch (e) {
-      logger.error(`[auth:register:service] failed register for ${data.email}`)
+      logger.error({
+        from: 'auth:register:service',
+        message: (e as Error).message
+      })
       throw CustomHandleError(e, {
         context: 'Error saat membuat user'
       })

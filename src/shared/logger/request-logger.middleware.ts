@@ -7,7 +7,9 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
     const requestId = asyncContext.getRequestId()
     const start = Date.now()
 
-    logger.info('request:start', {
+    logger.info({
+      from: 'request:logger:middleware',
+      message: 'Request started',
       method: req.method,
       url: req.originalUrl || req.url,
       ip: req.ip,
@@ -15,13 +17,11 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
       requestId
     })
 
-    if (req.method !== 'GET' && req.body) {
-      logger.debug('request:body', { body: req.body })
-    }
-
     res.on('finish', () => {
       const duration = Date.now() - start
-      logger.info('request:finish', {
+      logger.info({
+        from: 'request:logger:middleware',
+        message: 'Request finished',
         method: req.method,
         url: req.originalUrl || req.url,
         statusCode: res.statusCode,

@@ -8,9 +8,16 @@ async function bootstrap() {
     const routes = new Routes()
     const app = new App(routes)
     await app.start()
-    logger.info('✅ Message from bootstrap: Server successfully started')
+    logger.info({
+      from: 'index:bootstrap',
+      message: '✅ Server started ✅'
+    })
   } catch (error) {
-    logger.error('❌ Failed to start server:', error)
+    logger.error({
+      from: 'index:bootstrap',
+      message: '❌ Failed to start server ❌',
+      error
+    })
     process.exit(1)
   }
 }

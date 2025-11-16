@@ -104,14 +104,24 @@ class App implements IApp {
   public async start(): Promise<void> {
     try {
       await prisma.$connect()
-      logger.info(`✅ Database with prisma connected`)
+      logger.info({
+        from: 'application:start',
+        message: '✅ Database with prisma connected ✅'
+      })
       this.server = this.app.listen(process.env.PORT, () => {
-        logger.info(`✅ Server started on port ${process.env.PORT}`)
+        logger.info({
+          from: 'application:start',
+          message: `✅ Server started on port ${process.env.PORT} ✅`
+        })
         scheduleAllJobs()
       })
       this.setupGracefulShutdown()
     } catch (error) {
-      logger.error('❌ Failed to start server:', error)
+      logger.error({
+        from: 'application:start',
+        message: '❌ Failed to start server ❌',
+        error
+      })
       process.exit(1)
     }
   }
@@ -120,25 +130,43 @@ class App implements IApp {
     const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGQUIT']
 
     const shutdown = async (signal: NodeJS.Signals) => {
-      logger.warn(`Received ${signal}, shutting down...`)
+      logger.warn({
+        from: 'application:shutdown',
+        message: `Received ${signal}, shutting down...`
+      })
 
       try {
         await prisma.$disconnect()
         if (this.server) this.server.close()
-        logger.info('✅ Server closed')
+        logger.info({
+          from: 'application:shutdown',
+          message: '✅ Server shut down gracefully ✅'
+        })
         process.exit(0)
       } catch (error) {
-        logger.error('❌ Error during shutdown:', error)
+        logger.error({
+          from: 'application:shutdown',
+          message: '❌ Failed to shut down server ❌',
+          error
+        })
         process.exit(1)
       }
     }
     signals.forEach((signal) => process.on(signal, shutdown))
     process.on('unhandledRejection', (reason) => {
-      logger.error('Unhandled Rejection:', reason)
+      logger.error({
+        from: 'application:unhandledRejection',
+        message: '❌ Unhandled Rejection ❌',
+        reason
+      })
       shutdown('unhandledRejection' as NodeJS.Signals)
     })
     process.on('uncaughtException', (error) => {
-      logger.error('Uncaught Exception:', error)
+      logger.error({
+        from: 'application:uncaughtException',
+        message: '❌ Uncaught Exception ❌',
+        error
+      })
       shutdown('uncaughtException' as NodeJS.Signals)
     })
   }

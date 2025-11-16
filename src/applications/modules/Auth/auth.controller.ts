@@ -69,7 +69,8 @@ export class AuthController {
 
   private register = async (req: Request, res: Response, next: NextFunction) => {
     logger.info({
-      message: `[auth:register:controller] - register request untuk email: ${req.body.email}`,
+      from: 'auth:register:controller',
+      message: `Register request untuk email: ${req.body.email}`,
       body: sanitizeBody(req.body)
     })
     try {
@@ -83,7 +84,10 @@ export class AuthController {
         'https://ik.imagekit.io/yxctvbjvh/profilepic.png?updatedAt=1734338115538'
       const registerPayload: RegisterPayload = req.body
       await this.service.register(registerPayload)
-      logger.info(`[auth:register:controller] - register berhasil untuk email: ${req.body.email}`)
+      logger.info({
+        from: 'auth:register:controller',
+        message: `Register berhasil untuk email: ${req.body.email}`
+      })
       res.status(201).json({
         success: true,
         message:

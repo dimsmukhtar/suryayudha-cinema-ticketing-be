@@ -23,21 +23,29 @@ export const prisma = new PrismaClient({
 })
 
 prisma.$on('error', (e) => {
-  logger.error(`prisma:error ${e.message}`)
+  logger.error({
+    from: 'client:prisma',
+    message: e.message
+  })
 })
 
 prisma.$on('warn', (e) => {
-  logger.warn(`prisma:warning ${e.message}`)
+  logger.warn({
+    from: 'client:prisma',
+    message: e.message
+  })
 })
 
 prisma.$on('info', (e) => {
-  logger.info(`prisma:info ${e.message}`)
+  logger.info({
+    from: 'client:prisma',
+    message: e.message
+  })
 })
 
 prisma.$on('query', (e) => {
-  logger.info('prisma:query', {
-    query: e.query,
-    params: e.params,
-    duration: e.duration
+  logger.info({
+    from: 'client:prisma',
+    message: `Query: ${e.query} || Duration: ${e.duration} ms || Params: ${e.params}`
   })
 })

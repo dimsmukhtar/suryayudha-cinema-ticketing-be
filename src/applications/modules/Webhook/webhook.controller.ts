@@ -6,6 +6,7 @@ import { generateRandomCode } from '../../../shared/helpers/randomCode'
 import { ticketSuccessfullyCreatedTemplate } from '../../../shared/helpers/emailTemplate'
 import { sendEmail } from '../../../infrastructure/config/nodemailer'
 import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
+import { logger } from '../../../shared/logger/logger'
 
 export class WebhookController {
   private readonly webhookRouter: Router
@@ -19,6 +20,10 @@ export class WebhookController {
   }
 
   private midtransWebhookHandler = async (req: Request, res: Response, next: NextFunction) => {
+    logger.info({
+      from: 'webhook:midtrans',
+      message: 'Midtrans webhook received'
+    })
     try {
       const notificationJson = req.body
       const statusResponse = await snap.transaction.notification(notificationJson)
@@ -167,6 +172,7 @@ export class WebhookController {
       }
       res.status(200).send('OK')
     } catch (e) {
+      logger.error({ from: 'webhook:midtrans', message: `error: ${(e as Error).message}` })
       next(e)
     }
   }

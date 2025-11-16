@@ -5,7 +5,10 @@ import { sendEmail } from '../config/nodemailer'
 import { paymentCancelledTemplate } from '../../shared/helpers/emailTemplate'
 
 export const cancelExpiredPayments = async () => {
-  logger.info('Running cron job: Mencari payments dari midtrans yang kadaluarsa...')
+  logger.info({
+    from: 'cron-job:cancel-expired-payments',
+    message: '⌛Running cron job: Mencari payments dari midtrans yang kadaluarsa...⌛'
+  })
 
   try {
     const expiredPayments = await prisma.transaction.findMany({
@@ -36,11 +39,17 @@ export const cancelExpiredPayments = async () => {
     })
 
     if (expiredPayments.length === 0) {
-      logger.info('Tidak ada payments dari midtrans yang kadaluarsa ditemukan')
+      logger.info({
+        from: 'cron-job:cancel-expired-payments',
+        message: '❌Tidak ada payments dari midtrans yang kadaluarsa ditemukan❌'
+      })
       return
     }
 
-    logger.warn(`Ditemukan ${expiredPayments.length} payment dari midtrans yang kadaluarsa`)
+    logger.warn({
+      from: 'cron-job:cancel-expired-payments',
+      message: `✅Ditemukan ${expiredPayments.length} payment dari midtrans yang kadaluarsa✅`
+    })
 
     for (const transaction of expiredPayments) {
       await prisma.$transaction(async (tx) => {
@@ -117,9 +126,16 @@ export const cancelExpiredPayments = async () => {
         html: emailHtml
       })
 
-      logger.info(`Payment midtrans untuk transaksi ID ${transaction.id} berhasil dibatalkan`)
+      logger.info({
+        from: 'cron-job:cancel-expired-payments',
+        message: `✅Payment midtrans untuk transaksi ID ${transaction.id} berhasil dibatalkan✅`
+      })
     }
   } catch (e) {
-    logger.error('Terjadi error saat menjalankan cron job pembatalan payments dari midtrans:', e)
+    logger.error({
+      from: 'cron-job:cancel-expired-payments',
+      message: '❌Terjadi error saat menjalankan cron job pembatalan payments dari midtrans❌:',
+      e
+    })
   }
 }

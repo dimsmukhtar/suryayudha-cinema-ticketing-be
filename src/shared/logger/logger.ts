@@ -15,16 +15,6 @@ const NODE_ENV = process.env.NODE_ENV ?? 'development'
 const defaultLevel =
   NODE_ENV === 'development' ? 'debug' : NODE_ENV === 'production' ? 'info' : 'debug'
 
-const maskSensitive = format((info) => {
-  const sensitiveKeys = ['password', 'token', 'accessToken', 'refreshToken']
-  for (const k of sensitiveKeys) {
-    if (Object.prototype.hasOwnProperty.call(info, k)) {
-      info[k] = '***MASKED***'
-    }
-  }
-  return info
-})
-
 const addRequestId = format((info) => {
   const id = asyncContext.getRequestId()
   if (id) info.requestId = id
@@ -33,21 +23,33 @@ const addRequestId = format((info) => {
 
 const fileFormat = format.combine(
   addRequestId(),
-  maskSensitive(),
   format.timestamp(),
   format.errors({ stack: true }),
   format.json()
 )
 
+const jsonFormat = format((info) => {
+  const { from, level, message, timestamp, requestId, ...meta } = info
+
+  const logObj: Record<string, any> = {
+    from,
+    message,
+    level,
+    requestId,
+    timestamp,
+    ...meta
+  }
+
+  info[Symbol.for('message')] = JSON.stringify(logObj, null, 2)
+  return info
+})
+
 const consoleFormat = format.combine(
   addRequestId(),
-  maskSensitive(),
-  format.colorize(),
   format.errors({ stack: true }),
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  format.printf((info) => {
-    return `[${info.timestamp}] - [${info.level}]: [${info.message}] - [reqId=${info.requestId}]`
-  })
+  jsonFormat(),
+  format.colorize({ message: true })
 )
 
 export const logger = winston.createLogger({

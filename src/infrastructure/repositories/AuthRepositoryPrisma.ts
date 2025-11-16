@@ -24,7 +24,6 @@ export class AuthRepositoryPrisma implements IAuthRepository {
   async register(data: RegisterPayload): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email: data.email } })
     if (user) {
-      logger.warn(`[auth:register:repository] email already registered: ${data.email}`)
       throw new BadRequestException(`Email ${data.email} sudah terdaftar`)
     }
     const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${data.verification_token}&email=${data.email}`
@@ -32,7 +31,10 @@ export class AuthRepositoryPrisma implements IAuthRepository {
       .replace('{{namaUser}}', data.name)
       .replace('{{verificationLink}}', verificationLink)
 
-    logger.debug(`[auth:register:repository] sending verification email to ${data.email}`)
+    logger.info({
+      from: 'auth:register:repository',
+      message: `Sending verification email to ${data.email}`
+    })
 
     await sendEmail({
       email: data.email,
@@ -46,7 +48,6 @@ export class AuthRepositoryPrisma implements IAuthRepository {
         password: await hashPassword(data.password)
       }
     })
-    logger.info(`[auth:register:repository] success register user ${data.email}`)
     return userCreated
   }
 

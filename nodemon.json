@@ -1,5 +1,6 @@
 {
   "ext": "js",
   "watch": ["build"],
-  "exec": "node ./build/server/index.js"
+  "exec": "node ./build/server/index.js",
+  "ignore": ["logs", ".log"]
 }

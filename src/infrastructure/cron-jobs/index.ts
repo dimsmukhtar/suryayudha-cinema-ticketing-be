@@ -7,5 +7,8 @@ export const scheduleAllJobs = () => {
   cron.schedule('* * * * *', cancelExpiredBookings)
   cron.schedule('* * * * *', cancelExpiredPayments)
 
-  logger.info('✅ Semua cron job berhasil di jalankan! ✅')
+  logger.info({
+    from: 'cron-job:schedule-all-jobs',
+    message: '✅ Semua cron job berhasil di jalankan! ✅'
+  })
 }

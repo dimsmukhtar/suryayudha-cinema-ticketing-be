@@ -28,7 +28,11 @@ export async function sendEmail(data: MailDatA): Promise<void> {
       html: data.html
     })
   } catch (error: any) {
-    logger.error('Error sending email', error)
+    logger.error({
+      from: 'nodemailer:sendEmail',
+      message: 'Error sending email',
+      error
+    })
     throw new InternalServerErrorException(error)
   }
 }

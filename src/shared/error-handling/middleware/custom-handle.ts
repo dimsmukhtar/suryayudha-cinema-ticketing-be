@@ -4,7 +4,6 @@ import { NotFoundException } from '../exceptions/not-found.exception'
 import { HttpException } from '../exceptions/http.exception'
 import { BadRequestException } from '../exceptions/bad-request.exception'
 import { InternalServerErrorException } from '../exceptions/internal-server.exception'
-import { logger } from '../../../shared/logger/logger'
 import { ZodError } from 'zod'
 
 type HandleErrorOptions = {
@@ -35,7 +34,6 @@ export function CustomHandleError(error: any, options: HandleErrorOptions = {}):
     error instanceof Prisma.PrismaClientInitializationError ||
     error instanceof Prisma.PrismaClientRustPanicError
   ) {
-    logger.error(`${context}:`, error)
     return new InternalServerErrorException(`${context}: ${error.message}`)
   }
 

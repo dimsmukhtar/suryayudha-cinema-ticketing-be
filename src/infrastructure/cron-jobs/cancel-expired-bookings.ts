@@ -3,7 +3,10 @@ import { prisma } from '../config/clientPrisma'
 import { logger } from '../../shared/logger/logger'
 
 export const cancelExpiredBookings = async () => {
-  logger.info('Running cron job: Mencari booking yang kadaluarsa...')
+  logger.info({
+    from: 'cron-job:cancel-expired-bookings',
+    message: '⌛Running cron job: Mencari booking yang kadaluarsa...⌛'
+  })
 
   try {
     const expiredBookings = await prisma.transaction.findMany({
@@ -36,11 +39,17 @@ export const cancelExpiredBookings = async () => {
     })
 
     if (expiredBookings.length === 0) {
-      logger.info('Tidak ada booking yang kadaluarsa ditemukan')
+      logger.info({
+        from: 'cron-job:cancel-expired-bookings',
+        message: '❌Tidak ada booking yang kadaluarsa ditemukan❌'
+      })
       return
     }
 
-    logger.warn(`Ditemukan ${expiredBookings.length} booking yang kadaluarsa`)
+    logger.warn({
+      from: 'cron-job:cancel-expired-bookings',
+      message: `✅Ditemukan ${expiredBookings.length} booking yang kadaluarsa✅`
+    })
     for (const transaction of expiredBookings) {
       await prisma.$transaction(async (tx) => {
         const movieTitle =
@@ -86,9 +95,16 @@ export const cancelExpiredBookings = async () => {
           }
         })
       })
-      logger.info(`Booking untuk transaksi ID ${transaction.id} berhasil dibatalkan`)
+      logger.info({
+        from: 'cron-job:cancel-expired-bookings',
+        message: `✅Booking untuk transaksi ID ${transaction.id} berhasil dibatalkan✅`
+      })
     }
   } catch (e) {
-    logger.error('Terjadi error saat menjalankan cron job pembatalan booking:', e)
+    logger.error({
+      from: 'cron-job:cancel-expired-bookings',
+      message: '❌Terjadi error saat menjalankan cron job pembatalan booking❌:',
+      e
+    })
   }
 }
