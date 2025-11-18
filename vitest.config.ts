@@ -17,17 +17,11 @@ export default defineConfig({
       reporter: ['text', 'html'],
       reportsDirectory: './coverage',
       thresholds: {
-        functions: 90,
-        branches: 85,
-        statements: 90,
-        lines: 90
+        functions: 90, // minimal 90% fungsi harus terpanggil dalam test.
+        branches: 85, // minimal 85% branch (if/else, switch, ternary) harus terpanggil.
+        statements: 90, // minimal 90% pernyataan kode dieksekusi.
+        lines: 90 // minimal 90% baris kode dieksekusi.
       }
-    }
-  },
-
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
     }
   }
 })
