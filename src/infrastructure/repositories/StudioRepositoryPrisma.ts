@@ -1,7 +1,7 @@
 import { PrismaClient, ScreenPlacement, Studio, StudioGallery } from '@prisma/client'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '@shared/helpers/checkExistingRow'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { uploadImageToImageKit, deleteImageFromImageKit } from '../config/imagekit.config'
 import { IStudioRepository, StudioWIthGalleriesAndSeats } from '../types/entities/StudioTypes'
 

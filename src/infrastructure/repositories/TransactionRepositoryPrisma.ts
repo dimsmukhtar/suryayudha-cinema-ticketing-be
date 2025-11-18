@@ -6,11 +6,11 @@ import {
   TransactionStatus,
   TransactionType
 } from '@prisma/client'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { snap } from '../config/midtrans'
 import { sendEmail } from '../config/nodemailer'
-import { initiatePaymentTemplate } from '../../shared/helpers/emailTemplate'
+import { initiatePaymentTemplate } from '@shared/helpers/emailTemplate'
 import { queryGetAllTransactions, queryGetMyTransactions } from '../types/entities/TransactionTypes'
 
 export class TransactionRepositoryPrisma {

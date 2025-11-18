@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { UserService } from './user.service'
-import { UserPayload, UserUpdatePayload } from '../../../infrastructure/types/entities/UserTypes'
-import { upload } from '../../../infrastructure/config/multer.config'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { UserPayload, UserUpdatePayload } from '@infrastructure/types/entities/UserTypes'
+import { upload } from '@infrastructure/config/multer.config'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
 
 export class UserController {
   private readonly userRouter: Router

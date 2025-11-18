@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express'
 
 import { ScheduleService } from './schedule.service'
-import { SchedulePayload } from '../../../infrastructure/types/entities/ScheduleTypes'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { SchedulePayload } from '@infrastructure/types/entities/ScheduleTypes'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
 
 export class ScheduleController {
   private readonly scheduleRouter: Router

@@ -7,17 +7,17 @@ import {
   ChangePasswordPayload,
   ResetPasswordPayload,
   IAuthRepository
-} from '../../infrastructure/types/entities/AuthTypes'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
+} from '@infrastructure/types/entities/AuthTypes'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '@shared/helpers/checkExistingRow'
 import { uploadImageToImageKit } from '../config/imagekit.config'
-import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { sendEmail } from '../config/nodemailer'
-import { generateVerificationToken } from '../../shared/helpers/generateVerificationToken'
-import { hashPassword, verifyPassword } from '../../shared/helpers/passwordEncrypt'
+import { generateVerificationToken } from '@shared/helpers/generateVerificationToken'
+import { hashPassword, verifyPassword } from '@shared/helpers/passwordEncrypt'
 import { signJwt } from '../config/jwt'
-import { verificationEmailTemplate } from '../../shared/helpers/emailTemplate'
-import { logger } from '../../shared/logger/logger'
+import { verificationEmailTemplate } from '@shared/helpers/emailTemplate'
+import { logger } from '@shared/logger/logger'
 
 export class AuthRepositoryPrisma implements IAuthRepository {
   constructor(private readonly prisma: PrismaClient) {}

@@ -1,5 +1,5 @@
-import { DashboardRepositoryPrisma } from '../../../infrastructure/repositories/DashboardRepositoryPrisma'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
+import { DashboardRepositoryPrisma } from '@infrastructure/repositories/DashboardRepositoryPrisma'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 
 export class DashboardService {
   constructor(private readonly repository: DashboardRepositoryPrisma) {}

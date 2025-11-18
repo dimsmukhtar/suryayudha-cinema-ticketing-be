@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { GenreService } from './genre.service'
-import { GenrePayload, GenrePayloadUpdate } from '../../../infrastructure/types/entities/GenreTypes'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { GenrePayload, GenrePayloadUpdate } from '@infrastructure/types/entities/GenreTypes'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
 
 export class GenreController {
   private readonly genreRouter: Router

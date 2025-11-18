@@ -4,13 +4,13 @@ import {
   UserWithRelations,
   UserPayload,
   UserUpdatePayload
-} from '../../infrastructure/types/entities/UserTypes'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
+} from '@infrastructure/types/entities/UserTypes'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '@shared/helpers/checkExistingRow'
 import { uploadImageToImageKit } from '../config/imagekit.config'
-import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
-import { hashPassword } from '../../shared/helpers/passwordEncrypt'
+import { hashPassword } from '@shared/helpers/passwordEncrypt'
 
 export class UserRepositoryPrisma implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}

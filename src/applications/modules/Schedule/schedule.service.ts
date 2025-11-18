@@ -1,14 +1,14 @@
 import { Schedule, ScheduleSeat, SeatStatus } from '@prisma/client'
-import { ScheduleRepositoryPrisma } from '../../../infrastructure/repositories/ScheduleRepositoryPrisma'
+import { ScheduleRepositoryPrisma } from '@infrastructure/repositories/ScheduleRepositoryPrisma'
 import {
   SchedulePayload,
   ScheduleQuery,
   ScheduleWithScheduleSeats
-} from '../../../infrastructure/types/entities/ScheduleTypes'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
+} from '@infrastructure/types/entities/ScheduleTypes'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 import { ScheduleValidation } from './schedule.validation'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
 export class ScheduleService {
   constructor(private readonly repository: ScheduleRepositoryPrisma) {}

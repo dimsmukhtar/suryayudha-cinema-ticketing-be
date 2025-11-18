@@ -1,12 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { VoucherService } from './voucher.service'
-import {
-  UpdateVoucherPayload,
-  VoucherPayload
-} from '../../../infrastructure/types/entities/VoucherTypes'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { UpdateVoucherPayload, VoucherPayload } from '@infrastructure/types/entities/VoucherTypes'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
 export class VoucherController {
   private readonly voucherRouter: Router

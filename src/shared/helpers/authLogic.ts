@@ -1,4 +1,4 @@
-import { prisma } from '../../infrastructure/config/clientPrisma'
+import { prisma } from '@infrastructure/config/clientPrisma'
 
 export async function findOrCreateUser(provider: 'google' | 'facebook', profile: any) {
   const providerId = profile.id

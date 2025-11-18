@@ -1,7 +1,7 @@
 import { Ticket } from '@prisma/client'
-import { TicketRepositoryPrisma } from '../../../infrastructure/repositories/TicketRepositoryPrisma'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { TicketRepositoryPrisma } from '@infrastructure/repositories/TicketRepositoryPrisma'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
 export class TicketService {
   constructor(private readonly repository: TicketRepositoryPrisma) {}

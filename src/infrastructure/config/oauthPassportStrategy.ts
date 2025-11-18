@@ -2,8 +2,8 @@ import passport from 'passport'
 import PassportGoogle from 'passport-google-oauth20'
 import PassportFacebook from 'passport-facebook'
 
-import { findOrCreateUser } from '../../shared/helpers/authLogic'
-import { buildJwtPayload } from '../../shared/helpers/builtJwtPayload'
+import { findOrCreateUser } from '@shared/helpers/authLogic'
+import { buildJwtPayload } from '@shared/helpers/builtJwtPayload'
 
 const GoogleStrategy = PassportGoogle.Strategy
 const FacebookStrategy = PassportFacebook.Strategy

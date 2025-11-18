@@ -1,8 +1,8 @@
 import { Cast } from '@prisma/client'
-import { CastRepositoryPrisma } from '../../../infrastructure/repositories/CastRepositoryPrisma'
-import { CastPayload, CastPayloadUpdate } from '../../../infrastructure/types/entities/CastTypes'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
+import { CastRepositoryPrisma } from '@infrastructure/repositories/CastRepositoryPrisma'
+import { CastPayload, CastPayloadUpdate } from '@infrastructure/types/entities/CastTypes'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
 import { CastValidation } from './cast.validation'
 
 export class CastService {

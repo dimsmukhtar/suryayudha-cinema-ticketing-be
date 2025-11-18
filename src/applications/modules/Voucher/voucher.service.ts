@@ -1,13 +1,10 @@
 import { Transaction, Voucher } from '@prisma/client'
-import {
-  UpdateVoucherPayload,
-  VoucherPayload
-} from '../../../infrastructure/types/entities/VoucherTypes'
-import { VoucherRepositoryPrisma } from '../../../infrastructure/repositories/VoucherRepositoryPrisma'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
+import { UpdateVoucherPayload, VoucherPayload } from '@infrastructure/types/entities/VoucherTypes'
+import { VoucherRepositoryPrisma } from '@infrastructure/repositories/VoucherRepositoryPrisma'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
 import { VoucherValidaton } from './voucher.validation'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
 export class VoucherService {
   constructor(private readonly repository: VoucherRepositoryPrisma) {}

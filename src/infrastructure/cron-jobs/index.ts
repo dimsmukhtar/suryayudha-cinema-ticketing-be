@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { logger } from '../../shared/logger/logger'
+import { logger } from '@shared/logger/logger'
 import { cancelExpiredBookings } from './cancel-expired-bookings'
 import { cancelExpiredPayments } from './cancel-expired-payments'
 

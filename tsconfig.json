@@ -2,22 +2,29 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "rootDir": "./src",
     "moduleResolution": "node",
-    "baseUrl": "./src" ,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@tests/*": ["./tests/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"],
+      "@applications/*": ["./src/applications/*"],
+      "@src/*": ["./src/*"]
+    },
     "typeRoots": [
       "./src/types",
       "./node_modules/@types"
     ],
     "resolveJsonModule": true,
-    "sourceMap": true ,
+    "sourceMap": true,
     "outDir": "./build",
-    "esModuleInterop": true ,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true ,
-    "noImplicitAny": true ,
-    "skipLibCheck": true 
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "build"]
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "build", "coverage", "tests"]
 }

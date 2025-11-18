@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { TransactionService } from './transaction.service'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
 
 export class TransactionController {
   private readonly transactionRouter: Router

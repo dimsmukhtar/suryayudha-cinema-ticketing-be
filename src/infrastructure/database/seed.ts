@@ -1,5 +1,5 @@
 import { prisma } from '../config/clientPrisma'
-import { logger } from '../../shared/logger/logger'
+import { logger } from '@shared/logger/logger'
 
 interface SeatData {
   seat_label: string

@@ -1,9 +1,9 @@
 import { Studio, StudioGallery } from '@prisma/client'
-import { StudioRepositoryPrisma } from '../../../infrastructure/repositories/StudioRepositoryPrisma'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
+import { StudioRepositoryPrisma } from '@infrastructure/repositories/StudioRepositoryPrisma'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
 import { StudioValidation } from './studio.validation'
-import { StudioWIthGalleriesAndSeats } from '../../../infrastructure/types/entities/StudioTypes'
+import { StudioWIthGalleriesAndSeats } from '@infrastructure/types/entities/StudioTypes'
 
 export class StudioService {
   constructor(private readonly repository: StudioRepositoryPrisma) {}

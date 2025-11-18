@@ -6,18 +6,18 @@ import {
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload
-} from '../../../infrastructure/types/entities/AuthTypes'
+} from '@infrastructure/types/entities/AuthTypes'
 
-import { UserUpdatePayload } from 'infrastructure/types/entities/UserTypes'
-import { setAccessToken } from '../../../shared/helpers/setCookies'
-import { upload } from '../../../infrastructure/config/multer.config'
-import { generateVerificationToken } from '../../../shared/helpers/generateVerificationToken'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
-import { UnauthorizedException } from '../../../shared/error-handling/exceptions/unauthorized.exception'
-import { signJwt } from '../../../infrastructure/config/jwt'
-import { logger } from '../../../shared/logger/logger'
-import { sanitizeBody } from '../../../shared/helpers/sanitizeBody'
+import { UserUpdatePayload } from '@infrastructure/types/entities/UserTypes'
+import { setAccessToken } from '@shared/helpers/setCookies'
+import { upload } from '@infrastructure/config/multer.config'
+import { generateVerificationToken } from '@shared/helpers/generateVerificationToken'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
+import { UnauthorizedException } from '@shared/error-handling/exceptions/unauthorized.exception'
+import { signJwt } from '@infrastructure/config/jwt'
+import { logger } from '@shared/logger/logger'
+import { sanitizeBody } from '@shared/helpers/sanitizeBody'
 
 export class AuthController {
   private readonly authRouter: Router

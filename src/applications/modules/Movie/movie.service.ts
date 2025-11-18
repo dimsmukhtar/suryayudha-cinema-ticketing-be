@@ -1,13 +1,13 @@
-import { MovieRepositoryPrisma } from '../../../infrastructure/repositories/MovieRepositoryPrisma'
+import { MovieRepositoryPrisma } from '@infrastructure/repositories/MovieRepositoryPrisma'
 import { Movie } from '@prisma/client'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 import {
   MoviePayload,
   MoviePayloadUpdate,
   MovieQuery
-} from '../../../infrastructure/types/entities/MovieTypes'
+} from '@infrastructure/types/entities/MovieTypes'
 import { MovieValidation } from './movie.validation'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepositoryPrisma) {}

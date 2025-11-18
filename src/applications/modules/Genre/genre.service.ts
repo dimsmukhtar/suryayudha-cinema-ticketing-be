@@ -2,10 +2,10 @@ import {
   GenrePayload,
   GenrePayloadUpdate,
   GenreWithRelations
-} from '../../../infrastructure/types/entities/GenreTypes'
-import { GenreRepositoryPrisma } from '../../../infrastructure/repositories/GenreRepositoryPrisma'
+} from '@infrastructure/types/entities/GenreTypes'
+import { GenreRepositoryPrisma } from '@infrastructure/repositories/GenreRepositoryPrisma'
 import { Genre } from '@prisma/client'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 
 export class GenreService {
   constructor(private readonly repository: GenreRepositoryPrisma) {}

@@ -4,9 +4,9 @@ import {
   GenrePayload,
   GenrePayloadUpdate,
   GenreWithRelations
-} from '../../infrastructure/types/entities/GenreTypes'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
+} from '@infrastructure/types/entities/GenreTypes'
+import { checkExists } from '@shared/helpers/checkExistingRow'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
 
 export class GenreRepositoryPrisma implements IGenreRepository {
   constructor(private readonly prisma: PrismaClient) {}

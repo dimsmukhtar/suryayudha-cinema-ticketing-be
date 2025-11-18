@@ -1,11 +1,8 @@
 import { PrismaClient, Transaction, Voucher } from '@prisma/client'
-import {
-  UpdateVoucherPayload,
-  VoucherPayload
-} from '../../infrastructure/types/entities/VoucherTypes'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { UpdateVoucherPayload, VoucherPayload } from '@infrastructure/types/entities/VoucherTypes'
+import { checkExists } from '@shared/helpers/checkExistingRow'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
 export class VoucherRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}

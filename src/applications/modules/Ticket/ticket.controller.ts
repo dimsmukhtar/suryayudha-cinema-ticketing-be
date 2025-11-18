@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import { TicketService } from './ticket.service'
-import { authenticate } from '../../../shared/middlewares/authenticate'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
+import { authenticate } from '@shared/middlewares/authenticate'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
 import { string } from 'zod'
 
 export class TicketController {

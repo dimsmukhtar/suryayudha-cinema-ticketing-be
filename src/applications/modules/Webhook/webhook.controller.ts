@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { snap } from '../../../infrastructure/config/midtrans'
-import { prisma } from '../../../infrastructure/config/clientPrisma'
+import { snap } from '@infrastructure/config/midtrans'
+import { prisma } from '@infrastructure/config/clientPrisma'
 import { SeatStatus, TARGET_AUDIENCE, TicketStatus, TransactionStatus } from '@prisma/client'
-import { generateRandomCode } from '../../../shared/helpers/randomCode'
-import { ticketSuccessfullyCreatedTemplate } from '../../../shared/helpers/emailTemplate'
-import { sendEmail } from '../../../infrastructure/config/nodemailer'
-import { NotFoundException } from '../../../shared/error-handling/exceptions/not-found.exception'
-import { logger } from '../../../shared/logger/logger'
+import { generateRandomCode } from '@shared/helpers/randomCode'
+import { ticketSuccessfullyCreatedTemplate } from '@shared/helpers/emailTemplate'
+import { sendEmail } from '@infrastructure/config/nodemailer'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { logger } from '@shared/logger/logger'
 
 export class WebhookController {
   private readonly webhookRouter: Router

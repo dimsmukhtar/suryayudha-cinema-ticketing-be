@@ -1,17 +1,17 @@
 import { User } from '@prisma/client'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 import {
   ChangePasswordPayload,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload
-} from 'infrastructure/types/entities/AuthTypes'
+} from '@infrastructure/types/entities/AuthTypes'
 
-import { UserUpdatePayload } from 'infrastructure/types/entities/UserTypes'
+import { UserUpdatePayload } from '@infrastructure/types/entities/UserTypes'
 import { AuthValidation } from './auth.validation'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { AuthRepositoryPrisma } from '../../../infrastructure/repositories/AuthRepositoryPrisma'
-import { logger } from '../../../shared/logger/logger'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
+import { AuthRepositoryPrisma } from '@infrastructure/repositories/AuthRepositoryPrisma'
+import { logger } from '@shared/logger/logger'
 
 export class AuthService {
   constructor(private readonly repository: AuthRepositoryPrisma) {}

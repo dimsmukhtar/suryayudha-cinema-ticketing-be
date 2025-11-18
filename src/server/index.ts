@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import * as fs from 'fs'
-import { logger } from '../shared/logger/logger'
+import { logger } from '@shared/logger/logger'
 
 const env = process.env.NODE_ENV || 'development'
 const envFile = `.env.${env}`

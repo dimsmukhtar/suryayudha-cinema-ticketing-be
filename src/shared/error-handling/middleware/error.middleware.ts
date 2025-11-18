@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpException } from '../exceptions/http.exception'
 import multer from 'multer'
-import { logger } from '../../../shared/logger/logger'
-import { asyncContext } from '../../../shared/logger/async-context'
+import { logger } from '@shared/logger/logger'
 
 interface ErrorRequestHandler {
   (error: Error, req: Request, res: Response, next: NextFunction): void

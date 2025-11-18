@@ -1,6 +1,6 @@
 import { SeatStatus, TARGET_AUDIENCE, TransactionStatus, TransactionType } from '@prisma/client'
 import { prisma } from '../config/clientPrisma'
-import { logger } from '../../shared/logger/logger'
+import { logger } from '@shared/logger/logger'
 
 export const cancelExpiredBookings = async () => {
   logger.info({

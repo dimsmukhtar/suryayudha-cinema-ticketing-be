@@ -1,12 +1,12 @@
 import { Transaction } from '@prisma/client'
-import { TransactionRepositoryPrisma } from '../../../infrastructure/repositories/TransactionRepositoryPrisma'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
-import { snap } from '../../../infrastructure/config/midtrans'
+import { TransactionRepositoryPrisma } from '@infrastructure/repositories/TransactionRepositoryPrisma'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
+import { snap } from '@infrastructure/config/midtrans'
 import {
   queryGetAllTransactions,
   queryGetMyTransactions
-} from '../../../infrastructure\/types/entities/TransactionTypes'
+} from '@infrastructure\/types/entities/TransactionTypes'
 
 export class TransactionService {
   constructor(private readonly repository: TransactionRepositoryPrisma) {}

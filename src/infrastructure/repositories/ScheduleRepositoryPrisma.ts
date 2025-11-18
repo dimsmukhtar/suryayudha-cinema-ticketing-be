@@ -6,14 +6,14 @@ import {
   ScheduleSeat,
   SeatStatus
 } from '@prisma/client'
-import { SchedulePayload, ScheduleQuery } from '../../infrastructure/types/entities/ScheduleTypes'
-import { parseDurationToMinutes } from '../../shared/helpers/parseDuration'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
-import { BadRequestException } from '../../shared/error-handling/exceptions/bad-request.exception'
+import { SchedulePayload, ScheduleQuery } from '@infrastructure/types/entities/ScheduleTypes'
+import { parseDurationToMinutes } from '@shared/helpers/parseDuration'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '@shared/helpers/checkExistingRow'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { ScheduleWithScheduleSeats } from '../types/entities/ScheduleTypes'
-import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
-import { transformSeatsLayout } from '../../shared/helpers/seatsLayout'
+import { ConflictException } from '@shared/error-handling/exceptions/conflict.exception'
+import { transformSeatsLayout } from '@shared/helpers/seatsLayout'
 
 export class ScheduleRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}

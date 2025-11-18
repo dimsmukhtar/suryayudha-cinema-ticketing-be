@@ -13,7 +13,7 @@ import {
   factoriesDashboardController,
   factoriesAuthController
 } from '../../infrastructure/factories/factories'
-import { IRoutes } from 'infrastructure/types/route.type'
+import { IRoutes } from '@infrastructure/types/route.type'
 import { WebhookController } from '../../applications/modules/Webhook/webhook.controller'
 
 const webhookController = new WebhookController()

@@ -33,7 +33,7 @@ import { generateVerificationToken } from '../../../src/shared/helpers/generateV
 import { signJwt } from '../../../src/infrastructure/config/jwt'
 import { logger } from '../../../src/shared/logger/logger'
 
-describe("AuthController's (unit)", () => {
+describe('AuthController (unit)', () => {
   let authController: AuthController
 
   const mockService: Partial<AuthService> = {

@@ -1,9 +1,9 @@
 import { Movie, MovieStatus, Prisma, PrismaClient, MovieGenre } from '@prisma/client'
-import { ConflictException } from '../../shared/error-handling/exceptions/conflict.exception'
+import { ConflictException } from '@shared/error-handling/exceptions/conflict.exception'
 import { MoviePayload, MoviePayloadUpdate, MovieQuery } from '../types/entities/MovieTypes'
 import { IMovieRepository } from '../types/entities/MovieTypes'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '@shared/helpers/checkExistingRow'
 import { uploadImageToImageKit } from '../config/imagekit.config'
 
 export class MovieRepositoryPrisma implements IMovieRepository {

@@ -1,10 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { CastService } from './cast.service'
-import { upload } from '../../../infrastructure/config/multer.config'
-import { CastPayload, CastPayloadUpdate } from '../../../infrastructure/types/entities/CastTypes'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
-import { validateAdmin } from '../../../shared/middlewares/valiadateAdmin'
-import { authenticate } from '../../../shared/middlewares/authenticate'
+import { upload } from '@infrastructure/config/multer.config'
+import { CastPayload, CastPayloadUpdate } from '@infrastructure/types/entities/CastTypes'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
+import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
+import { authenticate } from '@shared/middlewares/authenticate'
 
 export class CastController {
   private readonly castRouter: Router

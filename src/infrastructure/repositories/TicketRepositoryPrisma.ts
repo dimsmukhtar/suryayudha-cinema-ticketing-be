@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient, Ticket, TicketStatus, TransactionStatus } from '@prisma/client'
-import { NotFoundException } from '../../shared/error-handling/exceptions/not-found.exception'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
+import { NotFoundException } from '@shared/error-handling/exceptions/not-found.exception'
+import { checkExists } from '@shared/helpers/checkExistingRow'
 
 export class TicketRepositoryPrisma {
   constructor(private readonly prisma: PrismaClient) {}

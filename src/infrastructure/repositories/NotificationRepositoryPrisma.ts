@@ -4,7 +4,7 @@ import {
   NotificationPayload,
   NotificationWithIsRead
 } from '../types/entities/NotificationTypes'
-import { checkExists } from '../../shared/helpers/checkExistingRow'
+import { checkExists } from '@shared/helpers/checkExistingRow'
 
 export class NotificationRepositoryPrisma implements INotificationRepository {
   constructor(private readonly prisma: PrismaClient) {}

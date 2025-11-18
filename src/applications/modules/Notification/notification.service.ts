@@ -1,13 +1,13 @@
 import { Notification, UserNotificationReads } from '@prisma/client'
-import { NotificationRepositoryPrisma } from '../../../infrastructure/repositories/NotificationRepositoryPrisma'
-import { CustomHandleError } from '../../../shared/error-handling/middleware/custom-handle'
+import { NotificationRepositoryPrisma } from '@infrastructure/repositories/NotificationRepositoryPrisma'
+import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 import {
   NotificationPayload,
   NotificationWithIsRead
-} from '../../../infrastructure/types/entities/NotificationTypes'
+} from '@infrastructure/types/entities/NotificationTypes'
 import { NotificationValidation } from './notification.validation'
-import { ZodValidation } from '../../../shared/middlewares/validation.middleware'
-import { BadRequestException } from '../../../shared/error-handling/exceptions/bad-request.exception'
+import { ZodValidation } from '@shared/middlewares/validation.middleware'
+import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 
 export class NotificationService {
   constructor(private readonly repository: NotificationRepositoryPrisma) {}
