@@ -39,7 +39,7 @@ export const errorMiddleware: ErrorRequestHandler = (
     query: req.query,
     statusCode: 500
   })
-  const isProduction = process.env.NODE_ENV === 'PRODUCTION'
+  const isProduction = process.env.NODE_ENV === 'production'
   res.status(500).json({
     success: false,
     statusCode: 500,

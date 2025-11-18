@@ -4,9 +4,11 @@
   "main": "./build/server/index.js",
   "scripts": {
     "build:watch": "tsc -w",
-    "dev": "nodemon",
+    "dev": "cross-env NODE_ENV=development nodemon",
     "build": "tsc",
-    "prod": "node ./build/server/index.js",
+    "prod": "cross-env NODE_ENV=production node ./build/server/index.js",
+    "test": "cross-env NODE_ENV=test vitest --run --reporter verbose",
+    "test:watch": "cross-env NODE_ENV=test vitest --watch --reporter verbose",
     "format": "prettier . --write",
     "check-types": "tsc --noEmit --pretty",
     "check-format": "prettier . --check",
@@ -65,10 +67,13 @@
     "@types/passport": "^1.0.17",
     "@types/passport-facebook": "^3.0.4",
     "@types/passport-google-oauth20": "^2.0.17",
+    "cross-env": "^10.1.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
     "prisma": "^6.6.0",
-    "typescript": "^5.8.3"
+    "supertest": "^7.1.4",
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.10"
   },
   "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
 }

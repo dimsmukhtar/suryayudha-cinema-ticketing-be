@@ -36,7 +36,7 @@ class App implements IApp {
   private validateEnvironment(): void {
     cleanEnv(process.env, {
       PORT: num({ default: 3000 }),
-      NODE_ENV: str({ choices: ['DEVELOPMENT', 'PRODUCTION', 'TEST'], default: 'DEVELOPMENT' }),
+      NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
       DATABASE_URL: str(),
       ACCESS_TOKEN_PRIVATE_KEY: str(),
       ACCESS_TOKEN_PUBLIC_KEY: str(),
@@ -56,7 +56,8 @@ class App implements IApp {
       FACEBOOK_CLIENT_ID: str(),
       FACEBOOK_CLIENT_SECRET: str(),
       GOOGLE_CALLBACK_URL: str(),
-      FACEBOOK_CALLBACK_URL: str()
+      FACEBOOK_CALLBACK_URL: str(),
+      LOG_DIRECTORY: str()
     })
   }
 
@@ -111,7 +112,7 @@ class App implements IApp {
       this.server = this.app.listen(process.env.PORT, () => {
         logger.info({
           from: 'application:start',
-          message: `✅ Server started on port ${process.env.PORT} ✅`
+          message: `✅ App is listening on port ${process.env.PORT} ✅`
         })
         scheduleAllJobs()
       })
