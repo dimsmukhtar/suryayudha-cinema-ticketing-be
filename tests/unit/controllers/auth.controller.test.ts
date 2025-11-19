@@ -98,4 +98,18 @@ describe('AuthController (unit)', () => {
       })
     )
   })
+
+  it('register -> service throws an error and should call next with error ', async () => {
+    const req = mockReq({ body: { email: 'example.com' } })
+    const res = mockRes()
+    const next = mockNext()
+    const err = new Error('error')
+    ;(mockService.register as Mock).mockRejectedValue(err)
+    await authController['register'](req as any, res as any, next)
+
+    expect(mockService.register).toHaveBeenCalled()
+    expect(next).toHaveBeenCalledWith(err)
+    expect(res.status).not.toHaveBeenCalled()
+    expect(res.json).not.toHaveBeenCalled()
+  })
 })

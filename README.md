@@ -41,13 +41,14 @@ api/v1/
 #### Users
 api/v1/
 
-- **users** GET | **(ADMIN)**
+- **users/** GET | **(ADMIN)**
 - **users/:id** GET | **(ADMIN)**
 - **users/** POST | **(ADMIN)**
  ```req.boy = name,email,role,password,is_verified ```
 - **users/:id** PATCH | **(ADMIN)**
  ```req.body = name,email,role,password,is_verified,profile_url```
 - **users/:id** DELETE | **(ADMIN)**
+- **users/:id/tickets** GET | **(ADMIN)**
 
 #### Movies
 api/v1/
