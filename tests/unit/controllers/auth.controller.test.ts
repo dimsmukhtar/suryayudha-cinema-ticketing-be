@@ -100,7 +100,7 @@ describe('AuthController (unit)', () => {
   })
 
   it('register -> service throws an error and should call next with error ', async () => {
-    const req = mockReq({ body: { email: 'example.com' } })
+    const req = mockReq({ body: { email: 'example@gmail.com' } })
     const res = mockRes()
     const next = mockNext()
     const err = new Error('error')
@@ -111,5 +111,24 @@ describe('AuthController (unit)', () => {
     expect(next).toHaveBeenCalledWith(err)
     expect(res.status).not.toHaveBeenCalled()
     expect(res.json).not.toHaveBeenCalled()
+  })
+
+  it('resendVerificationLink -> should call service.resendVerificationLink and return 200', async () => {
+    const req = mockReq({ body: { email: 'example@gmail.com' } })
+    const res = mockRes()
+    const next = mockNext()
+    ;(mockService.resendVerificationLink as Mock).mockResolvedValue(null)
+
+    await authController['resendVerificationLink'](req as any, res as any, next)
+
+    expect(mockService.resendVerificationLink).toHaveBeenCalled()
+    expect(mockService.resendVerificationLink).toHaveBeenCalledWith('example@gmail.com')
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: true,
+        message: 'Link verifikasi berhasil dikirim ulang'
+      })
+    )
   })
 })
