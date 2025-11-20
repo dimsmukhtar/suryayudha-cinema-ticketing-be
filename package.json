@@ -15,11 +15,16 @@
     "format": "prettier . --write",
     "check-types": "tsc --noEmit --pretty",
     "check-format": "prettier . --check",
-    "prisma:generate": "prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:migrate": "prisma migrate dev --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:migrate:deploy": "prisma migrate deploy --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:studio": "prisma studio --schema=./src/infrastructure/database/prisma/schema.prisma",
-    "prisma:seed": "pnpm build && node ./build/infrastructure/database/seed.js"
+    "prisma:migrate:dev": "cross-env NODE_ENV=development prisma migrate dev --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:migrate:test": "cross-env NODE_ENV=test prisma migrate deploy --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:migrate:prod": "cross-env NODE_ENV=production prisma migrate deploy --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:generate:dev": "cross-env NODE_ENV=development prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:generate:test": "cross-env NODE_ENV=test prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:generate:prod": "cross-env NODE_ENV=production prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma",
+    "prisma:seed:dev": "cross-env NODE_ENV=development pnpm build && node ./build/infrastructure/database/seed.js",
+    "prisma:seed:test": "cross-env NODE_ENV=test pnpm build && node ./build/infrastructure/database/seed.js",
+    "prisma:seed:prod": "cross-env NODE_ENV=production pnpm build && node ./build/infrastructure/database/seed.js",
+    "prisma:studio:dev": "cross-env NODE_ENV=development prisma studio --schema=./src/infrastructure/database/prisma/schema.prisma"
   },
   "keywords": [
     "cinema",

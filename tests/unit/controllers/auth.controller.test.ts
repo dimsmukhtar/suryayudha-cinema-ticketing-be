@@ -32,6 +32,7 @@ import { mockReq, mockRes, mockNext } from '../../mocks/mockReqRes'
 import { generateVerificationToken } from '../../../src/shared/helpers/generateVerificationToken'
 import { signJwt } from '../../../src/infrastructure/config/jwt'
 import { logger } from '../../../src/shared/logger/logger'
+import { BadRequestException } from '../../../src/shared/error-handling/exceptions/bad-request.exception'
 
 describe('AuthController (unit)', () => {
   let authController: AuthController
@@ -65,10 +66,8 @@ describe('AuthController (unit)', () => {
     const res = mockRes()
     const next = mockNext()
 
-    ;(mockService.register as Mock).mockResolvedValue({
-      id: 1,
-      email: 'example@gmail.com'
-    })
+    const registerMock = vi.spyOn(mockService, 'register')
+    registerMock.mockResolvedValue({ id: 1, email: 'example@gmail.com' } as any)
 
     await authController['register'](req as any, res as any, next)
 
@@ -130,5 +129,39 @@ describe('AuthController (unit)', () => {
         message: 'Link verifikasi berhasil dikirim ulang'
       })
     )
+  })
+
+  it('verifyEmail -> should call service.verifyEmail and return 200', async () => {
+    const req = mockReq({ query: { token: 'token', email: 'example@gmail.com' } })
+    const res = mockRes()
+    const next = mockNext()
+    ;(mockService.verifyEmail as Mock).mockResolvedValue(null)
+
+    await authController['verifyEmail'](req as any, res as any, next)
+
+    expect(mockService.verifyEmail).toHaveBeenCalled()
+    expect(mockService.verifyEmail).toHaveBeenCalledWith('token', 'example@gmail.com')
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: true,
+        message: 'Email berhasil diverifikasi'
+      })
+    )
+  })
+
+  it('verifyEmail -> should return bad request error', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['verifyEmail'](req as any, res as any, next)
+
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(BadRequestException)
+    expect(error.message).toBe('Token dan email diperlukan untuk verifikasi')
+    expect(res.status).not.toHaveBeenCalled()
+    expect(res.json).not.toHaveBeenCalled()
   })
 })
