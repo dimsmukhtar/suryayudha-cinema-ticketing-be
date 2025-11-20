@@ -33,6 +33,7 @@ import { generateVerificationToken } from '../../../src/shared/helpers/generateV
 import { signJwt } from '../../../src/infrastructure/config/jwt'
 import { logger } from '../../../src/shared/logger/logger'
 import { BadRequestException } from '../../../src/shared/error-handling/exceptions/bad-request.exception'
+import { userFactory } from '../../factories/user'
 
 describe('AuthController (unit)', () => {
   let authController: AuthController
@@ -66,8 +67,9 @@ describe('AuthController (unit)', () => {
     const res = mockRes()
     const next = mockNext()
 
+    // ini sebenarnya digunakan jika kita perlu return dari register di controller, misal req.json(user). jika tidak perlu return, bisa dihilangkan saja sebenarnya
     const registerMock = vi.spyOn(mockService, 'register')
-    registerMock.mockResolvedValue({ id: 1, email: 'example@gmail.com' } as any)
+    registerMock.mockResolvedValue(userFactory({ id: 1, email: 'example@gmail.com' }))
 
     await authController['register'](req as any, res as any, next)
 
@@ -102,8 +104,9 @@ describe('AuthController (unit)', () => {
     const req = mockReq({ body: { email: 'example@gmail.com' } })
     const res = mockRes()
     const next = mockNext()
-    const err = new Error('error')
-    ;(mockService.register as Mock).mockRejectedValue(err)
+    const err = new Error('zod error because user only send email')
+    const registerMock = vi.spyOn(mockService, 'register')
+    registerMock.mockRejectedValue(err)
     await authController['register'](req as any, res as any, next)
 
     expect(mockService.register).toHaveBeenCalled()
@@ -116,7 +119,8 @@ describe('AuthController (unit)', () => {
     const req = mockReq({ body: { email: 'example@gmail.com' } })
     const res = mockRes()
     const next = mockNext()
-    ;(mockService.resendVerificationLink as Mock).mockResolvedValue(null)
+    const resendVerificationLinkMock = vi.spyOn(mockService, 'resendVerificationLink')
+    resendVerificationLinkMock.mockResolvedValue() /// undefined, karean service tidak return apa apa alias void
 
     await authController['resendVerificationLink'](req as any, res as any, next)
 
@@ -135,7 +139,9 @@ describe('AuthController (unit)', () => {
     const req = mockReq({ query: { token: 'token', email: 'example@gmail.com' } })
     const res = mockRes()
     const next = mockNext()
-    ;(mockService.verifyEmail as Mock).mockResolvedValue(null)
+
+    const verifyEmailMock = vi.spyOn(mockService, 'verifyEmail')
+    verifyEmailMock.mockResolvedValue()
 
     await authController['verifyEmail'](req as any, res as any, next)
 
@@ -158,6 +164,7 @@ describe('AuthController (unit)', () => {
     await authController['verifyEmail'](req as any, res as any, next)
 
     const error = next.mock.calls[0][0]
+    expect(mockService.verifyEmail).not.toHaveBeenCalled()
     expect(next).toHaveBeenCalled()
     expect(error).toBeInstanceOf(BadRequestException)
     expect(error.message).toBe('Token dan email diperlukan untuk verifikasi')
