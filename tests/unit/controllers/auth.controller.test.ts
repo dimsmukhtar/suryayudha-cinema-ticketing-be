@@ -37,6 +37,7 @@ import { signJwt } from '../../../src/infrastructure/config/jwt'
 import { logger } from '../../../src/shared/logger/logger'
 import { BadRequestException } from '../../../src/shared/error-handling/exceptions/bad-request.exception'
 import { userFactory } from '../../factories/user'
+import { setAccessToken } from '../../../src/shared/helpers/setCookies'
 
 describe('AuthController (unit)', () => {
   let authController: AuthController
@@ -45,6 +46,7 @@ describe('AuthController (unit)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(generateVerificationToken).mockReturnValue('verif-token')
+    vi.mocked(setAccessToken).mockReturnValue(undefined)
     vi.mocked(signJwt).mockReturnValue('token')
     vi.mocked(logger.info).mockReturnValue(logger)
     vi.mocked(logger.error).mockReturnValue(logger)
@@ -172,6 +174,54 @@ describe('AuthController (unit)', () => {
     expect(next).toHaveBeenCalled()
     expect(error).toBeInstanceOf(BadRequestException)
     expect(error.message).toBe('Token dan email diperlukan untuk verifikasi')
+    expect(res.status).not.toHaveBeenCalled()
+    expect(res.json).not.toHaveBeenCalled()
+  })
+
+  it('login -> should call service.login, setAccessToken and return 200', async () => {
+    const req = mockReq({ body: { email: 'example@gmail.com', password: '12345678' } })
+    const res = mockRes()
+    const next = mockNext()
+
+    const token: string = 'token'
+    const loginMock = vi.spyOn(authServiceMock, 'login')
+    loginMock.mockResolvedValue(token)
+
+    await authController['login'](req as any, res as any, next)
+
+    expect(authServiceMock.login).toHaveBeenCalled()
+    expect(authServiceMock.login).toHaveBeenCalledWith('user', {
+      email: 'example@gmail.com',
+      password: '12345678'
+    })
+    expect(setAccessToken).toHaveBeenCalled()
+    expect(setAccessToken).toHaveBeenCalledWith(token, res)
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: true,
+        message: 'Login berhasil',
+        token
+      })
+    )
+  })
+
+  it('login -> should call next with Bad Request error instance', async () => {
+    const req = mockReq({ body: { email: 'example@gmail.com' } })
+    const res = mockRes()
+    const next = mockNext()
+
+    const token: string = 'token'
+    const loginMock = vi.spyOn(authServiceMock, 'login')
+    loginMock.mockRejectedValue(new BadRequestException('password not provided'))
+
+    await authController['login'](req as any, res as any, next)
+
+    const err = next.mock.calls[0][0]
+    expect(authServiceMock.login).toHaveBeenCalled()
+    expect(next).toHaveBeenCalled()
+    expect(err).toBeInstanceOf(BadRequestException)
+    expect(err.message).toBe('password not provided')
     expect(res.status).not.toHaveBeenCalled()
     expect(res.json).not.toHaveBeenCalled()
   })
