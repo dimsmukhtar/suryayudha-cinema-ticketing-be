@@ -328,4 +328,21 @@ describe('AuthController (unit)', () => {
     expect(res.status).not.toHaveBeenCalled()
     expect(res.json).not.toHaveBeenCalled()
   })
+
+  it('logout -> should call res.clearCookie and return 200', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['logout'](req as any, res as any, next)
+
+    expect(res.clearCookie).toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: true,
+        message: 'Logout berhasil'
+      })
+    )
+  })
 })
