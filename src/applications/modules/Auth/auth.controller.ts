@@ -240,7 +240,6 @@ export class AuthController {
       await this.service.sendTokenResetPassword(data)
       res.status(200).json({ success: true, message: 'Token reset password berhasil dikirim' })
     } catch (e) {
-      console.log(e)
       next(e)
     }
   }

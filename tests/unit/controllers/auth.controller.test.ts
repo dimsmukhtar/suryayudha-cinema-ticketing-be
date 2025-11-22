@@ -446,4 +446,111 @@ describe('AuthController (unit)', () => {
     expect(authServiceMock.changePassword).toHaveBeenCalled()
     expect(res.status).not.toHaveBeenCalled()
   })
+
+  it('sendTokenResetPassword -> should call service.sendTokenResetPassword and return 200', async () => {
+    const req = mockReq({ body: { email: 'example@gmail.com' } })
+    const res = mockRes()
+    const next = mockNext()
+
+    const sendTokenResetPasswordMock = vi.spyOn(authServiceMock, 'sendTokenResetPassword')
+    sendTokenResetPasswordMock.mockResolvedValue(undefined)
+
+    await authController['sendTokenResetPassword'](req as any, res as any, next)
+
+    expect(authServiceMock.sendTokenResetPassword).toHaveBeenCalled()
+    expect(authServiceMock.sendTokenResetPassword).toHaveBeenCalledWith({
+      email: 'example@gmail.com'
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
+
+  it('sendTokenResetPassword -> should call next and return an error instance of bad request', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    const sendTokenResetPasswordMock = vi.spyOn(authServiceMock, 'sendTokenResetPassword')
+    sendTokenResetPasswordMock.mockRejectedValue(new BadRequestException('email not provided'))
+
+    await authController['sendTokenResetPassword'](req as any, res as any, next)
+
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(BadRequestException)
+    expect(error.message).toBe('email not provided')
+    expect(authServiceMock.sendTokenResetPassword).toHaveBeenCalled()
+    expect(res.status).not.toHaveBeenCalled()
+  })
+
+  it('resetPassword -> should call service.resetPassword and return 200', async () => {
+    const req = mockReq({
+      body: {
+        email: 'example@gmail.com',
+        passwordResetCode: '123456',
+        newPassword: '12345600',
+        newPasswordConfirmation: '12345600'
+      }
+    })
+    const res = mockRes()
+    const next = mockNext()
+
+    const resetPasswordMock = vi.spyOn(authServiceMock, 'resetPassword')
+    resetPasswordMock.mockResolvedValue(
+      userFactory({ email: 'example@gmail.com', password: '12345600' })
+    )
+
+    await authController['resetPassword'](req as any, res as any, next)
+
+    expect(authServiceMock.resetPassword).toHaveBeenCalled()
+    expect(authServiceMock.resetPassword).toHaveBeenCalledWith({
+      email: 'example@gmail.com',
+      passwordResetCode: '123456',
+      newPassword: '12345600',
+      newPasswordConfirmation: '12345600'
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
+
+  it('resetPassword -> should call next and return an error instance of bad request', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    const resetPasswordMock = vi.spyOn(authServiceMock, 'resetPassword')
+    resetPasswordMock.mockRejectedValue(new BadRequestException('email not provided'))
+
+    await authController['resetPassword'](req as any, res as any, next)
+
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(BadRequestException)
+    expect(error.message).toBe('email not provided')
+    expect(authServiceMock.resetPassword).toHaveBeenCalled()
+    expect(res.status).not.toHaveBeenCalled()
+  })
+
+  it('checkAuthentication -> should call service.checkAuthentication and return 200', async () => {
+    const req = mockReq({ cookies: { accessToken: 'token' } })
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['checkAuthentication'](req as any, res as any, next)
+    expect(res.status).toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: 'Autentikasi berhasil' })
+  })
+
+  it('checkAuthentication -> should call next and return an error instance of unauthorized', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['checkAuthentication'](req as any, res as any, next)
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(UnauthorizedException)
+    expect(error.message).toBe('Tidak terautentikasi')
+    expect(res.status).not.toHaveBeenCalled()
+    expect(res.json).not.toHaveBeenCalled()
+  })
 })
