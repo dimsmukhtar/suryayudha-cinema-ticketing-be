@@ -416,12 +416,34 @@ describe('AuthController (unit)', () => {
     await authController['changePassword'](req as any, res as any, next)
 
     expect(authServiceMock.changePassword).toHaveBeenCalled()
-    // expect(authServiceMock.changePassword).toHaveBeenCalledWith(8, {
-    //   oldPassword: '11111111',
-    //   newPassword: '0000000000',
-    //   newPasswordConfirmation: '0000000000'
-    // })
     expect(res.status).toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(200)
+  })
+
+  it('change password -> should call next and return an error instance of bad request', async () => {
+    const req = mockReq({
+      user: { id: 8, name: 'name', email: 'name@gmail.com', role: 'user' },
+      body: {
+        oldPassword: '11111111',
+        newPassword: '9999999999999',
+        newPasswordConfirmation: '0000000000'
+      }
+    })
+    const res = mockRes()
+    const next = mockNext()
+
+    const changePasswordMock = vi.spyOn(authServiceMock, 'changePassword')
+    changePasswordMock.mockRejectedValue(
+      new BadRequestException("new password doesn't match with new password confirmation")
+    )
+
+    await authController['changePassword'](req as any, res as any, next)
+
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(BadRequestException)
+    expect(error.message).toBe("new password doesn't match with new password confirmation")
+    expect(authServiceMock.changePassword).toHaveBeenCalled()
+    expect(res.status).not.toHaveBeenCalled()
   })
 })
