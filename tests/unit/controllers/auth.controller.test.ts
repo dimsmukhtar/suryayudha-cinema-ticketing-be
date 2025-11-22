@@ -389,4 +389,39 @@ describe('AuthController (unit)', () => {
     expect(res.status).toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(200)
   })
+
+  it('change password -> should call service.changePassword and return 200', async () => {
+    const req = mockReq({
+      user: { id: 8, name: 'name', email: 'name@gmail.com', role: 'user' },
+      body: {
+        oldPassword: '11111111',
+        newPassword: '0000000000',
+        newPasswordConfirmation: '0000000000'
+      }
+    })
+    const res = mockRes()
+    const next = mockNext()
+
+    const changePasswordMock = vi.spyOn(authServiceMock, 'changePassword')
+    changePasswordMock.mockResolvedValue(
+      userFactory({
+        id: 8,
+        name: 'name',
+        email: 'name@gmail.com',
+        role: 'user',
+        password: '0000000000'
+      })
+    )
+
+    await authController['changePassword'](req as any, res as any, next)
+
+    expect(authServiceMock.changePassword).toHaveBeenCalled()
+    // expect(authServiceMock.changePassword).toHaveBeenCalledWith(8, {
+    //   oldPassword: '11111111',
+    //   newPassword: '0000000000',
+    //   newPasswordConfirmation: '0000000000'
+    // })
+    expect(res.status).toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
 })
