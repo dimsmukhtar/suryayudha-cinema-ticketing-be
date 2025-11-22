@@ -36,6 +36,7 @@ import { generateVerificationToken } from '../../../src/shared/helpers/generateV
 import { signJwt } from '../../../src/infrastructure/config/jwt'
 import { logger } from '../../../src/shared/logger/logger'
 import { BadRequestException } from '../../../src/shared/error-handling/exceptions/bad-request.exception'
+import { UnauthorizedException } from '../../../src/shared/error-handling/exceptions/unauthorized.exception'
 import { userFactory } from '../../factories/user'
 import { setAccessToken } from '../../../src/shared/helpers/setCookies'
 
@@ -224,5 +225,59 @@ describe('AuthController (unit)', () => {
     expect(err.message).toBe('password not provided')
     expect(res.status).not.toHaveBeenCalled()
     expect(res.json).not.toHaveBeenCalled()
+  })
+
+  it('googleOauthCallback -> should call next and return an UnauthoriedError', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['googleOauthCallback'](req as any, res as any, next)
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(UnauthorizedException)
+    expect(error.message).toBe('User tidak ditemukan dari google oauth')
+    expect(signJwt).not.toBeCalled()
+    expect(res.redirect).not.toBeCalled()
+  })
+
+  it('googleOauthCallback -> should successful got the callback and req.user also create a token', async () => {
+    const req = mockReq({ user: { id: 8, name: 'name', email: 'name@gmail.com', role: 'user' } })
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['googleOauthCallback'](req as any, res as any, next)
+
+    expect(signJwt).toHaveBeenCalled()
+    expect(setAccessToken).toHaveBeenCalled()
+    expect(setAccessToken).toHaveBeenCalledWith('token', res)
+    expect(res.redirect).toHaveBeenCalled()
+  })
+
+  it('facebookOauthCallback -> should call next and return an UnauthoriedError', async () => {
+    const req = mockReq()
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['facebookOauthCallback'](req as any, res as any, next)
+    const error = next.mock.calls[0][0]
+    expect(next).toHaveBeenCalled()
+    expect(error).toBeInstanceOf(UnauthorizedException)
+    expect(error.message).toBe('User tidak ditemukan dari facebook oauth')
+    expect(signJwt).not.toBeCalled()
+    expect(res.redirect).not.toBeCalled()
+  })
+
+  it('facebookOauthCallback -> should successful got the callback and req.user also create a token', async () => {
+    const req = mockReq({ user: { id: 8, name: 'name', email: 'name@gmail.com', role: 'user' } })
+    const res = mockRes()
+    const next = mockNext()
+
+    await authController['facebookOauthCallback'](req as any, res as any, next)
+
+    expect(signJwt).toHaveBeenCalled()
+    expect(setAccessToken).toHaveBeenCalled()
+    expect(setAccessToken).toHaveBeenCalledWith('token', res)
+    expect(res.redirect).toHaveBeenCalled()
   })
 })
