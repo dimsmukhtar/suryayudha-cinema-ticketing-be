@@ -365,4 +365,28 @@ describe('AuthController (unit)', () => {
     expect(res.status).toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(200)
   })
+
+  it('updateProfile -> should call service.updateProfile and return 200', async () => {
+    const req = mockReq({
+      user: { id: 8, name: 'name', email: 'name@gmail.com', role: 'user' },
+      body: { name: 'name', email: 'name@gmail.com' }
+    })
+    const res = mockRes()
+    const next = mockNext()
+
+    const updateProfileMock = vi.spyOn(authServiceMock, 'updateProfile')
+    updateProfileMock.mockResolvedValue(
+      userFactory({ id: 8, name: 'name', email: 'name@gmail.com', role: 'user' })
+    )
+
+    await authController['updateProfile'](req as any, res as any, next)
+
+    expect(authServiceMock.updateProfile).toHaveBeenCalled()
+    expect(authServiceMock.updateProfile).toHaveBeenCalledWith(8, {
+      name: 'name',
+      email: 'name@gmail.com'
+    })
+    expect(res.status).toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
 })
