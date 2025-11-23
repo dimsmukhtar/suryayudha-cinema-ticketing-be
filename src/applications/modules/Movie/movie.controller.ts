@@ -5,6 +5,9 @@ import { upload } from '@infrastructure/config/multer.config'
 import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { authenticate } from '@shared/middlewares/authenticate'
 import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
+import { setCache } from '@/infrastructure/cache/setCache'
+import { cache } from '@/infrastructure/cache/cache'
+import { logger } from '@/shared/logger/logger'
 
 export class MovieController {
   private readonly movieRouter: Router
@@ -29,7 +32,7 @@ export class MovieController {
       },
       this.createMovie
     )
-    this.movieRouter.get('/', this.getAllMovies)
+    this.movieRouter.get('/', cache({ prefix: 'movies', ttl: 60 * 60 * 2 }), this.getAllMovies)
     this.movieRouter.get('/:id', this.getMovieById)
     this.movieRouter.patch(
       '/:id',
@@ -64,7 +67,19 @@ export class MovieController {
   private getAllMovies = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const movies = await this.service.getAllMovies(req.query)
-      res.status(200).json({ success: true, message: 'Semua film berhasil diambil', data: movies })
+      const responseData = {
+        success: true,
+        message: 'Semua film berhasil diambil',
+        data: movies
+      }
+      if ((res as any).cacheKey) {
+        await setCache((res as any).cacheKey, responseData, (res as any).cacheTTL)
+        logger.info({
+          from: 'movie:controller:getAllMovies',
+          message: 'Set cache for movies successfully'
+        })
+      }
+      res.status(200).json(responseData)
     } catch (e) {
       next(e)
     }
