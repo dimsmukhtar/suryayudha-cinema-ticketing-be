@@ -10,7 +10,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w600_and_h900_face/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=YoHD9XEInc0",
     "release_date": "2010-07-16T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Action", "Science Fiction", "Thriller"]
   },
@@ -25,7 +25,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=zSWdZVtXT7E",
     "release_date": "2014-11-07T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Adventure", "Science Fiction", "Drama"]
   },
@@ -40,7 +40,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=EXeTwQWrcwY",
     "release_date": "2008-07-18T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Action", "Crime", "Thriller", "Superhero"]
   },
@@ -55,7 +55,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=5PSNL1qE6VY",
     "release_date": "2009-12-18T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Action", "Adventure", "Fantasy", "Science Fiction"]
   },
@@ -70,7 +70,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=2e-eXJ6HgkQ",
     "release_date": "1997-12-19T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Drama", "Romance", "History"]
   },
@@ -85,7 +85,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/p96dm7sCMn4VYAStA6siNz30G1r.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=vKQi3bBA1y8",
     "release_date": "1999-03-31T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Action", "Science Fiction"]
   },
@@ -100,7 +100,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=aStYWD25fAQ",
     "release_date": "2001-12-19T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Adventure", "Fantasy", "Action"]
   },
@@ -115,7 +115,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=LbfMDwc4azU",
     "release_date": "2002-12-18T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Adventure", "Fantasy"]
   },
@@ -130,7 +130,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=r5X-hFf6Bwo",
     "release_date": "2003-12-17T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Adventure", "Fantasy", "War"]
   },
@@ -145,7 +145,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=eOrNdBpGMv8",
     "release_date": "2012-05-04T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Action", "Adventure", "Science Fiction", "Superhero"]
   },
@@ -160,7 +160,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/bR8ISy1O9XQxqiy0fQFw2BX72RQ.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=TcMBFSGVi1c",
     "release_date": "2019-04-26T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Action", "Adventure", "Science Fiction", "Superhero"]
   },
@@ -175,7 +175,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=JfVOs4VSpmA",
     "release_date": "2021-12-17T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Action", "Adventure", "Science Fiction", "Superhero"]
   },
@@ -190,7 +190,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=zAGVQLHvwOY",
     "release_date": "2019-10-04T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Crime", "Drama", "Thriller"]
   },
@@ -205,7 +205,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=n9xhJrPXop4",
     "release_date": "2021-10-22T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Adventure", "Drama", "Science Fiction"]
   },
@@ -220,7 +220,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=Way9Dexny3w",
     "release_date": "2024-03-01T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Adventure", "Science Fiction"]
   },
@@ -235,7 +235,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=uYPbbksJxIg",
     "release_date": "2023-07-21T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Drama", "History", "War", "Biography"]
   },
@@ -250,7 +250,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/itAKcobTYGpYT8Phwjd8c9hleTo.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=TbQm5doF_Uc",
     "release_date": "2013-11-27T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Animation", "Family", "Fantasy", "Musical"]
   },
@@ -265,7 +265,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/w9kR8qbmQ01HwnvK4alvnQ2ca0L.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=wmiIUN-7qhE",
     "release_date": "2019-06-21T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Animation", "Adventure", "Comedy", "Family"]
   },
@@ -280,7 +280,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/fZPSd91yGE9fCcCe6OoQr6E3Bev.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=2AUmvWm5ZDQ",
     "release_date": "2014-10-24T00:00:00.000Z",
-    "status": "NOW_SHOWING",
+    "status": "now_showing",
     "created_by_id": 1,
     "genres": ["Action", "Thriller", "Crime"]
   },
@@ -295,7 +295,7 @@
     "poster_url": "https://media.themoviedb.org/t/p/w188_and_h282_face/hA2ple9q4qnwxp3hKVNhroipsir.jpg",
     "trailer_url": "https://www.youtube.com/watch?v=hEJnMQG9ev8",
     "release_date": "2015-05-15T00:00:00.000Z",
-    "status": "COMING_SOON",
+    "status": "coming_soon",
     "created_by_id": 1,
     "genres": ["Action", "Adventure", "Thriller"]
   }

@@ -1,4 +1,4 @@
-import { prisma } from '../../config/clientPrisma'
+import { PrismaClient } from '@prisma/client'
 import { logger } from '@shared/logger/logger'
 
 interface SeatData {
@@ -6,7 +6,10 @@ interface SeatData {
   studio_id: string
 }
 
-export default async function seedStudiosAndSeats() {
+export const tableName = 'Studios'
+export const tableName2 = 'Seats'
+
+export default async function seed(prisma: PrismaClient) {
   const studio1 = await prisma.studio.create({
     data: {
       id: 'cinema-1',
