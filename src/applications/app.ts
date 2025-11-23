@@ -50,14 +50,17 @@ class App implements IApp {
       USER_EMAIL: str(),
       MIDTRANS_SERVER_KEY: str(),
       MIDTRANS_CLIENT_KEY: str(),
-      CLIENT_URL: str(),
       GOOGLE_CLIENT_ID: str(),
       GOOGLE_CLIENT_SECRET: str(),
       FACEBOOK_CLIENT_ID: str(),
       FACEBOOK_CLIENT_SECRET: str(),
       GOOGLE_CALLBACK_URL: str(),
       FACEBOOK_CALLBACK_URL: str(),
-      LOG_DIRECTORY: str()
+      REDIS_PORT: num(),
+      REDIS_HOST: str(),
+      REDIS_PASSWORD: str(),
+      LOG_DIRECTORY: str(),
+      CLIENT_URL: str()
     })
   }
 
