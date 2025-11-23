@@ -4,7 +4,7 @@ import { logger } from '@/shared/logger/logger'
 
 export const tableName = 'Movies'
 
-export default async function seedMoviesWithMovieGenres(prisma: PrismaClient) {
+export default async function seed(prisma: PrismaClient) {
   for (const movie of data) {
     const genreRecords = []
     for (const genreName of movie.genres) {
