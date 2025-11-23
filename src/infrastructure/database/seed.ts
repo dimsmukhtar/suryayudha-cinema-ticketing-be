@@ -12,7 +12,8 @@ const tablesName = [
 
 async function resetTable() {
   for (const tableName of tablesName) {
-    await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tableName} RESTART INDENTITY CASCADE`)
+    console.log('Tables to truncate:', tableName)
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "${tableName}" RESTART IDENTITY CASCADE`)
     logger.info({
       from: 'seed:resetTable',
       message: `Table ${tableName} reseted successfully ✅`
@@ -41,5 +42,9 @@ async function runSeeds() {
 }
 
 runSeeds().catch((err) => {
-  console.error('❌ Error during seeding:', err)
+  logger.error({
+    from: 'seed:runSeeds',
+    message: '❌ Failed to seed database ❌',
+    error: err
+  })
 })
