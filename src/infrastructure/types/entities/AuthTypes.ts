@@ -49,8 +49,9 @@ export interface IAuthRepository {
   register(data: RegisterPayload): Promise<User>
   resendVerificationLink(email: string): Promise<void>
   verifyEmail(token: string, email: string): Promise<void>
-  login(data: LoginPayload): Promise<string>
-  loginAdmin(data: LoginPayload): Promise<string>
+  login(data: LoginPayload): Promise<{ accessToken: string; refreshToken: string }>
+  loginAdmin(data: LoginPayload): Promise<{ accessToken: string; refreshToken: string }>
+  refreshToken(refreshToken: string): Promise<{ newAccessToken: string; newRefreshToken: string }>
   getProfile(userId: number): Promise<User>
   updateProfile(userId: number, data: ProfileUpdatePayload): Promise<User>
   changePassword(email: string, data: ChangePasswordPayload): Promise<User>

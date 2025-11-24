@@ -1,21 +1,23 @@
 import { Response } from 'express'
 
+const sameSite: 'lax' | 'none' = process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+
 export const setAccessToken = (accessToken: string, res: Response) => {
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    maxAge: 60 * 60 * 1000, // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+    maxAge: 1000 * 60 * 15, // 15 minutes
     secure: process.env.NODE_ENV === 'production',
-    // sameSite: 'none'
-    sameSite: 'lax' // lax for lokal
+    sameSite,
+    path: '/'
   })
 }
 
 export const setRefreshToken = (refreshToken: string, res: Response) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     secure: process.env.NODE_ENV === 'production',
-    // sameSite: 'none'
-    sameSite: 'lax'
+    sameSite,
+    path: '/'
   })
 }

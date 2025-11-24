@@ -52,17 +52,33 @@ export class AuthService {
     }
   }
 
-  async login(role: string, data: LoginPayload): Promise<string> {
+  async login(
+    role: string,
+    data: LoginPayload
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const userPayloadRequest = ZodValidation.validate(AuthValidation.LOGIN, data)
-      const token =
+      const { accessToken, refreshToken } =
         role === 'user'
           ? await this.repository.login(userPayloadRequest)
           : await this.repository.loginAdmin(userPayloadRequest)
-      return token
+      return { accessToken, refreshToken }
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat login'
+      })
+    }
+  }
+
+  async refreshToken(
+    refreshToken: string
+  ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
+    try {
+      const { newAccessToken, newRefreshToken } = await this.repository.refreshToken(refreshToken)
+      return { newAccessToken, newRefreshToken }
+    } catch (e) {
+      throw CustomHandleError(e, {
+        context: 'Error saat refresh token'
       })
     }
   }

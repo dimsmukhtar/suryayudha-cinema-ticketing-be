@@ -11,7 +11,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
       return next(new UnauthorizedException('Akses ditolak, silahkan login terlebih dahulu'))
     }
 
-    const payload = verifyJwtToken(accessToken, 'ACCESS_TOKEN_PUBLIC_KEY') as UserJwtPayload
+    const payload = verifyJwtToken<UserJwtPayload>(accessToken, 'ACCESS_TOKEN_PUBLIC_KEY')
     if (!payload) {
       return next(
         new UnauthorizedException(

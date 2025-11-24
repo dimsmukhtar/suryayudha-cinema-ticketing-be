@@ -1,4 +1,5 @@
 import { PrismaClient, User } from '@prisma/client'
+import crypto from 'crypto'
 
 import {
   RegisterPayload,
@@ -15,9 +16,13 @@ import { BadRequestException } from '@shared/error-handling/exceptions/bad-reque
 import { sendEmail } from '../config/nodemailer'
 import { generateVerificationToken } from '@shared/helpers/generateVerificationToken'
 import { hashPassword, verifyPassword } from '@shared/helpers/passwordEncrypt'
-import { signJwt } from '../config/jwt'
+import { signJwt, verifyJwtToken } from '../config/jwt'
 import { verificationEmailTemplate } from '@shared/helpers/emailTemplate'
 import { logger } from '@shared/logger/logger'
+import { setCache } from '@infrastructure/cache/setCache'
+import { UnauthorizedException } from '@/shared/error-handling/exceptions/unauthorized.exception'
+import { UserJwtPayload } from '@infrastructure/types/entities/UserTypes'
+import redis from '@infrastructure/config/redis'
 
 export class AuthRepositoryPrisma implements IAuthRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -108,7 +113,7 @@ export class AuthRepositoryPrisma implements IAuthRepository {
     })
   }
 
-  async login(data: LoginPayload): Promise<string> {
+  async login(data: LoginPayload): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.prisma.user.findUnique({ where: { email: data.email } })
     if (!user) {
       throw new NotFoundException(`User dengan email ${data.email} tidak ditemukan`)
@@ -120,14 +125,22 @@ export class AuthRepositoryPrisma implements IAuthRepository {
     if (!isPasswordValid) {
       throw new BadRequestException('Password salah')
     }
-    const token = signJwt(
+    const accessToken = signJwt(
       { id: user.id, name: user.name, email: user.email, role: user.role },
       'ACCESS_TOKEN_PRIVATE_KEY',
-      { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+      { expiresIn: '15m' }
     )
-    return token
+    const jti = crypto.randomUUID()
+    const refreshToken = signJwt(
+      { id: user.id, jti, name: user.name, email: user.email, role: user.role },
+      'REFRESH_TOKEN_PRIVATE_KEY',
+      { expiresIn: '7d' }
+    )
+    const refreshTokenKey = `refresh-token:${jti}`
+    await setCache(refreshTokenKey, refreshToken, 60 * 60 * 24 * 7) // 7 days
+    return { accessToken, refreshToken }
   }
-  async loginAdmin(data: LoginPayload): Promise<string> {
+  async loginAdmin(data: LoginPayload): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.prisma.user.findUnique({ where: { email: data.email } })
     if (!user) {
       throw new NotFoundException(`User dengan email ${data.email} tidak ditemukan`)
@@ -139,12 +152,72 @@ export class AuthRepositoryPrisma implements IAuthRepository {
     if (!isPasswordValid) {
       throw new BadRequestException('Password salah')
     }
-    const token = signJwt(
-      { id: user.id, email: user.email, role: user.role },
+    const accessToken = signJwt(
+      { id: user.id, name: user.name, email: user.email, role: user.role },
       'ACCESS_TOKEN_PRIVATE_KEY',
-      { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+      { expiresIn: '15m' }
     )
-    return token
+    const jti = crypto.randomUUID()
+    const refreshToken = signJwt(
+      { id: user.id, jti, name: user.name, email: user.email, role: user.role },
+      'REFRESH_TOKEN_PRIVATE_KEY',
+      { expiresIn: '7d' }
+    )
+    const refreshTokenKey = `refresh-token:${jti}`
+    await setCache(refreshTokenKey, refreshToken, 60 * 60 * 24 * 7)
+    return { accessToken, refreshToken }
+  }
+
+  async refreshToken(
+    refreshToken: string
+  ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token tidak ditemukan di cookies')
+    }
+    const payloadUser = verifyJwtToken(
+      refreshToken,
+      'REFRESH_TOKEN_PUBLIC_KEY'
+    ) as UserJwtPayload & { jti: string }
+    if (!payloadUser) {
+      throw new UnauthorizedException(
+        'Refresh token di verifikasi oleh jwt, dan akses ditolak karena refresh token tidak valid'
+      )
+    }
+    const key = `refresh-token:${payloadUser.jti}`
+    const refreshTokenFromRedis = await redis.get(key)
+    if (!refreshTokenFromRedis) {
+      throw new UnauthorizedException(
+        'Refresh token di verifikasi oleh redis, akses ditolak karena refresh token tidak valid'
+      )
+    }
+
+    await redis.del(key)
+
+    const newAccessToken = signJwt(
+      {
+        id: payloadUser.id,
+        name: payloadUser.name,
+        email: payloadUser.email,
+        role: payloadUser.role
+      },
+      'ACCESS_TOKEN_PRIVATE_KEY',
+      { expiresIn: '15m' }
+    )
+    const jti = crypto.randomUUID()
+    const newRefreshToken = signJwt(
+      {
+        id: payloadUser.id,
+        jti,
+        name: payloadUser.name,
+        email: payloadUser.email,
+        role: payloadUser.role
+      },
+      'REFRESH_TOKEN_PRIVATE_KEY',
+      { expiresIn: '7d' }
+    )
+    const refreshTokenKey = `refresh-token:${jti}`
+    await setCache(refreshTokenKey, newRefreshToken, 60 * 60 * 24 * 7)
+    return { newAccessToken, newRefreshToken }
   }
 
   async getProfile(userId: number): Promise<User> {

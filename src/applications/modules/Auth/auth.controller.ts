@@ -8,8 +8,8 @@ import {
   ResetPasswordPayload
 } from '@infrastructure/types/entities/AuthTypes'
 
-import { UserUpdatePayload } from '@infrastructure/types/entities/UserTypes'
-import { setAccessToken } from '@shared/helpers/setCookies'
+import { UserJwtPayload, UserUpdatePayload } from '@infrastructure/types/entities/UserTypes'
+import { setAccessToken, setRefreshToken } from '@shared/helpers/setCookies'
 import { upload } from '@infrastructure/config/multer.config'
 import { generateVerificationToken } from '@shared/helpers/generateVerificationToken'
 import { authenticate } from '@shared/middlewares/authenticate'
@@ -18,6 +18,9 @@ import { UnauthorizedException } from '@shared/error-handling/exceptions/unautho
 import { signJwt } from '@infrastructure/config/jwt'
 import { logger } from '@shared/logger/logger'
 import { sanitizeBody } from '@shared/helpers/sanitizeBody'
+import redis from '@infrastructure/config/redis'
+import { verifyJwtToken } from '@infrastructure/config/jwt'
+import { clearAuthCookies } from '@/shared/helpers/clearCookies'
 
 export class AuthController {
   private readonly authRouter: Router
@@ -29,6 +32,7 @@ export class AuthController {
   private initializeAuthRoutes() {
     this.authRouter.post('/register', this.register)
     this.authRouter.post('/login', this.login)
+    this.authRouter.post('/refresh', this.refreshToken)
     this.authRouter.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
     this.authRouter.get(
       '/facebook',
@@ -123,9 +127,22 @@ export class AuthController {
   private login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const loginPayload: LoginPayload = req.body
-      const token = await this.service.login('user', loginPayload)
-      setAccessToken(token, res)
-      res.status(200).json({ success: true, message: 'Login berhasil', token })
+      const { accessToken, refreshToken } = await this.service.login('user', loginPayload)
+      setAccessToken(accessToken, res)
+      setRefreshToken(refreshToken, res)
+      res.status(200).json({ success: true, message: 'Login berhasil' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  private refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refreshToken = req.cookies.refreshToken
+      const { newAccessToken, newRefreshToken } = await this.service.refreshToken(refreshToken)
+      setAccessToken(newAccessToken, res)
+      setRefreshToken(newRefreshToken, res)
+      res.status(200).json({ success: true, message: 'Refresh token berhasil' })
     } catch (e) {
       next(e)
     }
@@ -169,9 +186,9 @@ export class AuthController {
   private loginAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const loginPayload: LoginPayload = req.body
-      const token = await this.service.login('admin', loginPayload)
-      setAccessToken(token, res)
-      res.status(200).json({ success: true, message: 'Login admin berhasil', token })
+      const { accessToken, refreshToken } = await this.service.login('admin', loginPayload)
+      setAccessToken(accessToken, res)
+      res.status(200).json({ success: true, message: 'Login admin berhasil' })
     } catch (e) {
       next(e)
     }
@@ -179,11 +196,32 @@ export class AuthController {
 
   private logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.clearCookie('accessToken')
-      res.clearCookie('refreshToken')
+      const refreshToken = req.cookies.refreshToken
+      if (!refreshToken) {
+        clearAuthCookies(res)
+        return res.status(200).json({ success: true, message: 'Logout berhasil' })
+      }
+      try {
+        const payload = verifyJwtToken<UserJwtPayload & { jti: string }>(
+          refreshToken,
+          'REFRESH_TOKEN_PUBLIC_KEY'
+        )
+        if (payload?.jti) {
+          await redis.del(`refresh-token:${payload.jti}`)
+        }
+      } catch (err) {
+        logger.error({
+          from: 'auth:logout',
+          message: '❌ Logout cleanup failed ❌',
+          error: err
+        })
+      }
+
+      clearAuthCookies(res)
       res.status(200).json({ success: true, message: 'Logout berhasil' })
     } catch (e) {
-      next(e)
+      clearAuthCookies(res)
+      return res.status(200).json({ success: true, message: 'Logout berhasil' })
     }
   }
 
