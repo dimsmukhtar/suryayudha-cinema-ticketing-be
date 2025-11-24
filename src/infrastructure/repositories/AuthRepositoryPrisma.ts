@@ -187,7 +187,7 @@ export class AuthRepositoryPrisma implements IAuthRepository {
     const refreshTokenFromRedis = await redis.get(key)
     if (!refreshTokenFromRedis) {
       throw new UnauthorizedException(
-        'Refresh token di verifikasi oleh redis, akses ditolak karena refresh token tidak valid'
+        'Refresh token di verifikasi oleh redis, akses ditolak karena refresh token tidak ada atau tidak valid'
       )
     }
 
