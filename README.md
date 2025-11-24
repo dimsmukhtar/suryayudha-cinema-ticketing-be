@@ -13,6 +13,7 @@ api/v1/
 ```req.body = email,password```
 - **auth/login-admin** POST | **(ADMIN)**
 ```req.body = email,password```
+- **auth/refresh** POST | **(ADMIN & USER)**
 - **auth/google** GET | **(USER)**
 - **auth/google/callback** GET | **(USER)**
 - **auth/facebook** GET | **(USER)**
