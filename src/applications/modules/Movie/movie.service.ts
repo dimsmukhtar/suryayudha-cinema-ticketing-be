@@ -8,6 +8,7 @@ import {
 } from '@infrastructure/types/entities/MovieTypes'
 import { MovieValidation } from './movie.validation'
 import { ZodValidation } from '@shared/middlewares/validation.middleware'
+import { clearingCacheByPrefix } from '@/infrastructure/cache/deleteCache'
 
 export class MovieService {
   constructor(private readonly repository: MovieRepositoryPrisma) {}
@@ -19,6 +20,7 @@ export class MovieService {
   ): Promise<Movie> {
     try {
       const movieCreatePayloadRequest = ZodValidation.validate(MovieValidation.CREATE, movieData)
+      await clearingCacheByPrefix('movies')
       return await this.repository.createMovie(movieCreatePayloadRequest, userId, movie_genres)
     } catch (e) {
       throw CustomHandleError(e, {
