@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import passport from 'passport'
+import crypto from 'crypto'
 import { AuthService } from './auth.service'
 import {
   ChangePasswordPayload,
@@ -21,6 +22,7 @@ import { sanitizeBody } from '@shared/helpers/sanitizeBody'
 import redis from '@infrastructure/config/redis'
 import { verifyJwtToken } from '@infrastructure/config/jwt'
 import { clearAuthCookies } from '@/shared/helpers/clearCookies'
+import { setCache } from '@/infrastructure/cache/setCache'
 
 export class AuthController {
   private readonly authRouter: Router
@@ -157,9 +159,18 @@ export class AuthController {
       const token = signJwt(
         { id: user.id, name: user.name, email: user.email, role: user.role },
         'ACCESS_TOKEN_PRIVATE_KEY',
-        { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+        { expiresIn: '15m' }
       )
+      const jti = crypto.randomUUID()
+      const refreshToken = signJwt(
+        { id: user.id, jti, name: user.name, email: user.email, role: user.role },
+        'REFRESH_TOKEN_PRIVATE_KEY',
+        { expiresIn: '7d' }
+      )
+      const key = `refresh-token:${jti}`
+      await setCache(key, refreshToken, 60 * 60 * 24 * 7)
       setAccessToken(token, res)
+      setRefreshToken(refreshToken, res)
       res.redirect(process.env.CLIENT_URL!)
     } catch (e) {
       next(e)
@@ -174,9 +185,19 @@ export class AuthController {
       const token = signJwt(
         { id: user.id, name: user.name, email: user.email, role: user.role },
         'ACCESS_TOKEN_PRIVATE_KEY',
-        { expiresIn: '60m' } // best pratice use 15 minutes with refresh token, but now i dont have refresh token yet, so i set 60 minutes
+        { expiresIn: '15m' }
       )
+
+      const jti = crypto.randomUUID()
+      const refreshToken = signJwt(
+        { id: user.id, jti, name: user.name, email: user.email, role: user.role },
+        'REFRESH_TOKEN_PRIVATE_KEY',
+        { expiresIn: '7d' }
+      )
+      const key = `refresh-token:${jti}`
+      await setCache(key, refreshToken, 60 * 60 * 24 * 7)
       setAccessToken(token, res)
+      setRefreshToken(refreshToken, res)
       res.redirect(process.env.CLIENT_URL!)
     } catch (e) {
       next(e)
