@@ -8,13 +8,13 @@ const envFile = `.env.${env}`
 
 if (!fs.existsSync(envFile)) {
   logger.error({
-    from: 'index:boostrap',
+    from: 'config:loadEnv',
     message: '❌ Environment file not found, Set NODE_ENV to one of: development, test, production'
   })
   process.exit(1)
 }
 logger.info({
-  from: 'index:boostrap',
+  from: 'config:loadEnv',
   message: `✅ Environment set to ${env} and using ${envFile} file ✅`
 })
 dotenv.config({ path: envFile })

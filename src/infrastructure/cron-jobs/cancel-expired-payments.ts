@@ -41,7 +41,7 @@ export const cancelExpiredPayments = async () => {
     if (expiredPayments.length === 0) {
       logger.info({
         from: 'cron-job:cancel-expired-payments',
-        message: '❌Tidak ada payments dari midtrans yang kadaluarsa ditemukan❌'
+        message: 'Tidak ada payments dari midtrans yang kadaluarsa ditemukan'
       })
       return
     }
