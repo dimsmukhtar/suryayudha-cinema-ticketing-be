@@ -3,6 +3,9 @@ import { TransactionService } from './transaction.service'
 import { authenticate } from '@shared/middlewares/authenticate'
 import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { validateAdmin } from '@shared/middlewares/valiadateAdmin'
+import { cache } from '@/infrastructure/cache/cache'
+import { setCache } from '@/infrastructure/cache/setCache'
+import { logger } from '@/shared/logger/logger'
 
 export class TransactionController {
   private readonly transactionRouter: Router
@@ -13,9 +16,20 @@ export class TransactionController {
 
   private initializeTransactionRoutes(): void {
     this.transactionRouter.post('/', authenticate, this.createBooking)
-    this.transactionRouter.get('/', authenticate, validateAdmin, this.getAllTransactions)
+    this.transactionRouter.get(
+      '/',
+      cache({ prefix: 'transactions', ttl: 60 * 60 }),
+      authenticate,
+      validateAdmin,
+      this.getAllTransactions
+    )
     this.transactionRouter.get('/bookings', authenticate, validateAdmin, this.getAllBokings)
-    this.transactionRouter.get('/my', authenticate, this.getMyTransactions)
+    this.transactionRouter.get(
+      '/my',
+      authenticate,
+      cache({ prefix: 'my-transactions', ttl: 60 * 60, spesificUser: true }),
+      this.getMyTransactions
+    )
     this.transactionRouter.post('/:id/pay', authenticate, this.initiatePayment)
     this.transactionRouter.get('/:id', authenticate, this.getTransactionById)
     this.transactionRouter.get(
@@ -53,7 +67,7 @@ export class TransactionController {
 
       const { transactions, total } = await this.service.getAllTransactions(page, limit, req.query)
 
-      res.status(200).json({
+      const responseData = {
         success: true,
         message: 'Semua transaksi berhasil diambil',
         data: transactions,
@@ -63,7 +77,16 @@ export class TransactionController {
           total,
           totalPages: Math.ceil(total / limit)
         }
-      })
+      }
+      if ((res as any).cacheKey) {
+        await setCache((res as any).cacheKey, responseData, (res as any).cacheTTL)
+        logger.info({
+          from: 'transaction:controller:getAllTransactions',
+          message: 'Set cache for transactions successfully'
+        })
+      }
+
+      res.status(200).json(responseData)
     } catch (e) {
       next(e)
     }
@@ -95,9 +118,19 @@ export class TransactionController {
     try {
       const userId = req.user!.id
       const transactions = await this.service.getMyTransactions(userId, req.query)
-      res
-        .status(200)
-        .json({ success: true, message: 'Semua transaksi berhasil diambil', data: transactions })
+      const responseData = {
+        success: true,
+        message: 'Semua transaksi berhasil diambil',
+        data: transactions
+      }
+      if ((res as any).cacheKey) {
+        await setCache((res as any).cacheKey, responseData, (res as any).cacheTTL)
+        logger.info({
+          from: 'transaction:controller:getMyTransactions',
+          message: `Set cache get my transactions for user ${userId} successfully`
+        })
+      }
+      res.status(200).json(responseData)
     } catch (e) {
       next(e)
     }

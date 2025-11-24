@@ -3,10 +3,11 @@ import { TransactionRepositoryPrisma } from '@infrastructure/repositories/Transa
 import { CustomHandleError } from '@shared/error-handling/middleware/custom-handle'
 import { BadRequestException } from '@shared/error-handling/exceptions/bad-request.exception'
 import { snap } from '@infrastructure/config/midtrans'
+import { clearingCacheByPrefix } from '@/infrastructure/cache/deleteCache'
 import {
   queryGetAllTransactions,
   queryGetMyTransactions
-} from '@infrastructure\/types/entities/TransactionTypes'
+} from '@infrastructure/types/entities/TransactionTypes'
 
 export class TransactionService {
   constructor(private readonly repository: TransactionRepositoryPrisma) {}
@@ -20,6 +21,8 @@ export class TransactionService {
       if (!scheduleId) {
         throw new BadRequestException('Schedule ID tidak boleh kosong')
       }
+      await clearingCacheByPrefix('transactions')
+      await clearingCacheByPrefix(`${userId}:my-transactions`)
       return await this.repository.createBooking(scheduleId, userId, scheduleSeatIds)
     } catch (e) {
       throw CustomHandleError(e, {
@@ -75,6 +78,8 @@ export class TransactionService {
 
   async initiatePayment(transactionId: number, userId: number) {
     try {
+      await clearingCacheByPrefix('transactions')
+      await clearingCacheByPrefix(`${userId}:my-transactions`)
       return await this.repository.initiatePayment(transactionId, userId)
     } catch (e) {
       throw CustomHandleError(e, {

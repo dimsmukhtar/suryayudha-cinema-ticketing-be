@@ -52,6 +52,7 @@ export class MovieService {
   async upateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie> {
     try {
       const movieUpdatePayloadRequest = ZodValidation.validate(MovieValidation.UPDATE, movieData)
+      await clearingCacheByPrefix('movies')
       return await this.repository.updateMovie(movieId, movieUpdatePayloadRequest)
     } catch (e) {
       console.error(e)
@@ -64,6 +65,7 @@ export class MovieService {
   async deleteMovie(movieId: number): Promise<void> {
     try {
       await this.repository.deleteMovie(movieId)
+      await clearingCacheByPrefix('movies')
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat menghapus film'

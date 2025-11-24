@@ -41,7 +41,7 @@ export const cancelExpiredBookings = async () => {
     if (expiredBookings.length === 0) {
       logger.info({
         from: 'cron-job:cancel-expired-bookings',
-        message: '❌Tidak ada booking yang kadaluarsa ditemukan❌'
+        message: 'Tidak ada booking yang kadaluarsa ditemukan'
       })
       return
     }
