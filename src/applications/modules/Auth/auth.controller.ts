@@ -188,6 +188,7 @@ export class AuthController {
       const loginPayload: LoginPayload = req.body
       const { accessToken, refreshToken } = await this.service.login('admin', loginPayload)
       setAccessToken(accessToken, res)
+      setRefreshToken(refreshToken, res)
       res.status(200).json({ success: true, message: 'Login admin berhasil' })
     } catch (e) {
       next(e)
