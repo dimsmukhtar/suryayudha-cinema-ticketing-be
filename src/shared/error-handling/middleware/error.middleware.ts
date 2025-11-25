@@ -23,7 +23,8 @@ export const errorMiddleware: ErrorRequestHandler = (
       success: false,
       statusCode: 400,
       errorCode: 'BAD_REQUEST_ERROR_CODE',
-      message: error.message
+      message: error.message,
+      timeStamp: new Date().toISOString()
     })
   }
 
@@ -44,6 +45,7 @@ export const errorMiddleware: ErrorRequestHandler = (
     statusCode: 500,
     errorCode: 'UNKNOWN_ERROR_CODE',
     message: isProduction ? 'SOMETHING WENT WRONG' : error.message,
+    timeStamp: new Date().toISOString(),
     ...(!isProduction && { stack: error.stack })
   })
 }

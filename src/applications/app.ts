@@ -14,6 +14,7 @@ import { errorMiddleware } from '@shared/error-handling/middleware/error.middlew
 import { IApp } from '@infrastructure/types/app.type'
 import { IRoutes } from '@infrastructure/types/route.type'
 import { scheduleAllJobs } from '@infrastructure/cron-jobs'
+import { setupSwagger } from '@src/docs/swagger'
 
 class App implements IApp {
   private app: Application
@@ -84,6 +85,7 @@ class App implements IApp {
   }
 
   private initializeRoutes(): void {
+    setupSwagger(this.app)
     this.app.use('/api', this.routes.getRoutes())
   }
 

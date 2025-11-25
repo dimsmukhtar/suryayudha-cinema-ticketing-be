@@ -1,0 +1,13 @@
+ErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    statusCode:
+      type: integer
+    errorCode:
+      type: string
+    message:
+      type: string
+    timeStamp:
+      type: string

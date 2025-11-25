@@ -1,0 +1,73 @@
+openapi: 3.1.0
+
+info:
+  title: Surya Yudha Cinema Booking Backend - Api Documentation
+  version: 1.0.0
+  description: This is a Documentation for backend application Cinema E-Ticket Booking Platform
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local Development
+
+tags:
+  - name: Auth
+    description: Authentication Endpoints
+  - name: Movies
+    description: Movies Endpoints
+
+paths:
+  /movies:
+    $ref: './paths/movies/list.yaml'
+  /movies/:
+    post:
+      $ref: './paths/movies/create.yaml'
+  /movies/{id}:
+    get:
+      $ref: './paths/movies/detail.yaml'
+    patch:
+      $ref: './paths/movies/update.yaml'
+    delete:
+      $ref: './paths/movies/delete.yaml'
+
+  /auth/login:
+    post:
+      $ref: './paths/auth/login.yaml'
+  /auth/register:
+    post:
+      $ref: './paths/auth/register.yaml'
+  /auth/logout:
+    post:
+      $ref: './paths/auth/logout.yaml'
+
+components:
+  securitySchemes:
+    cookieAuth:
+      $ref: './components/security.yaml#/cookieAuth'
+
+  responses:
+    SuccessResponse:
+      $ref: './components/responses.yaml#/SuccessResponse'
+    CreatedResponse:
+      $ref: './components/responses.yaml#/CreatedResponse'
+    NotFoundResponse:
+      $ref: './components/responses.yaml#/NotFoundResponse'
+    ValidationErrorResponse:
+      $ref: './components/responses.yaml#/ValidationErrorResponse'
+    UnauthorizedResponse:
+      $ref: './components/responses.yaml#/UnauthorizedResponse'
+
+  schemas:
+    Common:
+      $ref: './schemas/common.yaml'
+    Movie:
+      $ref: './schemas/movies.yaml'
+    Auth:
+      $ref: './schemas/auth.yaml'
+
+  errors:
+    ValidationError:
+      $ref: './components/errors.yaml#/ValidationError'
+    UnauthorizedError:
+      $ref: './components/errors.yaml#/UnauthorizedError'
+    NotFoundError:
+      $ref: './components/errors.yaml#/NotFoundError'

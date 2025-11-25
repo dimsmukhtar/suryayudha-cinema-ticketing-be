@@ -1,0 +1,23 @@
+patch:
+  tags:
+    - Movies
+  summary: Update movie
+  security:
+    - cookieAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/movies.yaml#/CreateMovieDto'
+  responses:
+    '200':
+      $ref: '../../components/responses.yaml#/SuccessResponse'
+    '404':
+      $ref: '../../components/responses.yaml#/NotFoundResponse'

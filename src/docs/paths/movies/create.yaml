@@ -1,0 +1,22 @@
+post:
+  tags:
+    - Movies
+  summary: Create a new movie
+  security:
+    - cookieAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/movies.yaml#/CreateMovieDto'
+        example:
+          title: 'Inside Out 2'
+          overview: 'Riley menghadapi emosi baru...'
+          poster_url: 'https://image.tmdb.org/t/p/w500/asdf.jpg'
+          release_date: '2024-06-15'
+  responses:
+    '201':
+      $ref: '../../components/responses.yaml#/CreatedResponse'
+    '400':
+      $ref: '../../components/responses.yaml#/ValidationErrorResponse'
