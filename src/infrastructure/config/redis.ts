@@ -1,3 +1,4 @@
+import './loadEnv'
 import Redis, { RedisOptions } from 'ioredis'
 import { URL } from 'url'
 import { logger } from '@shared/logger/logger'

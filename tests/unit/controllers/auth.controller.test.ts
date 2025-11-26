@@ -1,3 +1,4 @@
+import '../../__mocks__/mockRedis'
 import { beforeEach, describe, it, vi, Mock, expect } from 'vitest'
 
 // cara di bawah ini akan error mock kehilangan return value karena di beforeEach saya clearAllMocks
@@ -43,6 +44,7 @@ import { userFactory } from '../../factories/user'
 import { setAccessToken, setRefreshToken } from '../../../src/shared/helpers/setCookies'
 import { setCache } from '../../../src/infrastructure/cache/setCache'
 import { clearAuthCookies } from '../../../src/shared/helpers/clearCookies'
+import redis from '../../../src/infrastructure/config/redis'
 
 describe('AuthController (unit)', () => {
   let authController: AuthController
@@ -369,11 +371,10 @@ describe('AuthController (unit)', () => {
     const res = mockRes()
     const next = mockNext()
 
-    const refreshToken: string = req.cookies.refreshToken
-    const payload = verifyJwtToken(refreshToken, 'REFRESH_TOKEN_PUBLIC_KEY')
     await authController['logout'](req as any, res as any, next)
 
-    expect(res.clearCookie).toHaveBeenCalled()
+    expect(redis.del).toHaveBeenCalled()
+    expect(clearAuthCookies).toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({

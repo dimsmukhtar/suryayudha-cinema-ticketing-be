@@ -1,37 +1,25 @@
 import { vi } from 'vitest'
 
-export const createMockRedis = () => {
-  return {
-    get: vi.fn(),
-    set: vi.fn(),
-    del: vi.fn(),
-    expire: vi.fn(),
-    ttl: vi.fn(),
-    incr: vi.fn(),
-    decr: vi.fn(),
-
-    publish: vi.fn(),
-    subscribe: vi.fn(),
-    unsubscribe: vi.fn(),
-
-    pipeline: vi.fn(() => ({
-      set: vi.fn().mockReturnThis(),
-      del: vi.fn().mockReturnThis(),
-      expire: vi.fn().mockReturnThis(),
-      exec: vi.fn()
-    })),
-    multi: vi.fn(() => ({
-      set: vi.fn().mockReturnThis(),
-      del: vi.fn().mockReturnThis(),
-      expire: vi.fn().mockReturnThis(),
-      exec: vi.fn()
-    })),
-
-    on: vi.fn(),
-    quit: vi.fn(),
-    disconnect: vi.fn(),
-
-    options: {}
-  }
+class MockRedis {
+  constructor() {}
+  connect = vi.fn()
+  quit = vi.fn()
+  on = vi.fn()
+  set = vi.fn()
+  get = vi.fn()
+  del = vi.fn()
 }
-export type MockRedisType = ReturnType<typeof createMockRedis>
+
+vi.mock('ioredis', () => {
+  return {
+    default: class Redis extends MockRedis {},
+    Redis: class Redis extends MockRedis {}
+  }
+})
+
+vi.mock('../../../src/infrastructure/config/redis', () => {
+  return {
+    default: new MockRedis(),
+    createRedis: vi.fn(() => new MockRedis())
+  }
+})
