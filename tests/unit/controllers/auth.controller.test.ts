@@ -29,8 +29,8 @@ vi.mock('../../../src/infrastructure/cache/setCache')
 vi.mock('../../../src/shared/helpers/clearCookies')
 
 // mock base
-import { createMockService } from '../../mocks/baseMockService'
-import { mockReq, mockRes, mockNext } from '../../mocks/mockReqRes'
+import { createMockService } from '../../__mocks__/baseMockService'
+import { mockReq, mockRes, mockNext } from '../../__mocks__/mockReqRes'
 
 import { AuthController } from '../../../src/applications/modules/Auth/auth.controller'
 import { AuthService } from '../../../src/applications/modules/Auth/auth.service'

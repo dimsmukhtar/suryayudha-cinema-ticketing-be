@@ -13,7 +13,7 @@ import { AuthRepositoryPrisma } from '../../../src/infrastructure/repositories/A
 import { logger } from '../../../src/shared/logger/logger'
 import { CustomHandleError } from '../../../src/shared/error-handling/middleware/custom-handle'
 import { HttpException } from '../../../src/shared/error-handling/exceptions/http.exception'
-import { createMockService } from '../../mocks/baseMockService'
+import { createMockService } from '../../__mocks__/baseMockService'
 import { ZodValidation } from '../../../src/shared/middlewares/validation.middleware'
 
 describe('Auth Service (unit)', () => {
