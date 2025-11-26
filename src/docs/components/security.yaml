@@ -2,3 +2,5 @@ cookieAuth:
   type: apiKey
   in: cookie
   name: accessToken
+  description: Authentication using HTTP-Only Cookies.
+    The server generates a signed JSON Web Token (JWT) and stores it in the "accessToken" cookie.

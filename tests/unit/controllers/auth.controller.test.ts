@@ -25,6 +25,8 @@ vi.mock('../../../src/shared/helpers/generateVerificationToken')
 vi.mock('../../../src/shared/helpers/setCookies')
 vi.mock('../../../src/infrastructure/config/jwt')
 vi.mock('../../../src/shared/logger/logger')
+vi.mock('../../../src/infrastructure/cache/setCache')
+vi.mock('../../../src/shared/helpers/clearCookies')
 
 // mock base
 import { createMockService } from '../../mocks/baseMockService'
@@ -33,12 +35,14 @@ import { mockReq, mockRes, mockNext } from '../../mocks/mockReqRes'
 import { AuthController } from '../../../src/applications/modules/Auth/auth.controller'
 import { AuthService } from '../../../src/applications/modules/Auth/auth.service'
 import { generateVerificationToken } from '../../../src/shared/helpers/generateVerificationToken'
-import { signJwt } from '../../../src/infrastructure/config/jwt'
+import { signJwt, verifyJwtToken } from '../../../src/infrastructure/config/jwt'
 import { logger } from '../../../src/shared/logger/logger'
 import { BadRequestException } from '../../../src/shared/error-handling/exceptions/bad-request.exception'
 import { UnauthorizedException } from '../../../src/shared/error-handling/exceptions/unauthorized.exception'
 import { userFactory } from '../../factories/user'
-import { setAccessToken } from '../../../src/shared/helpers/setCookies'
+import { setAccessToken, setRefreshToken } from '../../../src/shared/helpers/setCookies'
+import { setCache } from '../../../src/infrastructure/cache/setCache'
+import { clearAuthCookies } from '../../../src/shared/helpers/clearCookies'
 
 describe('AuthController (unit)', () => {
   let authController: AuthController
@@ -48,7 +52,19 @@ describe('AuthController (unit)', () => {
     vi.clearAllMocks()
     vi.mocked(generateVerificationToken).mockReturnValue('verif-token')
     vi.mocked(setAccessToken).mockReturnValue(undefined)
+    vi.mocked(setRefreshToken).mockReturnValue(undefined)
+    vi.mocked(clearAuthCookies).mockReturnValue(undefined)
     vi.mocked(signJwt).mockReturnValue('token')
+    vi.mocked(verifyJwtToken).mockReturnValue({
+      id: 1,
+      name: 'example',
+      email: 'example@gmail.com',
+      role: 'user',
+      iat: '31312',
+      exp: '2312312',
+      jti: 'alskjdhasdjsakaj'
+    })
+    vi.mocked(setCache).mockResolvedValue(undefined)
     vi.mocked(logger.info).mockReturnValue(logger)
     vi.mocked(logger.error).mockReturnValue(logger)
     vi.mocked(logger.warn).mockReturnValue(logger)
@@ -184,9 +200,10 @@ describe('AuthController (unit)', () => {
     const res = mockRes()
     const next = mockNext()
 
-    const token: string = 'token'
+    const accessToken: string = 'access token'
+    const refreshToken: string = 'refresh token'
     const loginMock = vi.spyOn(authServiceMock, 'login')
-    loginMock.mockResolvedValue(token)
+    loginMock.mockResolvedValue({ accessToken, refreshToken })
 
     await authController['login'](req as any, res as any, next)
 
@@ -196,13 +213,14 @@ describe('AuthController (unit)', () => {
       password: '12345678'
     })
     expect(setAccessToken).toHaveBeenCalled()
-    expect(setAccessToken).toHaveBeenCalledWith(token, res)
+    expect(setAccessToken).toHaveBeenCalledWith(accessToken, res)
+    expect(setRefreshToken).toHaveBeenCalled()
+    expect(setRefreshToken).toHaveBeenCalledWith(refreshToken, res)
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         success: true,
-        message: 'Login berhasil',
-        token
+        message: 'Login berhasil'
       })
     )
   })
@@ -212,7 +230,6 @@ describe('AuthController (unit)', () => {
     const res = mockRes()
     const next = mockNext()
 
-    const token: string = 'token'
     const loginMock = vi.spyOn(authServiceMock, 'login')
     loginMock.mockRejectedValue(new BadRequestException('password not provided'))
 
@@ -223,6 +240,8 @@ describe('AuthController (unit)', () => {
     expect(next).toHaveBeenCalled()
     expect(err).toBeInstanceOf(BadRequestException)
     expect(err.message).toBe('password not provided')
+    expect(setAccessToken).not.toHaveBeenCalled()
+    expect(setRefreshToken).not.toHaveBeenCalled()
     expect(res.status).not.toHaveBeenCalled()
     expect(res.json).not.toHaveBeenCalled()
   })
@@ -237,6 +256,9 @@ describe('AuthController (unit)', () => {
     expect(next).toHaveBeenCalled()
     expect(error).toBeInstanceOf(UnauthorizedException)
     expect(error.message).toBe('User tidak ditemukan dari google oauth')
+    expect(setAccessToken).not.toHaveBeenCalled()
+    expect(setRefreshToken).not.toHaveBeenCalled()
+    expect(setCache).not.toHaveBeenCalled()
     expect(signJwt).not.toBeCalled()
     expect(res.redirect).not.toBeCalled()
   })
@@ -251,6 +273,9 @@ describe('AuthController (unit)', () => {
     expect(signJwt).toHaveBeenCalled()
     expect(setAccessToken).toHaveBeenCalled()
     expect(setAccessToken).toHaveBeenCalledWith('token', res)
+    expect(setRefreshToken).toHaveBeenCalled()
+    expect(setRefreshToken).toHaveBeenCalledWith('token', res)
+    expect(setCache).toHaveBeenCalled()
     expect(res.redirect).toHaveBeenCalled()
   })
 
@@ -264,6 +289,9 @@ describe('AuthController (unit)', () => {
     expect(next).toHaveBeenCalled()
     expect(error).toBeInstanceOf(UnauthorizedException)
     expect(error.message).toBe('User tidak ditemukan dari facebook oauth')
+    expect(setAccessToken).not.toHaveBeenCalled()
+    expect(setRefreshToken).not.toHaveBeenCalled()
+    expect(setCache).not.toHaveBeenCalled()
     expect(signJwt).not.toBeCalled()
     expect(res.redirect).not.toBeCalled()
   })
@@ -278,6 +306,9 @@ describe('AuthController (unit)', () => {
     expect(signJwt).toHaveBeenCalled()
     expect(setAccessToken).toHaveBeenCalled()
     expect(setAccessToken).toHaveBeenCalledWith('token', res)
+    expect(setRefreshToken).toHaveBeenCalled()
+    expect(setRefreshToken).toHaveBeenCalledWith('token', res)
+    expect(setCache).toHaveBeenCalled()
     expect(res.redirect).toHaveBeenCalled()
   })
 
@@ -286,9 +317,10 @@ describe('AuthController (unit)', () => {
     const res = mockRes()
     const next = mockNext()
 
-    const token: string = 'token'
+    const accessToken: string = 'access token'
+    const refreshToken: string = 'refresh token'
     const loginMock = vi.spyOn(authServiceMock, 'login')
-    loginMock.mockResolvedValue(token)
+    loginMock.mockResolvedValue({ accessToken, refreshToken })
 
     await authController['loginAdmin'](req as any, res as any, next)
 
@@ -298,13 +330,14 @@ describe('AuthController (unit)', () => {
       password: '12345678'
     })
     expect(setAccessToken).toHaveBeenCalled()
-    expect(setAccessToken).toHaveBeenCalledWith(token, res)
+    expect(setAccessToken).toHaveBeenCalledWith(accessToken, res)
+    expect(setRefreshToken).toHaveBeenCalled()
+    expect(setRefreshToken).toHaveBeenCalledWith(refreshToken, res)
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         success: true,
-        message: 'Login admin berhasil',
-        token
+        message: 'Login admin berhasil'
       })
     )
   })
@@ -325,15 +358,19 @@ describe('AuthController (unit)', () => {
     expect(next).toHaveBeenCalled()
     expect(err).toBeInstanceOf(BadRequestException)
     expect(err.message).toBe('password not provided')
+    expect(setAccessToken).not.toHaveBeenCalled()
+    expect(setRefreshToken).not.toHaveBeenCalled()
     expect(res.status).not.toHaveBeenCalled()
     expect(res.json).not.toHaveBeenCalled()
   })
 
   it('logout -> should call res.clearCookie and return 200', async () => {
-    const req = mockReq()
+    const req = mockReq({ cookies: { refreshToken: 'refresh token' } })
     const res = mockRes()
     const next = mockNext()
 
+    const refreshToken: string = req.cookies.refreshToken
+    const payload = verifyJwtToken(refreshToken, 'REFRESH_TOKEN_PUBLIC_KEY')
     await authController['logout'](req as any, res as any, next)
 
     expect(res.clearCookie).toHaveBeenCalled()
