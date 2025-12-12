@@ -1,9 +1,8 @@
-post:
-  tags:
-    - Auth
-  summary: Logout user
-  security:
-    - cookieAuth: []
-  responses:
-    '200':
-      $ref: '../../components/responses.yaml#/SuccessResponse'
+tags:
+  - Auth
+summary: Logout user
+security:
+  - cookieAuth: []
+responses:
+  '200':
+    $ref: '../../components/responses.yaml#/SuccessResponse'

@@ -1,9 +1,8 @@
-openapi: 3.1.0
-
+openapi: 3.0.3
 info:
   title: Surya Yudha Cinema Booking Backend - Api Documentation
   version: 1.0.0
-  description: This is a Documentation for backend application Cinema E-Ticket Booking Platform
+  description: Dokumentasi backend aplikasi Cinema E-Ticket Booking Platform (Surya Yudha)
 
 servers:
   - url: http://localhost:3000/api/v1
@@ -11,16 +10,17 @@ servers:
 
 tags:
   - name: Auth
-    description: Authentication Endpoints
+    description: Endpoints otentikasi
   - name: Movies
-    description: Movies Endpoints
+    description: Endpoints film
 
 paths:
   /movies:
-    $ref: './paths/movies/list.yaml'
-  /movies/:
+    get:
+      $ref: './paths/movies/list.yaml'
     post:
       $ref: './paths/movies/create.yaml'
+
   /movies/{id}:
     get:
       $ref: './paths/movies/detail.yaml'
@@ -32,9 +32,11 @@ paths:
   /auth/login:
     post:
       $ref: './paths/auth/login.yaml'
+
   /auth/register:
     post:
       $ref: './paths/auth/register.yaml'
+
   /auth/logout:
     post:
       $ref: './paths/auth/logout.yaml'
@@ -42,7 +44,10 @@ paths:
 components:
   securitySchemes:
     cookieAuth:
-      $ref: './components/security.yaml#/cookieAuth'
+      type: apiKey
+      in: cookie
+      name: accessToken
+      description: Cookie HttpOnly berisi JWT (accessToken)
 
   responses:
     SuccessResponse:
@@ -57,17 +62,25 @@ components:
       $ref: './components/responses.yaml#/UnauthorizedResponse'
 
   schemas:
-    Common:
-      $ref: './schemas/common.yaml'
-    Movie:
-      $ref: './schemas/movies.yaml'
-    Auth:
-      $ref: './schemas/auth.yaml'
+    RegisterDto:
+      $ref: './schemas/auth.yaml#/RegisterDto'
+    LoginDto:
+      $ref: './schemas/auth.yaml#/LoginDto'
+    AuthUser:
+      $ref: './schemas/auth.yaml#/AuthUser'
+    LoginSuccess:
+      $ref: './schemas/auth.yaml#/LoginSuccess'
 
-  errors:
-    ValidationError:
-      $ref: './components/errors.yaml#/ValidationError'
-    UnauthorizedError:
-      $ref: './components/errors.yaml#/UnauthorizedError'
-    NotFoundError:
-      $ref: './components/errors.yaml#/NotFoundError'
+    ErrorResponse:
+      $ref: './schemas/common.yaml#/ErrorResponse'
+
+    Movie:
+      $ref: './schemas/movies.yaml#/Movie'
+    MovieGenre:
+      $ref: './schemas/movies.yaml#/MovieGenre'
+    Genre:
+      $ref: './schemas/movies.yaml#/Genre'
+    MovieListResponse:
+      $ref: './schemas/movies.yaml#/MovieListResponse'
+    CreateMovieDto:
+      $ref: './schemas/movies.yaml#/CreateMovieDto'

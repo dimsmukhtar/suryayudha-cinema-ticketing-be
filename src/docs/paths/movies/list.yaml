@@ -1,7 +1,6 @@
-get:
-  tags:
-    - Movies
-  summary: Get list of movies
-  responses:
-    '200':
-      $ref: '../../components/responses.yaml#/SuccessResponse'
+tags:
+  - Movies
+summary: Get list of movies
+responses:
+  '200':
+    $ref: '../../components/responses.yaml#/SuccessResponse'

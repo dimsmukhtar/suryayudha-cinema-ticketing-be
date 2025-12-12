@@ -1,17 +1,16 @@
-delete:
-  tags:
-    - Movies
-  summary: Delete movie
-  security:
-    - cookieAuth: []
-  parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: integer
-  responses:
-    '200':
-      $ref: '../../components/responses.yaml#/SuccessResponse'
-    '404':
-      $ref: '../../components/responses.yaml#/NotFoundResponse'
+tags:
+  - Movies
+summary: Delete movie
+security:
+  - cookieAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: integer
+responses:
+  '200':
+    $ref: '../../components/responses.yaml#/SuccessResponse'
+  '404':
+    $ref: '../../components/responses.yaml#/NotFoundResponse'

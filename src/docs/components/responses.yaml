@@ -1,5 +1,5 @@
 SuccessResponse:
-  description: The request was successfull.
+  description: The request was successful.
   content:
     application/json:
       schema:
@@ -8,13 +8,16 @@ SuccessResponse:
           success:
             type: boolean
           message:
-            type: boolean
+            type: string
           data:
             type: object
-          example:
+      examples:
+        default:
+          value:
             success: true
             message: 'Success'
             data: {}
+
 CreatedResponse:
   description: Resource successfully created.
   content:
@@ -28,44 +31,55 @@ CreatedResponse:
             type: string
           data:
             type: object
-        example:
-          success: true
-          message: 'Movie created successfully'
-          data:
-            id: 1
+      examples:
+        default:
+          value:
+            success: true
+            message: 'Movie created successfully'
+            data:
+              id: 1
+
 NotFoundResponse:
   description: Resource not found.
   content:
     application/json:
       schema:
         $ref: '../schemas/common.yaml#/ErrorResponse'
-      example:
-        success: false
-        statusCode: 404
-        errorCode: 'NOT_FOUND'
-        message: 'Movie not found'
-        timeStamp: '2022-10-20T00:00:00.000Z'
-ValidationError:
+      examples:
+        default:
+          value:
+            success: false
+            statusCode: 404
+            errorCode: 'NOT_FOUND'
+            message: 'Movie not found'
+            timeStamp: '2022-10-20T00:00:00.000Z'
+
+ValidationErrorResponse:
   description: Request validation failed.
   content:
     application/json:
       schema:
         $ref: '../schemas/common.yaml#/ErrorResponse'
-      example:
-        success: false
-        statusCode: 400
-        errorCode: 'BAD_REQUEST'
-        message: 'Password is required'
-        timeStamp: '2022-10-20T00:00:00.000Z'
-UnauthorizedError:
+      examples:
+        default:
+          value:
+            success: false
+            statusCode: 400
+            errorCode: 'BAD_REQUEST'
+            message: 'Password is required'
+            timeStamp: '2022-10-20T00:00:00.000Z'
+
+UnauthorizedResponse:
   description: Unauthorized access.
   content:
     application/json:
       schema:
         $ref: '../schemas/common.yaml#/ErrorResponse'
-      example:
-        success: false
-        statusCode: 400
-        errorCode: 'UNAUTHORIZED'
-        message: 'Unauthorized access'
-        timeStamp: '2022-10-20T00:00:00.000Z'
+      examples:
+        default:
+          value:
+            success: false
+            statusCode: 401
+            errorCode: 'UNAUTHORIZED'
+            message: 'Unauthorized access'
+            timeStamp: '2022-10-20T00:00:00.000Z'
