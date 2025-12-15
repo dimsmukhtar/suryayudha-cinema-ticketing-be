@@ -29,9 +29,14 @@ export class MovieService {
     }
   }
 
-  async getAllMovies(query: MovieQuery): Promise<Movie[]> {
+  async getAllMovies(
+    page: number,
+    limit: number,
+    query: MovieQuery
+  ): Promise<{ movies: Movie[]; total: number }> {
     try {
-      return await this.repository.getAllMovies(query)
+      const { movies, total } = await this.repository.getAllMovies(page, limit, query)
+      return { movies, total }
     } catch (e) {
       throw CustomHandleError(e, {
         context: 'Error saat mengambil semua film'

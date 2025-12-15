@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: surya-postgres
+    env_file:
+      - .env.production
+    volumes:
+      - postgresql-data-surya:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - surya-network
+
+  redis:
+    image: redis:8.2
+    container_name: surya-redis
+    command: >
+      sh -c "redis-server --requirepass $${REDIS_PASSWORD} --appendonly yes"
+    env_file:
+      - .env.production
+    volumes:
+      - redis-data-surya:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '$${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - surya-network
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+    image: surya-backend-image
+    container_name: surya-backend
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./logs/backend:/app/logs
+    networks:
+      - surya-network
+
+volumes:
+  postgresql-data-surya:
+    name: postgresql-data-surya
+  redis-data-surya:
+    name: redis-data-surya
+
+networks:
+  surya-network:
+    name: surya-network
+    driver: bridge

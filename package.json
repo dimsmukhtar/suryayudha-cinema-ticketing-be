@@ -7,7 +7,7 @@
     "build:watch": "tsc-watch --onSuccess \"tsc-alias\"",
     "dev": "cross-env NODE_ENV=development nodemon --delay 2000ms",
     "build": "tsc && tsc-alias && pnpm copy-docs",
-    "copy-docs": "copyfiles -u 1 src/docs/**/* build",
+    "copy-docs": "copyfiles -u 1 src/docs/** build",
     "validate:yaml": "swagger-cli validate ./src/docs/openapi.yaml",
     "prod": "cross-env NODE_ENV=production node ./build/server/index.js",
     "test": "cross-env NODE_ENV=test vitest --run --reporter verbose --coverage",

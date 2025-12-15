@@ -66,11 +66,19 @@ export class MovieController {
 
   private getAllMovies = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const movies = await this.service.getAllMovies(req.query)
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 10
+      const { movies, total } = await this.service.getAllMovies(page, limit, req.query)
       const responseData = {
         success: true,
         message: 'Semua film berhasil diambil',
-        data: movies
+        data: movies,
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
       }
       if ((res as any).cacheKey) {
         await setCache((res as any).cacheKey, responseData, (res as any).cacheTTL)

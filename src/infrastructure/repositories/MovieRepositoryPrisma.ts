@@ -53,7 +53,11 @@ export class MovieRepositoryPrisma implements IMovieRepository {
     })
   }
 
-  async getAllMovies(query: MovieQuery): Promise<Movie[]> {
+  async getAllMovies(
+    page: number,
+    limit: number,
+    query: MovieQuery
+  ): Promise<{ movies: Movie[]; total: number }> {
     const where: Prisma.MovieWhereInput = {}
     if (query.title) {
       where.title = {
@@ -79,20 +83,29 @@ export class MovieRepositoryPrisma implements IMovieRepository {
         }
       }
     }
-    return await this.prisma.movie.findMany({
-      where,
-      include: {
-        movie_genres: {
-          include: {
-            genre: true
-          }
+
+    const [movies, total] = await this.prisma.$transaction([
+      this.prisma.movie.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          movie_genres: {
+            include: {
+              genre: true
+            }
+          },
+          casts: true
         },
-        casts: true
-      },
-      orderBy: {
-        release_date: 'desc'
-      }
-    })
+        orderBy: {
+          release_date: 'desc'
+        }
+      }),
+
+      this.prisma.movie.count({ where })
+    ])
+
+    return { movies, total }
   }
 
   async getMovieById(movieId: number) {

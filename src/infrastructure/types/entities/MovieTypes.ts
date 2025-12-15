@@ -56,7 +56,11 @@ export type MovieResponse = MoviePayload
 
 export interface IMovieRepository {
   createMovie(movieData: MoviePayload, userId: number, movie_genres?: number[]): Promise<Movie>
-  getAllMovies(query: MovieQuery): Promise<Movie[]>
+  getAllMovies(
+    page: number,
+    limit: number,
+    query: MovieQuery
+  ): Promise<{ movies: Movie[]; total: number }>
   updateMovie(movieId: number, movieData: MoviePayloadUpdate): Promise<Movie>
   deleteMovie(movieId: number): Promise<void>
 }
